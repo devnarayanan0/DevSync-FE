@@ -215,7 +215,7 @@ export default function LogsPage() {
       </div>
 
       {/* Search and Filters Bar */}
-      <div className="rounded border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 shadow-xs space-y-3">
+      <div className="rounded border border-theme-border bg-theme-card p-4 shadow-xs space-y-3">
         <div className="flex flex-col md:flex-row gap-3">
           {/* Search */}
           <div className="relative flex-1">
@@ -225,7 +225,7 @@ export default function LogsPage() {
               placeholder="Search logs by action, source, endpoint..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full text-xs bg-slate-50 border border-slate-200 select-all dark:border-slate-805 dark:bg-slate-950 pl-9 pr-3 py-2 rounded focus:bg-white dark:focus:bg-slate-950 outline-none text-slate-800 dark:text-slate-100"
+              className="w-full text-xs bg-theme-bg border border-theme-border select-all pl-9 pr-3 py-2 rounded focus:bg-theme-card outline-none text-theme-text font-mono"
             />
           </div>
 
@@ -234,7 +234,7 @@ export default function LogsPage() {
             <select
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
-              className="p-2 border border-slate-200 bg-slate-50 dark:border-slate-805 dark:bg-slate-950 text-xs font-semibold rounded outline-none"
+              className="p-2 border border-theme-border bg-theme-bg text-xs font-semibold rounded outline-none text-theme-text focus:bg-theme-card focus:border-indigo-500"
             >
               <option value="all">Levels: All</option>
               <option value="INFO">INFO</option>
@@ -247,7 +247,7 @@ export default function LogsPage() {
             <select
               value={providerFilter}
               onChange={(e) => setProviderFilter(e.target.value)}
-              className="p-2 border border-slate-200 bg-slate-50 dark:border-slate-805 dark:bg-slate-950 text-xs font-semibold rounded outline-none"
+              className="p-2 border border-theme-border bg-theme-bg text-xs font-semibold rounded outline-none text-theme-text focus:bg-theme-card focus:border-indigo-500"
             >
               <option value="all">Providers: All</option>
               <option value="AWS S3">AWS S3</option>
@@ -259,7 +259,7 @@ export default function LogsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="p-2 border border-slate-200 bg-slate-50 dark:border-slate-805 dark:bg-slate-950 text-xs font-semibold rounded outline-none"
+              className="p-2 border border-theme-border bg-theme-bg text-xs font-semibold rounded outline-none text-theme-text focus:bg-theme-card focus:border-indigo-500"
             >
               <option value="all">Statuses: All</option>
               <option value="SUCCESS">Success</option>
@@ -275,16 +275,16 @@ export default function LogsPage() {
         {/* Left Side: Table */}
         <div className="lg:col-span-3">
           {filteredLogs.length === 0 ? (
-            <div className="p-10 border border-dashed text-center rounded bg-white dark:border-slate-800 dark:bg-slate-900 space-y-2">
+            <div className="p-10 border border-dashed border-theme-border text-center rounded bg-theme-card space-y-2">
               <Terminal className="mx-auto h-8 w-8 text-slate-300 dark:text-slate-700" />
-              <h4 className="font-bold text-slate-700 dark:text-slate-300">No Logs Matching Search</h4>
+              <h4 className="font-bold text-theme-text">No Logs Matching Search</h4>
               <p className="text-xs text-slate-400">Clear filters or try a different search phrase.</p>
             </div>
           ) : (
-            <div className="border border-slate-200 dark:border-slate-800 rounded bg-white dark:bg-slate-900 overflow-hidden">
+            <div className="border border-theme-border rounded bg-theme-card overflow-hidden">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-450 font-semibold uppercase text-[10px]">
+                  <tr className="bg-theme-bg border-b border-theme-border text-slate-450 font-semibold uppercase text-[10px]">
                     <th className="p-3">Time</th>
                     <th className="p-3">Level</th>
                     <th className="p-3">Source/Action</th>
@@ -292,7 +292,7 @@ export default function LogsPage() {
                     <th className="p-3 text-right">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-[11px] font-mono leading-relaxed">
+                <tbody className="divide-y divide-theme-border text-[11px] font-mono leading-relaxed">
                   {filteredLogs.map((log) => {
                     const isSelected = selectedLogId === log.id;
                     return (
@@ -301,23 +301,23 @@ export default function LogsPage() {
                         onClick={() => setSelectedLogId(log.id)}
                         className={`cursor-pointer transition-colors ${
                           isSelected
-                            ? 'bg-indigo-50/40 dark:bg-indigo-950/20 font-semibold border-l-4 border-indigo-550'
-                            : 'hover:bg-slate-50/50 dark:hover:bg-slate-950/10'
+                            ? 'bg-indigo-50/45 dark:bg-indigo-950/25 font-semibold border-l-4 border-indigo-550 text-indigo-700 dark:text-indigo-400'
+                            : 'hover:bg-theme-bg'
                         }`}
                       >
                         <td className="p-3 text-slate-400 dark:text-slate-500 whitespace-nowrap">{log.timestamp}</td>
                         <td className="p-3">
                           <span className={`inline-block px-1.5 py-0.2 rounded text-[9px] font-bold ${
                             log.level === 'ERROR' ? 'bg-red-50 text-red-700 dark:bg-red-950/30' :
-                            log.level === 'WARNING' ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/30' :
-                            log.level === 'DEBUG' ? 'bg-purple-50 text-purple-700' :
+                            log.level === 'WARNING' ? 'bg-amber-50 text-amber-700 dark:bg-amber-955/30' :
+                            log.level === 'DEBUG' ? 'bg-purple-50 text-purple-700 dark:bg-purple-950/30' :
                             'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30'
                           }`}>
                             {log.level}
                           </span>
                         </td>
                         <td className="p-3">
-                          <div className="font-semibold text-slate-800 dark:text-slate-200">[{log.source}]</div>
+                          <div className="font-semibold text-theme-text">[{log.source}]</div>
                           <div className="text-slate-500 truncate max-w-[200px]">{log.action}</div>
                         </td>
                         <td className="p-3 text-slate-450">{log.provider}</td>
@@ -338,13 +338,13 @@ export default function LogsPage() {
         {/* Right Side: Log Inspector Details Panel */}
         <div className="lg:col-span-2">
           {!selectedLog ? (
-            <div className="p-6 border border-dashed rounded bg-slate-50/50 dark:bg-slate-900/10 text-center text-slate-400 text-xs">
+            <div className="p-6 border border-dashed border-theme-border rounded bg-theme-bg text-center text-slate-400 text-xs">
               <SlidersHorizontal className="mx-auto h-8 w-8 text-slate-300 dark:text-slate-700 mb-2" />
               <span>Select a log row on the left to view detailed metrics and payload variables.</span>
             </div>
           ) : (
-            <div className="rounded border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 shadow-xs space-y-4 text-xs font-sans">
-              <div className="flex justify-between items-center border-b pb-2.5 dark:border-slate-800 text-slate-800 dark:text-slate-100">
+            <div className="rounded border border-theme-border bg-theme-card p-5 shadow-xs space-y-4 text-xs font-sans text-theme-text">
+              <div className="flex justify-between items-center border-b border-theme-border pb-2.5 text-theme-text">
                 <span className="font-bold uppercase text-xs">Log Inspector</span>
                 <span className="font-mono text-slate-400 text-[10px]">ID: {selectedLog.id}</span>
               </div>
@@ -364,16 +364,16 @@ export default function LogsPage() {
 
               {/* Details table mapping */}
               <div className="space-y-3">
-                <div className="rounded bg-slate-50 dark:bg-slate-950 p-3 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                <div className="rounded bg-theme-bg p-3 space-y-1.5 text-xs text-theme-text">
                   <header className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Metadata Variables</header>
                   <div className="grid grid-cols-2 gap-2 text-[11px] font-mono leading-relaxed">
-                    <div>PROVIDER: <span className="font-semibold text-slate-900 dark:text-slate-100">{selectedLog.provider}</span></div>
-                    <div>SOURCE: <span className="font-semibold text-slate-900 dark:text-slate-100">{selectedLog.source}</span></div>
-                    <div className="col-span-2">NAMESPACE: <span className="font-semibold text-slate-900 dark:text-slate-100">{selectedLog.tenantId}</span></div>
+                    <div>PROVIDER: <span className="font-semibold text-theme-text">{selectedLog.provider}</span></div>
+                    <div>SOURCE: <span className="font-semibold text-theme-text">{selectedLog.source}</span></div>
+                    <div className="col-span-2">NAMESPACE: <span className="font-semibold text-theme-text">{selectedLog.tenantId}</span></div>
                   </div>
                 </div>
 
-                <div className="rounded bg-slate-50 dark:bg-slate-950 p-3 space-y-1 text-xs text-slate-750 dark:text-slate-300">
+                <div className="rounded bg-theme-bg p-3 space-y-1 text-xs text-theme-text">
                   <header className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-1">Protocol Execution</header>
                   <div className="space-y-1.5 text-[11px] font-mono leading-relaxed">
                     <div className="flex justify-between">
@@ -382,11 +382,11 @@ export default function LogsPage() {
                     </div>
                     <div className="flex justify-between">
                       <span>METHOD:</span>
-                      <span className="font-bold">{selectedLog.method}</span>
+                      <span>{selectedLog.method}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>STATUS:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedLog.statusCode}</span>
+                      <span className="font-semibold text-theme-text">{selectedLog.statusCode}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>LATENCY:</span>
@@ -410,33 +410,33 @@ export default function LogsPage() {
 
                 {/* Dropdowns payloads */}
                 <div className="space-y-1.5 font-mono text-[11px]">
-                  <div className="border border-slate-200 dark:border-slate-800 rounded">
+                  <div className="border border-theme-border rounded">
                     <button
                       type="button"
                       onClick={() => setRequestPayloadOpen(!requestPayloadOpen)}
-                      className="w-full flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-950 text-[10px] font-bold uppercase"
+                      className="w-full flex items-center justify-between p-2 bg-theme-bg text-[10px] font-bold uppercase"
                     >
                       <span>Request Payload Details</span>
                       {requestPayloadOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                     </button>
                     {requestPayloadOpen && (
-                      <pre className="p-2.5 bg-neutral-950 text-emerald-400 overflow-x-auto max-h-[100px] leading-relaxed select-all">
+                      <pre className="p-2.5 bg-neutral-950 text-emerald-400 overflow-x-auto max-h-[100px] leading-relaxed select-all border-t border-theme-border">
                         {selectedLog.requestPayload}
                       </pre>
                     )}
                   </div>
 
-                  <div className="border border-slate-200 dark:border-slate-800 rounded">
+                  <div className="border border-theme-border rounded">
                     <button
                       type="button"
                       onClick={() => setResponsePayloadOpen(!responsePayloadOpen)}
-                      className="w-full flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-950 text-[10px] font-bold uppercase"
+                      className="w-full flex items-center justify-between p-2 bg-theme-bg text-[10px] font-bold uppercase"
                     >
                       <span>Response Payload Details</span>
                       {responsePayloadOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                     </button>
                     {responsePayloadOpen && (
-                      <pre className="p-2.5 bg-neutral-950 text-emerald-400 overflow-x-auto max-h-[100px] leading-relaxed select-all">
+                      <pre className="p-2.5 bg-neutral-950 text-emerald-400 overflow-x-auto max-h-[100px] leading-relaxed select-all border-t border-theme-border">
                         {selectedLog.responsePayload}
                       </pre>
                     )}

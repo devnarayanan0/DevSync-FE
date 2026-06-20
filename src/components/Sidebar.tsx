@@ -74,13 +74,13 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`flex flex-col border-r border-slate-200 bg-slate-50 transition-all duration-200 ease-in-out dark:border-slate-800 dark:bg-slate-950 ${
+      className={`flex flex-col border-r border-theme-border bg-theme-bg transition-all duration-201 ease-in-out ${
         isExpanded ? 'w-56' : 'w-16'
       }`}
       id="devsync-navigation-sidebar"
     >
       {/* Top Sidebar Badge */}
-      <div className="flex h-12 items-center px-4 border-b border-slate-200/60 dark:border-slate-800/60 justify-between">
+      <div className="flex h-12 items-center px-4 border-b border-theme-border/60 justify-between">
         {isExpanded ? (
           <span className="text-[10px] uppercase tracking-[0.16em] font-bold text-indigo-600 dark:text-indigo-400">
             DevSync
@@ -135,8 +135,8 @@ export default function Sidebar({
               onClick={() => onSelectTab(item.id)}
               className={`relative flex w-full items-center rounded-sm px-3 py-2 text-[11px] font-mono uppercase tracking-wider transition-all group ${
                 isActive
-                  ? 'bg-white border border-slate-200 text-indigo-600 dark:bg-slate-900 dark:border-slate-800 dark:text-indigo-400 font-bold shadow-xs'
-                  : 'text-slate-450 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-900/60 dark:hover:text-slate-200'
+                  ? 'bg-theme-card border border-theme-border text-indigo-600 dark:text-indigo-400 font-bold shadow-xs'
+                  : 'text-slate-450 hover:bg-theme-card hover:text-slate-800 dark:text-slate-400 dark:hover:bg-theme-card dark:hover:text-slate-200'
               }`}
               id={`nav-item-${item.id}`}
             >
@@ -178,7 +178,7 @@ export default function Sidebar({
 
       {/* System Status Indicators in Sidebar */}
       {isExpanded && (
-        <div className="mx-3 my-2 p-3.5 rounded-sm bg-white border border-slate-200 shadow-xs dark:bg-slate-900 dark:border-slate-800 font-sans text-xs">
+        <div className="mx-3 my-2 p-3.5 rounded-sm bg-theme-card border border-theme-border shadow-xs font-sans text-xs">
           <div className="flex items-center space-x-1.5 text-slate-400 dark:text-slate-500 font-bold text-[10px] uppercase tracking-wider mb-2">
             <Sparkles className="h-3 w-3 text-indigo-500" />
             <span>Sync Status</span>
@@ -198,10 +198,10 @@ export default function Sidebar({
       )}
 
       {/* Toggle Expand Button and Footer info */}
-      <div className="p-2 border-t border-slate-200/60 dark:border-slate-850 flex flex-col items-center">
+      <div className="p-2 border-t border-theme-border flex flex-col items-center">
         <button
           onClick={onToggleExpand}
-          className="w-full flex justify-center items-center rounded-sm p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-600 dark:hover:text-slate-200 transition-all font-mono text-[10px] uppercase"
+          className="w-full flex justify-center items-center rounded-sm p-1.5 text-slate-400 hover:bg-theme-card hover:text-slate-600 dark:hover:text-theme-card dark:hover:text-slate-200 transition-all font-mono text-[10px] uppercase"
           title={isExpanded ? 'Collapse Navigation Bar' : 'Expand Navigation Bar'}
           id="sidebar-toggle-expand-button"
         >

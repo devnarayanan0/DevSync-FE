@@ -4,10 +4,34 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-theme-bg: var(--theme-bg);
+  --color-theme-card: var(--theme-card);
+  --color-theme-border: var(--theme-border);
+  --color-theme-text: var(--theme-text);
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+:root {
+  --theme-bg: #F8FAFC;
+  --theme-card: #FFFFFF;
+  --theme-border: #E2E8F0;
+  --theme-text: #0F172A;
+}
+
+.dark {
+  --theme-bg: #020617;
+  --theme-card: #0F172A;
+  --theme-border: #1E293B;
+  --theme-text: #F8FAFC;
 }
 
 @layer base {
   body {
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
     @apply font-sans antialiased selection:bg-indigo-500/30 selection:text-indigo-900 dark:selection:text-indigo-100;
   }
 }
+

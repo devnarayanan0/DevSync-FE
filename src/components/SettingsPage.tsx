@@ -79,11 +79,11 @@ export default function SettingsPage({
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="border-b border-slate-200 pb-3 dark:border-slate-800">
-        <h1 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+      <div className="border-b border-theme-border pb-3">
+        <h1 className="text-lg font-bold text-theme-text">
           Client Settings
         </h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-neutral-400">
           Configure application themes, cloud provider credentials, and client-side options.
         </p>
       </div>
@@ -92,8 +92,8 @@ export default function SettingsPage({
         {/* Left Column */}
         <div className="space-y-5">
           {/* Appearance Section */}
-          <div className="rounded border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 shadow-xs space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-105 border-b border-slate-150 pb-2 dark:border-slate-800 flex items-center gap-1.5">
+          <div className="rounded border border-theme-border bg-theme-card p-5 shadow-xs space-y-4 text-theme-text">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-theme-text border-b border-theme-border pb-2 flex items-center gap-1.5">
               <Sparkles className="h-4 w-4 text-indigo-505" />
               Theme & Appearance Settings
             </h3>
@@ -102,10 +102,10 @@ export default function SettingsPage({
               {/* Theme toggler */}
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <span className="font-semibold text-slate-850 dark:text-slate-200 block text-xs">Application Theme</span>
+                  <span className="font-semibold text-theme-text block text-xs">Application Theme</span>
                   <p className="text-[11px] text-slate-400">Switch between light and dark visual interfaces.</p>
                 </div>
-                <div className="flex border border-slate-200 dark:border-slate-850 rounded bg-slate-50 dark:bg-slate-950 p-0.5">
+                <div className="flex border border-theme-border rounded bg-theme-bg p-0.5">
                   <button
                     onClick={() => theme === 'dark' && onThemeToggle()}
                     className={`px-3 py-1 text-[10px] font-bold rounded uppercase cursor-pointer transition-all ${
@@ -126,7 +126,7 @@ export default function SettingsPage({
               </div>
 
               {/* Accent Color switcher */}
-              <div className="flex items-center justify-between gap-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between gap-4 pt-3 border-t border-theme-border">
                 <div>
                   <span className="font-semibold text-slate-850 dark:text-slate-200 block text-xs">Accent Highlight Color</span>
                   <p className="text-[11px] text-slate-400">Select standard accent highlight schemes.</p>
@@ -151,12 +151,12 @@ export default function SettingsPage({
               </div>
 
               {/* Typography Readability Scale */}
-              <div className="flex items-center justify-between gap-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between gap-4 pt-3 border-t border-theme-border">
                 <div>
-                  <span className="font-semibold text-slate-850 dark:text-slate-200 block text-xs">Interface Typography Scale</span>
+                  <span className="font-semibold text-theme-text block text-xs">Interface Typography Scale</span>
                   <p className="text-[11px] text-slate-400 font-sans">Adjust labels text sizing.</p>
                 </div>
-                <div className="flex border border-slate-200 dark:border-slate-850 bg-slate-50 dark:bg-slate-950 p-0.5 rounded">
+                <div className="flex border border-theme-border bg-theme-bg p-0.5 rounded">
                   {['small', 'medium', 'large'].map((sz) => (
                     <button
                       key={sz}
@@ -174,8 +174,8 @@ export default function SettingsPage({
           </div>
 
           {/* Startup Settings Section */}
-          <div className="rounded border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 shadow-xs space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-105 border-b border-slate-150 pb-2 dark:border-slate-800 flex items-center gap-1.5">
+          <div className="rounded border border-theme-border bg-theme-card p-5 shadow-xs space-y-4 text-theme-text">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-theme-text border-b border-theme-border pb-2 flex items-center gap-1.5">
               <Cpu className="h-4 w-4 text-indigo-505" />
               Startup & Notification rules
             </h3>
@@ -224,7 +224,7 @@ export default function SettingsPage({
               </div>
 
               {/* Notification preferences */}
-              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
+              <div className="pt-3 border-t border-theme-border space-y-2">
                 <span className="text-[10px] text-slate-400 block font-bold uppercase">Banner Notification Alerts</span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
                   <label className="flex items-center gap-2 cursor-pointer select-none">
@@ -248,24 +248,24 @@ export default function SettingsPage({
         {/* Right Column */}
         <div className="space-y-5">
           {/* Local Database Viewer */}
-          <div className="rounded border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 shadow-xs space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-105 border-b border-slate-150 pb-2 dark:border-slate-800 flex items-center gap-1.5">
+          <div className="rounded border border-theme-border bg-theme-card p-5 shadow-xs space-y-4 text-theme-text">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-theme-text border-b border-theme-border pb-2 flex items-center gap-1.5">
               <Database className="h-4 w-4 text-indigo-505" />
               Configuration Storage Inspector (Local Cache)
             </h3>
 
-            <div className="grid grid-cols-3 gap-2.5 text-[10px] border-b pb-3 border-slate-100 dark:border-slate-800">
-              <div className="bg-slate-50 dark:bg-slate-950/40 p-2 border dark:border-slate-805 rounded">
+            <div className="grid grid-cols-3 gap-2.5 text-[10px] border-b pb-3 border-theme-border">
+              <div className="bg-theme-bg p-2 border border-theme-border rounded">
                 <span className="text-slate-400 block font-semibold uppercase text-[9px]">Storage Channel:</span>
-                <strong className="block text-slate-700 dark:text-slate-250 font-mono">sync_config</strong>
+                <strong className="block text-theme-text font-mono">sync_config</strong>
               </div>
-              <div className="bg-slate-50 dark:bg-slate-950/40 p-2 border dark:border-slate-805 rounded">
+              <div className="bg-theme-bg p-2 border border-theme-border rounded">
                 <span className="text-slate-400 block font-semibold uppercase text-[9px]">Memory cache:</span>
-                <strong className="block text-slate-700 dark:text-slate-250 font-mono">Active (12KB)</strong>
+                <strong className="block text-theme-text font-mono">Active (12KB)</strong>
               </div>
-              <div className="bg-slate-50 dark:bg-slate-955/40 p-2 border dark:border-slate-805 rounded">
+              <div className="bg-theme-bg p-2 border border-theme-border rounded">
                 <span className="text-slate-400 block font-semibold uppercase text-[9px]">Definitions:</span>
-                <strong className="block text-slate-700 dark:text-slate-250 font-mono">{syncRequests.length} items</strong>
+                <strong className="block text-theme-text font-mono">{syncRequests.length} items</strong>
               </div>
             </div>
 
@@ -282,7 +282,7 @@ export default function SettingsPage({
                     placeholder="Enter Admin Password (try: admin)"
                     value={adminPasswordInput}
                     onChange={(e) => setAdminPasswordInput(e.target.value)}
-                    className="flex-1 text-xs p-2.5 bg-slate-50 border border-slate-200 dark:border-slate-805 dark:bg-slate-950 rounded outline-none select-all"
+                    className="flex-1 text-xs p-2.5 bg-theme-bg border border-theme-border rounded outline-none select-all text-theme-text focus:outline-none"
                   />
                   <button
                     type="submit"
@@ -310,16 +310,16 @@ export default function SettingsPage({
                 </div>
 
                 {/* DB table rendering */}
-                <div className="rounded border border-slate-150 dark:border-slate-800 overflow-hidden max-h-[120px] overflow-y-auto bg-slate-50 dark:bg-slate-950">
-                  <table className="w-full text-left text-[10px] font-mono leading-tight">
+                <div className="rounded border border-theme-border overflow-hidden max-h-[120px] overflow-y-auto bg-theme-bg">
+                  <table className="w-full text-left text-[10px] font-mono leading-tight text-theme-text">
                     <thead>
-                      <tr className="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-450 uppercase font-bold">
+                      <tr className="bg-theme-bg border-b border-theme-border text-slate-450 uppercase font-bold">
                         {currentTableHeaders.map((hd) => (
                           <th key={hd} className="p-2 whitespace-nowrap">{hd}</th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-150 dark:divide-slate-800">
+                    <tbody className="divide-y divide-theme-border text-theme-text">
                       {currentTableRows.length === 0 ? (
                         <tr>
                           <td colSpan={currentTableHeaders.length} className="p-3 text-center text-slate-400">
@@ -328,7 +328,7 @@ export default function SettingsPage({
                         </tr>
                       ) : (
                         currentTableRows.map((row, idx) => (
-                          <tr key={idx} className="hover:bg-slate-100/40 dark:hover:bg-slate-900/60">
+                          <tr key={idx} className="hover:bg-theme-border/40 text-theme-text">
                             {row.map((cellValue, cellIdx) => (
                               <td key={cellIdx} className="p-2 max-w-[120px] truncate" title={String(cellValue)}>
                                 {String(cellValue)}
@@ -345,14 +345,14 @@ export default function SettingsPage({
                   <button
                     type="button"
                     onClick={() => alert('Dump exported to workstation disk.')}
-                    className="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-205 dark:bg-slate-800 dark:text-slate-300 font-semibold cursor-pointer border border-slate-200 dark:border-slate-700"
+                    className="px-2.5 py-1 rounded bg-theme-bg hover:bg-theme-border font-semibold cursor-pointer border border-theme-border text-theme-text"
                   >
                     Export Dump (.sql)
                   </button>
                   <button
                     type="button"
                     onClick={() => alert('Backup snap file created.')}
-                    className="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-205 dark:bg-slate-800 dark:text-slate-300 font-semibold cursor-pointer border border-slate-200 dark:border-slate-705"
+                    className="px-2.5 py-1 rounded bg-theme-bg hover:bg-theme-border font-semibold cursor-pointer border border-theme-border text-theme-text"
                   >
                     Backup Database
                   </button>
@@ -362,8 +362,8 @@ export default function SettingsPage({
           </div>
 
           {/* Diagnostics / Backend configuration */}
-          <div className="rounded border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 shadow-xs space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-105 border-b border-slate-150 pb-2 dark:border-slate-800 flex items-center gap-1.5">
+          <div className="rounded border border-theme-border bg-theme-card p-5 shadow-xs space-y-4 text-theme-text">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-theme-text border-b border-theme-border pb-2 flex items-center gap-1.5">
               <Settings className="h-4 w-4 text-indigo-505" />
               Cloud Backend & Advanced Options
             </h3>
@@ -375,7 +375,7 @@ export default function SettingsPage({
                   type="text"
                   value={backendUrl}
                   onChange={(e) => setBackendUrl(e.target.value)}
-                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 dark:border-slate-800 dark:bg-slate-950 rounded outline-none font-mono lowercase"
+                  className="w-full text-xs p-2.5 bg-theme-bg border border-theme-border rounded outline-none font-mono lowercase text-theme-text"
                 />
               </div>
 
@@ -384,14 +384,14 @@ export default function SettingsPage({
                   type="button"
                   disabled={isTestingBackend}
                   onClick={handleTestBackendStatus}
-                  className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-750 dark:text-slate-300 border dark:border-slate-750 rounded font-bold cursor-pointer transition-colors"
+                  className="px-3.5 py-1.5 bg-theme-bg hover:bg-theme-border text-theme-text border border-theme-border rounded font-bold cursor-pointer transition-colors"
                 >
                   {isTestingBackend ? 'Testing...' : 'Check Backend Link'}
                 </button>
                 <button
                   type="button"
                   onClick={() => alert('All AWS S3 and Google Drive providers responded successfully.')}
-                  className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-705 dark:bg-slate-800 dark:hover:bg-slate-750 dark:text-slate-300 border dark:border-slate-750 rounded font-bold cursor-pointer transition-colors"
+                  className="px-3.5 py-1.5 bg-theme-bg hover:bg-theme-border text-theme-text border border-theme-border rounded font-bold cursor-pointer transition-colors"
                 >
                   Test Providers
                 </button>
@@ -404,12 +404,12 @@ export default function SettingsPage({
               )}
 
               {/* Hard application reset */}
-              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div className="pt-3 border-t border-theme-border flex items-center justify-between">
                 <span className="text-[10px] text-red-500 font-bold block uppercase font-sans">Hard Reset Application State</span>
                 <button
                   type="button"
                   onClick={() => setShowResetConfirm(true)}
-                  className="bg-red-50 hover:bg-red-100 text-red-650 dark:bg-red-950/20 dark:text-red-400 border border-red-200 dark:border-red-900/30 px-3.5 py-1.5 rounded font-bold text-xs flex items-center gap-1.5 cursor-pointer"
+                  className="bg-red-50/10 hover:bg-red-50 text-red-650 dark:text-red-400 border border-red-200/40 px-3.5 py-1.5 rounded font-bold text-xs flex items-center gap-1.5 cursor-pointer"
                 >
                   <Trash2 className="h-4 w-4" /> Reset App
                 </button>
@@ -420,7 +420,7 @@ export default function SettingsPage({
       </div>
 
       {/* FOOTER */}
-      <div className="rounded border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 p-4 font-mono text-[11px] text-slate-450 flex flex-col sm:flex-row justify-between gap-2">
+      <div className="rounded border border-theme-border bg-theme-bg p-4 font-mono text-[11px] text-slate-450 flex flex-col sm:flex-row justify-between gap-2">
         <span>Application: <strong>DevSync Workstation Client</strong></span>
         <span>Version: <strong>v1.0.0 Stable</strong></span>
         <span>Ref Channel: <strong>production.alpha.sync</strong></span>
@@ -429,20 +429,20 @@ export default function SettingsPage({
       {/* Purge Modal overlay */}
       {showResetConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-xs" onClick={() => setShowResetConfirm(false)} />
-          <div className="relative w-full max-w-sm rounded border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 text-slate-900 dark:text-slate-50 z-50 shadow-xl space-y-4 font-sans text-xs">
-            <div className="flex items-center gap-2 border-b pb-2 dark:border-slate-800">
+          <div className="absolute inset-0 bg-neutral-955/40 backdrop-blur-xs" onClick={() => setShowResetConfirm(false)} />
+          <div className="relative w-full max-w-sm rounded border border-theme-border bg-theme-card p-5 text-theme-text z-50 shadow-xl space-y-4 font-sans text-xs">
+            <div className="flex items-center gap-2 border-b pb-2 border-theme-border">
               <AlertTriangle className="h-5 w-5 text-red-500" />
               <h3 className="font-bold text-red-650">Confirm hard application reset?</h3>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-sans font-medium">
               Are you sure? This action will permanently remove all synchronization mappings, group settings, locally cached parameters, and credentials.
             </p>
-            <div className="flex justify-end gap-2 pt-1">
+            <div className="flex justify-end gap-2 pt-1 font-sans">
               <button
                 type="button"
                 onClick={() => setShowResetConfirm(false)}
-                className="px-3 py-1.5 border border-slate-200 dark:border-slate-800 bg-white text-slate-700 dark:bg-slate-800 dark:text-slate-300 rounded hover:bg-slate-50 text-xs font-semibold cursor-pointer"
+                className="px-3 py-1.5 border border-theme-border bg-theme-bg hover:bg-theme-border text-theme-text rounded text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>
@@ -452,7 +452,7 @@ export default function SettingsPage({
                   onResetApp();
                   setShowResetConfirm(false);
                 }}
-                className="px-3.5 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded font-bold text-xs cursor-pointer"
+                className="px-3.5 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded font-bold text-xs cursor-pointer focus:outline-none"
               >
                 Reset Application
               </button>

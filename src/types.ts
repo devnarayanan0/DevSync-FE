@@ -18,6 +18,7 @@ export interface SyncRequest {
   remoteFolder: string;
   lastSync: string;
   schedule: string;
+  description?: string;
 }
 
 export interface UserProfile {

@@ -27,7 +27,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 10 }}
             transition={{ duration: 0.2 }}
-            className="relative w-full max-w-lg overflow-hidden rounded-sm border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-950"
+            className="relative w-full max-w-lg overflow-hidden rounded-sm border border-theme-border bg-theme-card shadow-lg text-theme-text"
             id="about-modal-container"
           >
             {/* Top Header Decorator */}
@@ -35,13 +35,13 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
 
             <div className="p-6">
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-slate-100 pb-4 dark:border-slate-850">
+              <div className="flex items-center justify-between border-b border-theme-border pb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-indigo-50 text-indigo-600 dark:bg-slate-900 dark:text-indigo-400">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-indigo-50 text-indigo-600 dark:bg-theme-bg dark:text-indigo-400">
                     <Cpu className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold tracking-wider font-mono uppercase text-slate-900 dark:text-slate-50" id="about-title">
+                    <h3 className="text-sm font-bold tracking-wider font-mono uppercase text-theme-text" id="about-title">
                       DevSync Desktop Client
                     </h3>
                     <p className="text-[10px] font-mono tracking-wide text-slate-400 dark:text-slate-500 uppercase">
@@ -51,7 +51,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
                 </div>
                 <button
                   onClick={onClose}
-                  className="rounded-sm p-1.5 text-slate-450 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-900 dark:hover:text-slate-200"
+                  className="rounded-sm p-1.5 text-slate-455 hover:bg-theme-bg hover:text-slate-700 dark:hover:text-slate-200"
                   aria-label="Close dialog"
                 >
                   <X className="h-4.5 w-4.5" />
@@ -59,12 +59,12 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
               </div>
 
               {/* Specs & Description */}
-              <div className="mt-5 space-y-4 text-xs text-slate-650 dark:text-slate-300">
+              <div className="mt-5 space-y-4 text-xs text-slate-650 dark:text-slate-350">
                 <p className="leading-relaxed">
                   DevSync is a desktop client designed for efficient filesystem synchronization between host workstations and secure cloud providers (AWS S3, Google Drive).
                 </p>
 
-                <div className="rounded-sm bg-slate-50 p-4 border border-slate-200 dark:bg-slate-900/60 dark:border-slate-800 space-y-2.5 font-mono text-[11px]">
+                <div className="rounded-sm bg-theme-bg p-4 border border-theme-border space-y-2.5 font-mono text-[11px]">
                   <div className="flex justify-between">
                     <span className="text-slate-400 dark:text-slate-500 uppercase text-[9px] tracking-wider">Client Engine:</span>
                     <span className="text-slate-700 dark:text-slate-350">React 19 + Vite Embedded</span>
@@ -96,7 +96,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
               </div>
 
               {/* Footer */}
-              <div className="mt-6 flex items-center justify-between border-t border-slate-105 pt-4 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:border-slate-850 dark:text-slate-500">
+              <div className="mt-6 flex items-center justify-between border-t border-theme-border pt-4 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 <span className="flex items-center gap-1">
                   DESKTOP SYNC CLIENT
                 </span>

@@ -39,11 +39,12 @@ import SyncRequestWorkspace from './components/SyncRequestWorkspace';
 import ActivitySchedulingPage from './components/ActivitySchedulingPage';
 import LogsPage from './components/LogsPage';
 import SettingsPage from './components/SettingsPage';
+import CreateSyncRequestWizard from './components/CreateSyncRequestWizard';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   // Theme state system
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [theme, setTheme] = useState<Theme>('light');
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(true);
   const [aboutOpen, setAboutOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -67,6 +68,7 @@ export default function App() {
       remoteFolder: 's3://production-vault-sync-us-east-1/backups/',
       lastSync: '2026-06-20 05:30:12',
       schedule: 'Every 30 Minutes',
+      description: 'Backup important production data',
     },
     {
       id: 'gdrive-design',
@@ -77,6 +79,7 @@ export default function App() {
       remoteFolder: 'gdrive://shared-drives/design-assets-hub/',
       lastSync: '2026-06-20 04:15:00',
       schedule: 'Daily at 02:00 AM',
+      description: 'Design system and brand assets',
     },
     {
       id: 'gdrive-budget',
@@ -87,6 +90,7 @@ export default function App() {
       remoteFolder: 'gdrive://my-drive/finance-archives/q2-2026/',
       lastSync: '2026-06-19 18:22:10',
       schedule: 'Manual Trigger Only',
+      description: 'Finance documents and reports',
     },
     {
       id: 'aws-s3-media',
@@ -97,6 +101,7 @@ export default function App() {
       remoteFolder: 's3://client-delivery-bucket-s3/master-renders/',
       lastSync: '2026-06-18 10:45:30',
       schedule: 'Every 6 Hours',
+      description: 'Rendered videos and final outputs',
     },
   ]);
 
@@ -273,27 +278,31 @@ export default function App() {
   };
 
   // Handle Wizard action to create first or subsequent sync requests
-  const handleCreateSyncRequest = (e: FormEvent) => {
-    e.preventDefault();
-    if (!newRequestName.trim()) return;
-
+  const handleCreateSyncRequestFromWizard = (payload: {
+    name: string;
+    description?: string;
+    provider: any;
+    localPath: string;
+    remoteFolder: string;
+    schedule: string;
+  }) => {
     const newId = `req-${Date.now()}`;
     const newReq: SyncRequest = {
       id: newId,
-      name: newRequestName,
-      provider: newRequestProvider,
+      name: payload.name,
+      provider: payload.provider,
       status: 'idle',
-      localPath: newRequestLocalPath,
-      remoteFolder: newRequestRemote,
+      localPath: payload.localPath,
+      remoteFolder: payload.remoteFolder,
       lastSync: 'Never Executed',
-      schedule: newRequestSchedule,
+      schedule: payload.schedule,
+      description: payload.description || `Synchronized ${payload.provider === 'aws-s3' ? 'S3 bucket' : 'Google Drive'} data pipeline`,
     };
 
     // Save of request
     setSyncRequests([newReq, ...syncRequests]);
 
     // Cleanup state
-    setNewRequestName('');
     setIsWizardOpen(false);
 
     // Open workspace tab for the new creation
@@ -453,7 +462,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-105 selection:bg-indigo-600/10">
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-theme-bg text-theme-text selection:bg-indigo-600/10">
       {/* Top Navigation Bar */}
       <Navbar
         theme={theme}
@@ -478,7 +487,7 @@ export default function App() {
         />
 
         {/* Workspace Display Area */}
-        <main className="flex flex-1 flex-col overflow-hidden bg-white dark:bg-slate-900 transition-colors duration-150">
+        <main className="flex flex-1 flex-col overflow-hidden bg-theme-bg border-l border-theme-border transition-colors duration-150">
           {/* Layout Tab System */}
           <TabBar
             tabs={tabs}
@@ -530,7 +539,7 @@ export default function App() {
                 {/* Dashboard Quick Stats Grid */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   {/* Stat Card 1: Sync Requests count */}
-                  <div className="rounded-sm border border-slate-200 bg-white p-4.5 dark:border-slate-800 dark:bg-slate-950/40 shadow-xs">
+                  <div className="rounded-sm border border-theme-border bg-theme-card p-4.5 shadow-xs">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest font-mono">
                         Sync Requests
@@ -546,7 +555,7 @@ export default function App() {
                   </div>
 
                   {/* Stat Card 2: Connected Providers count */}
-                  <div className="rounded-sm border border-slate-200 bg-white p-4.5 dark:border-slate-800 dark:bg-slate-950/40 shadow-xs">
+                  <div className="rounded-sm border border-theme-border bg-theme-card p-4.5 shadow-xs">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest font-mono">
                         Connected Providers
@@ -562,7 +571,7 @@ export default function App() {
                   </div>
 
                   {/* Stat Card 3: System Status */}
-                  <div className="rounded-sm border border-slate-200 bg-white p-4.5 dark:border-slate-800 dark:bg-slate-950/40 shadow-xs">
+                  <div className="rounded-sm border border-theme-border bg-theme-card p-4.5 shadow-xs">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest font-mono">
                         Sync Status
@@ -582,8 +591,8 @@ export default function App() {
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                   {/* Left Column: Sync Requests quick overview panel */}
                   <div className="lg:col-span-2 space-y-4">
-                    <div className="rounded-sm border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950/20 shadow-xs overflow-hidden">
-                      <div className="flex items-center justify-between border-b border-slate-250 bg-slate-50 px-4 py-3.5 dark:border-slate-850 dark:bg-slate-900/60">
+                    <div className="rounded-sm border border-theme-border bg-theme-card shadow-xs overflow-hidden">
+                      <div className="flex items-center justify-between border-b border-theme-border bg-theme-bg px-4 py-3.5">
                         <div className="flex items-center space-x-2">
                           <FolderSync className="h-4 w-4 text-indigo-500" />
                           <h2 className="text-xs font-bold font-mono uppercase tracking-wider text-slate-900 dark:text-white">
@@ -656,8 +665,8 @@ export default function App() {
                     </div>
 
                     {/* Simulation Engine Logs Overview snippet */}
-                    <div className="rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950/20 shadow-xs overflow-hidden">
-                      <div className="flex items-center justify-between border-b border-neutral-100 bg-neutral-50/50 px-4 py-3 dark:border-neutral-800/60 dark:bg-neutral-950/30">
+                    <div className="rounded-xl border border-theme-border bg-theme-card shadow-xs overflow-hidden">
+                      <div className="flex items-center justify-between border-b border-theme-border bg-theme-bg px-4 py-3">
                         <div className="flex items-center space-x-2">
                           <Terminal className="h-4 w-4 text-sky-500" />
                           <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">
@@ -686,14 +695,14 @@ export default function App() {
                   {/* Right Column: API Connectivity, Statuses, and Coming Soon placeholders */}
                   <div className="space-y-4">
                     {/* Cloud Connections */}
-                    <div className="rounded-xl border border-neutral-200 bg-white p-4.5 dark:border-neutral-800 dark:bg-neutral-950/20 shadow-xs space-y-4">
+                    <div className="rounded-xl border border-theme-border bg-theme-card p-4.5 shadow-xs space-y-4">
                       <h2 className="text-sm font-bold text-neutral-800 dark:text-neutral-100">
                         Connected Providers
                       </h2>
 
                       <div className="space-y-2.5">
                         {/* AWS Provider */}
-                        <div className="flex items-center justify-between rounded-lg border border-neutral-100 p-2.5 dark:border-neutral-800/80 dark:bg-neutral-900/60">
+                        <div className="flex items-center justify-between rounded-lg border border-theme-border p-2.5 bg-theme-bg">
                           <div className="flex items-center space-x-2 overflow-hidden">
                             <div className="h-7 w-7 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-xs shrink-0">
                               S3
@@ -709,7 +718,7 @@ export default function App() {
                         </div>
 
                         {/* Google Drive Provider */}
-                        <div className="flex items-center justify-between rounded-lg border border-neutral-100 p-2.5 dark:border-neutral-800/80 dark:bg-neutral-900/60">
+                        <div className="flex items-center justify-between rounded-lg border border-theme-border p-2.5 bg-theme-bg">
                           <div className="flex items-center space-x-2 overflow-hidden">
                             <div className="h-7 w-7 rounded bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold text-xs shrink-0">
                               GD
@@ -725,7 +734,7 @@ export default function App() {
                         </div>
 
                         {/* MS Azure - Coming Soon */}
-                        <div className="flex items-center justify-between rounded-lg border border-neutral-200/40 p-2.5 dark:border-neutral-800/40 bg-neutral-50/20 opacity-60">
+                        <div className="flex items-center justify-between rounded-lg border border-theme-border p-2.5 bg-theme-bg opacity-65">
                           <div className="flex items-center space-x-2">
                             <div className="h-7 w-7 rounded bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 flex items-center justify-center font-bold text-[10px] shrink-0">
                               AZ
@@ -738,7 +747,7 @@ export default function App() {
                         </div>
 
                         {/* Dropbox - Coming Soon */}
-                        <div className="flex items-center justify-between rounded-lg border border-neutral-200/40 p-2.5 dark:border-neutral-800/40 bg-neutral-50/20 opacity-60">
+                        <div className="flex items-center justify-between rounded-lg border border-theme-border p-2.5 bg-theme-bg opacity-65">
                           <div className="flex items-center space-x-2">
                             <div className="h-7 w-7 rounded bg-sky-505/10 text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0">
                               DB
@@ -753,7 +762,7 @@ export default function App() {
                     </div>
 
                     {/* Scheduling automation quick check */}
-                    <div className="rounded-xl border border-neutral-200 bg-indigo-900/5 p-4.5 dark:border-neutral-850 dark:bg-indigo-950/10 space-y-3">
+                    <div className="rounded-xl border border-theme-border bg-indigo-900/5 p-4.5 space-y-3 dark:bg-indigo-950/10">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-indigo-800 dark:text-indigo-400">
                           Application Settings
@@ -856,124 +865,11 @@ export default function App() {
       </div>
 
       {/* Embedded New Sync Request Wizard Modal Dialog */}
-      {isWizardOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-neutral-950/60 backdrop-blur-xs"
-            onClick={() => setIsWizardOpen(false)}
-          />
-
-          <div className="relative w-full max-w-lg rounded-xl border border-neutral-200 bg-white p-6 shadow-2xl dark:border-neutral-800 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 z-50">
-            <div className="flex items-center justify-between border-b border-neutral-100 pb-3 dark:border-neutral-800">
-              <h3 className="text-base font-bold flex items-center gap-2">
-                <FolderSync className="h-5 w-5 text-indigo-500" />
-                Initialize Next cloud synchronization
-              </h3>
-              <button
-                onClick={() => setIsWizardOpen(false)}
-                className="rounded p-1 text-neutral-400 hover:bg-neutral-150 dark:hover:bg-neutral-800"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateSyncRequest} className="mt-4 space-y-4 text-xs">
-              <div>
-                <label className="block font-semibold text-neutral-500 dark:text-neutral-400 mb-1.5">
-                  Synchronize Name / Description
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. AWS Production Files Replication"
-                  value={newRequestName}
-                  onChange={(e) => setNewRequestName(e.target.value)}
-                  className="w-full rounded border border-neutral-300 bg-neutral-50 p-2 focus:border-indigo-500 focus:bg-white focus:outline-none dark:border-neutral-800 dark:bg-neutral-950 dark:focus:border-indigo-600"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-semibold text-neutral-500 dark:text-neutral-400 mb-1.5">
-                    Cloud Storage Provider
-                  </label>
-                  <select
-                    value={newRequestProvider}
-                    onChange={(e: any) => setNewRequestProvider(e.target.value)}
-                    className="w-full rounded border border-neutral-300 bg-neutral-50 p-2 dark:border-neutral-800 dark:bg-neutral-950"
-                  >
-                    <option value="aws-s3">AWS S3 Integration</option>
-                    <option value="google-drive">Google Drive Workspace</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-semibold text-neutral-500 dark:text-neutral-400 mb-1.5">
-                    Cron Schedule Frequency
-                  </label>
-                  <select
-                    value={newRequestSchedule}
-                    onChange={(e) => setNewRequestSchedule(e.target.value)}
-                    className="w-full rounded border border-neutral-300 bg-neutral-50 p-2 dark:border-neutral-800 dark:bg-neutral-950"
-                  >
-                    <option value="Every 30 Minutes">Every 30 Minutes</option>
-                    <option value="Every 1 Hour">Every 1 Hour</option>
-                    <option value="Every 6 Hours">Every 6 Hours</option>
-                    <option value="Daily at 02:00 AM">Daily at 02:00 AM</option>
-                    <option value="Manual Trigger Only">Manual Trigger Only</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-neutral-500 dark:text-neutral-400 mb-1.5">
-                  Local Folder Source Path
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={newRequestLocalPath}
-                  onChange={(e) => setNewRequestLocalPath(e.target.value)}
-                  className="w-full rounded border border-neutral-300 bg-neutral-50 p-2 font-mono dark:border-neutral-800 dark:bg-neutral-950"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-neutral-500 dark:text-neutral-400 mb-1.5">
-                  Remote Cloud Bucket Target
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={newRequestRemote}
-                  onChange={(e) => setNewRequestRemote(e.target.value)}
-                  className="w-full rounded border border-neutral-300 bg-neutral-50 p-2 font-mono dark:border-neutral-800 dark:bg-neutral-950"
-                />
-              </div>
-
-              <div className="flex items-center space-x-2 rounded-lg bg-indigo-50/50 p-3 text-[11px] text-indigo-700 dark:bg-indigo-950/20 dark:text-indigo-400 border border-indigo-200/20">
-                <Info className="h-4 w-4 text-indigo-500" />
-                <span>Creating your sync request registers the folder mapping definitions for local-to-cloud transfers.</span>
-              </div>
-
-              <div className="mt-5 flex justify-end space-x-2 border-t border-neutral-100 pt-3 dark:border-neutral-800">
-                <button
-                  type="button"
-                  onClick={() => setIsWizardOpen(false)}
-                  className="rounded border border-neutral-300 px-4 py-1.5 text-xs hover:bg-neutral-55 dark:border-neutral-750 dark:hover:bg-neutral-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="rounded bg-indigo-600 px-4 py-1.5 text-xs text-white font-bold hover:bg-indigo-500"
-                >
-                  Initialize Request
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <CreateSyncRequestWizard
+        isOpen={isWizardOpen}
+        onClose={() => setIsWizardOpen(false)}
+        onComplete={handleCreateSyncRequestFromWizard}
+      />
 
       {/* Dialog: About DevSync client */}
       <AboutModal isOpen={aboutOpen} onClose={() => setAboutOpen(false)} />

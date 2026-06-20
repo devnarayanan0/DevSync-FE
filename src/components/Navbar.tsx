@@ -28,7 +28,7 @@ export default function Navbar({
 
   return (
     <nav
-      className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white px-6 transition-colors duration-200 dark:border-slate-800 dark:bg-slate-950"
+      className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-theme-border bg-theme-card px-6 transition-colors duration-205 text-theme-text"
       id="devsync-top-navbar"
     >
       {/* Left branding */}
@@ -71,7 +71,7 @@ export default function Navbar({
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="SEARCH FILES, LOGS, SCHEDULES..."
-          className="h-10 w-full rounded-sm border border-slate-200 bg-slate-50 px-3 pl-9 text-xs font-mono uppercase tracking-wide transition-colors placeholder:text-slate-400 focus:border-indigo-600 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-900 dark:placeholder:text-slate-650 dark:focus:border-indigo-500 dark:focus:bg-slate-900 text-slate-800 dark:text-slate-200"
+          className="h-10 w-full rounded-sm border border-theme-border bg-theme-bg px-3 pl-9 text-xs font-mono uppercase tracking-wide transition-colors placeholder:text-slate-400 focus:border-indigo-650 focus:bg-theme-card focus:outline-none text-theme-text dark:placeholder:text-slate-500"
           id="global-search-input"
         />
         {searchTerm && (
@@ -89,7 +89,7 @@ export default function Navbar({
         {/* Toggle Theme System */}
         <button
           onClick={onThemeToggle}
-          className="rounded-sm p-2 text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-200 transition-colors"
+          className="rounded-sm p-2 text-slate-500 hover:bg-theme-border hover:text-slate-700 dark:text-slate-450 dark:hover:bg-theme-border dark:hover:text-slate-200 transition-colors"
           title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
           aria-label="Toggle theme appearance"
           id="theme-toggle-button"
@@ -104,7 +104,7 @@ export default function Navbar({
         {/* About App Info trigger */}
         <button
           onClick={onOpenAbout}
-          className="rounded-sm p-2 text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-200 transition-colors"
+          className="rounded-sm p-2 text-slate-500 hover:bg-theme-border hover:text-slate-700 dark:text-slate-450 dark:hover:bg-theme-border dark:hover:text-slate-200 transition-colors"
           title="About DevSync Client"
           aria-label="About DevSync client details"
           id="about-button"
@@ -113,7 +113,7 @@ export default function Navbar({
         </button>
 
         {/* Vertical Separator */}
-        <div className="h-6 w-px bg-slate-200 dark:bg-slate-850" />
+        <div className="h-6 w-px bg-theme-border" />
 
         {/* User Status Avatar with Dropdown */}
         <div className="relative">
@@ -124,7 +124,7 @@ export default function Navbar({
             aria-expanded={profileOpen}
             id="avatar-trigger-button"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-xs font-bold text-slate-800 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-theme-border bg-theme-bg text-xs font-bold text-theme-text dark:bg-theme-card">
               {user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
             </div>
           </button>
