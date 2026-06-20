@@ -83,7 +83,7 @@ export default function Sidebar({
       <div className="flex h-12 items-center px-4 border-b border-slate-200/60 dark:border-slate-800/60 justify-between">
         {isExpanded ? (
           <span className="text-[10px] uppercase tracking-[0.16em] font-bold text-indigo-600 dark:text-indigo-400">
-            Workspace Engine
+            DevSync
           </span>
         ) : (
           <span className="mx-auto text-[10px] font-mono font-bold text-slate-400 dark:text-slate-500">
@@ -181,7 +181,7 @@ export default function Sidebar({
         <div className="mx-3 my-2 p-3.5 rounded-sm bg-white border border-slate-200 shadow-xs dark:bg-slate-900 dark:border-slate-800 font-sans text-xs">
           <div className="flex items-center space-x-1.5 text-slate-400 dark:text-slate-500 font-bold text-[10px] uppercase tracking-wider mb-2">
             <Sparkles className="h-3 w-3 text-indigo-500" />
-            <span>Local Sync daemon</span>
+            <span>Sync Status</span>
           </div>
           <div className="flex items-center justify-between text-[11px] mb-1.5 text-slate-650 dark:text-slate-350 font-mono">
             <span>Status:</span>

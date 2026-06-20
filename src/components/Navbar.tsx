@@ -59,12 +59,6 @@ export default function Navbar({
             DevSync
           </span>
         </button>
-
-        {/* Localhost connection badge */}
-        <div className="hidden items-center space-x-1.5 rounded-sm bg-slate-50 px-2 py-0.5 text-[9px] font-mono font-medium uppercase text-slate-500 border border-slate-200/60 dark:bg-slate-900 dark:text-slate-400 dark:border-slate-800 lg:flex">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Spring API (3000)</span>
-        </div>
       </div>
 
       {/* Center Interactive Search */}
@@ -131,7 +125,7 @@ export default function Navbar({
             id="avatar-trigger-button"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-xs font-bold text-slate-800 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200">
-              JD
+              {user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
             </div>
           </button>
 

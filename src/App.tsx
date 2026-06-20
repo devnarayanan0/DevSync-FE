@@ -50,8 +50,8 @@ export default function App() {
 
   // Mock initial logged user
   const [userProfile, setUserProfile] = useState<UserProfile>({
-    name: 'David Vance',
-    email: 'david.vance@devsync.io',
+    name: 'Current User',
+    email: 'current.user@devsync.io',
     role: 'Storage Lead',
     tenant: 'Client-Org-Production',
   });
@@ -120,16 +120,16 @@ export default function App() {
 
   // Real-time simulated logs data pool
   const [logMessages, setLogMessages] = useState<Array<{ timestamp: string; level: 'INFO' | 'WARN' | 'ERROR'; source: string; message: string }>>([
-    { timestamp: '12:40:02', level: 'INFO', source: 'daemon', message: 'Local filesystem scan initialized successfully' },
+    { timestamp: '12:40:02', level: 'INFO', source: 'client', message: 'Local workspace folder scan completed successfully' },
     { timestamp: '12:40:15', level: 'INFO', source: 'aws-prov', message: 'Verifying AWS credentials for prod-vault-sync' },
-    { timestamp: '12:40:18', level: 'INFO', source: 'sync-engine', message: 'Found 12 changed files in /Users/david/workspace/devsync/prod-data' },
-    { timestamp: '12:40:22', level: 'INFO', source: 'sync-engine', message: 'Uploading batch AWS-32 to s3://production-vault-sync-us-east-1...' },
-    { timestamp: '12:41:05', level: 'WARN', source: 'gdrive-prov', message: 'Rate limit threshold approaching for Q2 Budgeting space' },
-    { timestamp: '12:42:10', level: 'ERROR', source: 'sync-engine', message: 'Failed to authenticate credential token: Google Drive connection returned HTTP 401 unauthorized' },
-    { timestamp: '12:43:00', level: 'INFO', source: 'daemon', message: 'Database persistent state clean execution completed.' },
+    { timestamp: '12:40:18', level: 'INFO', source: 'sync-engine', message: 'Detected 12 file changes in local directories' },
+    { timestamp: '12:40:22', level: 'INFO', source: 'sync-engine', message: 'Uploading file updates to s3://production-vault-sync-us-east-1...' },
+    { timestamp: '12:41:05', level: 'WARN', source: 'gdrive-prov', message: 'Approaching monthly resource quota limits' },
+    { timestamp: '12:42:10', level: 'ERROR', source: 'sync-engine', message: 'Authentication failure: Google Drive integration invalid credentials' },
+    { timestamp: '12:43:00', level: 'INFO', source: 'client', message: 'Synchronization local records consolidated successfully.' },
   ]);
 
-  // Auto-simulation timer to prove live state & telemetry in "Desktop Dashboard"
+  // Auto-simulation timer to prove live state & client updates in "Desktop Dashboard"
   useEffect(() => {
     const timer = setInterval(() => {
       // Simulate random sync engine transfers occasionally
@@ -147,13 +147,13 @@ export default function App() {
 
       // Append random mock log statements occasionally to show dynamic activity
       if (Math.random() > 0.8) {
-        const sources = ['daemon', 'aws-prov', 'gdrive-prov', 'scheduler'];
+        const sources = ['client', 'aws-prov', 'gdrive-prov', 'scheduler'];
         const levels: ('INFO' | 'WARN')[] = ['INFO', 'WARN'];
         const messages = [
           'Calculated metadata hash validation matching remotely',
           'Hourly scheduled job verification executed',
           'Disk storage threshold check: 78% remaining healthy',
-          'Established heartbeat communication with Spring API',
+          'Established cloud store connection successfully',
         ];
         const randomSource = sources[Math.floor(Math.random() * sources.length)];
         const randomLevel = levels[Math.floor(Math.random() * levels.length)];
@@ -511,8 +511,8 @@ export default function App() {
                     <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50 uppercase font-sans">
                       Welcome Back, {userProfile.name}
                     </h1>
-                    <p className="text-[11px] font-mono tracking-wide text-slate-500 dark:text-slate-400 mt-1 uppercase">
-                      Monitoring sync engine activities across your linked cloud cloud-stores.
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      Manage and monitor your cloud synchronization requests.
                     </p>
                   </div>
                   <div className="mt-4 flex space-x-2 md:mt-0">
@@ -528,12 +528,12 @@ export default function App() {
                 </div>
 
                 {/* Dashboard Quick Stats Grid */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  {/* Stat Card 1: Active Sync requests count */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  {/* Stat Card 1: Sync Requests count */}
                   <div className="rounded-sm border border-slate-200 bg-white p-4.5 dark:border-slate-800 dark:bg-slate-950/40 shadow-xs">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest font-mono">
-                        Connected Syncs
+                        Sync Requests
                       </span>
                       <FolderSync className="h-4 w-4 text-indigo-500" />
                     </div>
@@ -541,55 +541,39 @@ export default function App() {
                       <span className="text-2xl font-bold text-slate-900 dark:text-white">
                         {syncRequests.length}
                       </span>
-                      <span className="text-[10px] uppercase text-slate-400 tracking-wider">active configs</span>
+                      <span className="text-[10px] uppercase text-slate-400 tracking-wider">Configured Mappings</span>
                     </div>
                   </div>
 
-                  {/* Stat Card 2: Run status */}
+                  {/* Stat Card 2: Connected Providers count */}
                   <div className="rounded-sm border border-slate-200 bg-white p-4.5 dark:border-slate-800 dark:bg-slate-950/40 shadow-xs">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest font-mono">
-                        Active Operations
+                        Connected Providers
                       </span>
                       <CloudLightning className="h-4 w-4 text-emerald-500 animate-pulse" />
                     </div>
                     <div className="mt-2.5 flex items-baseline space-x-1.5 font-mono">
                       <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                        {syncRequests.filter((r) => r.status === 'syncing').length}
+                        2
                       </span>
-                      <span className="text-[10px] uppercase text-slate-400 tracking-wider">transfers running</span>
+                      <span className="text-[10px] uppercase text-slate-400 tracking-wider">Cloud Integrations</span>
                     </div>
                   </div>
 
-                  {/* Stat Card 3: Failed status helper */}
+                  {/* Stat Card 3: System Status */}
                   <div className="rounded-sm border border-slate-200 bg-white p-4.5 dark:border-slate-800 dark:bg-slate-950/40 shadow-xs">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest font-mono">
-                        Action Required
-                      </span>
-                      <AlertTriangle className="h-4 w-4 text-amber-500" />
-                    </div>
-                    <div className="mt-2.5 flex items-baseline space-x-1.5 font-mono">
-                      <span className="text-2xl font-bold text-red-650 dark:text-red-400">
-                        {syncRequests.filter((r) => r.status === 'failed').length}
-                      </span>
-                      <span className="text-[10px] uppercase text-slate-400 tracking-wider font-bold">errors reported</span>
-                    </div>
-                  </div>
-
-                  {/* Stat Card 4: Dev sync engine version status */}
-                  <div className="rounded-sm border border-slate-200 bg-white p-4.5 dark:border-slate-800 dark:bg-slate-950/40 shadow-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest font-mono">
-                        Local DB Status
+                        Sync Status
                       </span>
                       <Database className="h-4 w-4 text-sky-500" />
                     </div>
                     <div className="mt-2.5 flex items-baseline space-x-1.5 font-mono">
-                      <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                        100%
+                      <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-450 uppercase">
+                        Active
                       </span>
-                      <span className="text-[10px] uppercase text-emerald-600 font-bold tracking-wider">Postgres OK</span>
+                      <span className="text-[10px] uppercase text-slate-400 tracking-wider">Ready</span>
                     </div>
                   </div>
                 </div>
@@ -603,7 +587,7 @@ export default function App() {
                         <div className="flex items-center space-x-2">
                           <FolderSync className="h-4 w-4 text-indigo-500" />
                           <h2 className="text-xs font-bold font-mono uppercase tracking-wider text-slate-900 dark:text-white">
-                            Synchronization Registry
+                            Sync Requests
                           </h2>
                         </div>
                         <button
@@ -677,15 +661,9 @@ export default function App() {
                         <div className="flex items-center space-x-2">
                           <Terminal className="h-4 w-4 text-sky-500" />
                           <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">
-                            Live Synchronization Telemetry
+                            Recent Activity
                           </h2>
                         </div>
-                        <button
-                          onClick={() => handleSidebarTabNavigate('logs')}
-                          className="text-xs text-indigo-600 hover:text-indigo-800 font-medium dark:text-indigo-400 dark:hover:text-indigo-300"
-                        >
-                          Raw Console View
-                        </button>
                       </div>
                       <div className="bg-neutral-950 p-4 font-mono text-[11px] leading-relaxed text-neutral-300 space-y-1.5 overflow-hidden">
                         {logMessages.slice(-5).map((log, index) => (
@@ -710,7 +688,7 @@ export default function App() {
                     {/* Cloud Connections */}
                     <div className="rounded-xl border border-neutral-200 bg-white p-4.5 dark:border-neutral-800 dark:bg-neutral-950/20 shadow-xs space-y-4">
                       <h2 className="text-sm font-bold text-neutral-800 dark:text-neutral-100">
-                        Multi-Provider Integrations
+                        Connected Providers
                       </h2>
 
                       <div className="space-y-2.5">
@@ -778,18 +756,18 @@ export default function App() {
                     <div className="rounded-xl border border-neutral-200 bg-indigo-900/5 p-4.5 dark:border-neutral-850 dark:bg-indigo-950/10 space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-indigo-800 dark:text-indigo-400">
-                          Desktop Daemon Settings
+                          Application Settings
                         </span>
                         <Settings className="h-4 w-4 text-indigo-500" />
                       </div>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-                        DevSync client is currently configured to store local replication markers in internal SQLite db. To swap to external PostgreSQL storage database, shift configure keys in Settings.
+                        DevSync client handles automatic file scanning and syncing in the background. You can customize paths, themes, and client preferences in Settings.
                       </p>
                       <button
                         onClick={() => handleSidebarTabNavigate('settings')}
                         className="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 flex items-center gap-1"
                       >
-                        Navigate to Database Config <ArrowRight className="h-3 w-3" />
+                        Go to Application Settings <ArrowRight className="h-3 w-3" />
                       </button>
                     </div>
                   </div>
@@ -805,6 +783,7 @@ export default function App() {
                 onToggleStatus={handlePauseSync}
                 onDeleteRequest={handleDisconnectRequest}
                 onCreateClick={() => setIsWizardOpen(true)}
+                onTriggerSync={handleTriggerSync}
               />
             )}
 
@@ -842,8 +821,8 @@ export default function App() {
                     {
                       timestamp: new Date().toTimeString().split(' ')[0],
                       level: 'INFO',
-                      source: 'daemon',
-                      message: 'User password successfully updated in SQLite user record.',
+                      source: 'client',
+                      message: 'User profile configuration successfully updated.',
                     },
                   ]);
                 }}
@@ -973,7 +952,7 @@ export default function App() {
 
               <div className="flex items-center space-x-2 rounded-lg bg-indigo-50/50 p-3 text-[11px] text-indigo-700 dark:bg-indigo-950/20 dark:text-indigo-400 border border-indigo-200/20">
                 <Info className="h-4 w-4 text-indigo-500" />
-                <span>Creating sync request will instantiate direct background mapping hooks using the Spring API container.</span>
+                <span>Creating your sync request registers the folder mapping definitions for local-to-cloud transfers.</span>
               </div>
 
               <div className="mt-5 flex justify-end space-x-2 border-t border-neutral-100 pt-3 dark:border-neutral-800">

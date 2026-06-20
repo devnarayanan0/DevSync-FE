@@ -461,7 +461,7 @@ export default function FirstSyncWizard({
                       </div>
                       <div className="flex justify-between text-[11px] font-mono">
                         <span className="text-slate-405">IAM User:</span>
-                        <span className="text-slate-800 dark:text-slate-200 font-bold text-sky-600 dark:text-indigo-400">devsync-daemon-user</span>
+                        <span className="text-slate-800 dark:text-slate-200 font-bold text-sky-600 dark:text-indigo-400">devsync-client-user</span>
                       </div>
                       <div className="flex justify-between text-[11px] font-mono">
                         <span className="text-slate-405">Available S3 Buckets:</span>
@@ -597,7 +597,7 @@ export default function FirstSyncWizard({
                     Step 5: Pick Workspace Source Folder
                   </h3>
                   <p className="text-[11px] text-slate-450 dark:text-slate-400 uppercase mt-0.5 font-mono">
-                    Set up your localized filesystem directories for daemon scanning tasks.
+                    Set up your localized filesystem directories for sync scanning tasks.
                   </p>
                 </div>
 
@@ -649,7 +649,7 @@ export default function FirstSyncWizard({
                       Local System File Scanner
                     </span>
                     <p className="text-[10px] text-slate-450 uppercase leading-relaxed font-mono">
-                      Selecting directories prompts our system daemon to register direct file watcher listeners. This detects additions, moves, or edits at low-latency.
+                      Selecting directories registers direct file watchers. This detects additions, moves, or edits instantly.
                     </p>
                   </div>
                 </div>
@@ -694,7 +694,7 @@ export default function FirstSyncWizard({
                   </div>
 
                   <div className="grid grid-cols-3">
-                    <span className="text-slate-450">Starting Daemon Status:</span>
+                    <span className="text-slate-450">Initial Sync Status:</span>
                     <span className="col-span-2">
                       <span className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-450 font-bold bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-sm">
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -707,7 +707,7 @@ export default function FirstSyncWizard({
                 <div className="rounded-sm bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200/20 p-4.5 text-[10px] font-mono uppercase tracking-wider text-indigo-650 dark:text-indigo-400">
                   <div className="flex gap-2">
                     <Database className="h-4 w-4 text-indigo-500 shrink-0" />
-                    <span>Writing sync schema records will initialize internal PostgreSQL daemon tables directly with default automated intervals.</span>
+                    <span>Creating the sync request will register the cloud folder mapping with default automated sync intervals.</span>
                   </div>
                 </div>
               </div>

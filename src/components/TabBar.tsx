@@ -78,12 +78,6 @@ export default function TabBar({
           );
         })}
       </div>
-
-      {/* Decorative desktop tab helper */}
-      <div className="hidden items-center justify-end px-3 font-mono text-[10px] text-slate-400 dark:text-slate-500 space-x-2 md:flex uppercase tracking-wider">
-        <Sparkles className="h-3 w-3 text-indigo-500 animate-spin-slow" />
-        <span>Multi-Tab IDE Mode</span>
-      </div>
     </div>
   );
 }

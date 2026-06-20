@@ -61,7 +61,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
               {/* Specs & Description */}
               <div className="mt-5 space-y-4 text-xs text-slate-650 dark:text-slate-300">
                 <p className="leading-relaxed">
-                  DevSync is an orchestration client designed for low-latency filesystem synchronization between host workstations and secure cloud providers (AWS S3, Google Drive Enterprise).
+                  DevSync is a desktop client designed for efficient filesystem synchronization between host workstations and secure cloud providers (AWS S3, Google Drive).
                 </p>
 
                 <div className="rounded-sm bg-slate-50 p-4 border border-slate-200 dark:bg-slate-900/60 dark:border-slate-800 space-y-2.5 font-mono text-[11px]">
@@ -70,12 +70,12 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
                     <span className="text-slate-700 dark:text-slate-350">React 19 + Vite Embedded</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400 dark:text-slate-500 uppercase text-[9px] tracking-wider">Backend API:</span>
-                    <span className="text-indigo-600 dark:text-indigo-400">Spring Daemon (3000)</span>
+                    <span className="text-slate-400 dark:text-slate-500 uppercase text-[9px] tracking-wider">Sync API:</span>
+                    <span className="text-indigo-600 dark:text-indigo-400">DevSync Core</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400 dark:text-slate-500 uppercase text-[9px] tracking-wider">Storage Registry:</span>
-                    <span className="text-slate-700 dark:text-slate-350">PostgreSQL (Durable Sync)</span>
+                    <span className="text-slate-400 dark:text-slate-400 uppercase text-[9px] tracking-wider">Storage Mode:</span>
+                    <span className="text-slate-700 dark:text-slate-350">Local Key-Value Storage</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400 dark:text-slate-500 uppercase text-[9px] tracking-wider">Encryption Mode:</span>
@@ -98,7 +98,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
               {/* Footer */}
               <div className="mt-6 flex items-center justify-between border-t border-slate-105 pt-4 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:border-slate-850 dark:text-slate-500">
                 <span className="flex items-center gap-1">
-                  FOR ELITE DEVELOPERS
+                  DESKTOP SYNC CLIENT
                 </span>
                 <span>© 2026 DevSync Corp.</span>
               </div>

@@ -39,7 +39,7 @@ export default function ProfileDropdown({
               <div className="flex items-center space-x-3">
                 <div className="relative">
                   <div className="flex h-11 w-11 items-center justify-center rounded-sm bg-indigo-50 text-indigo-700 font-bold dark:bg-slate-900 dark:text-indigo-300">
-                    {user.name.charAt(0)}
+                    {user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                   </div>
                   <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border border-white bg-emerald-500 dark:border-slate-950" />
                 </div>
@@ -69,20 +69,20 @@ export default function ProfileDropdown({
             {/* Provider Connectivity Monitor */}
             <div className="px-4 py-3 bg-slate-50 dark:bg-slate-900/20 border-b border-slate-150 dark:border-slate-850">
               <p className="text-[9px] font-mono font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
-                Connected Workspace APIs
+                Connected Providers
               </p>
               <div className="space-y-1.5 text-[11px] font-mono uppercase tracking-wider text-slate-650 dark:text-slate-350">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center">
                     <Cloud className="h-3.5 w-3.5 mr-1.5 text-sky-500" />
-                    AWS Cloud-Link
+                    AWS S3
                   </span>
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center">
                     <Server className="h-3.5 w-3.5 mr-1.5 text-amber-500" />
-                    Google Storage API
+                    Google Drive
                   </span>
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 </div>

@@ -2,20 +2,15 @@ import { useState } from 'react';
 import {
   Search,
   Terminal,
-  Activity,
   Download,
   Trash2,
   ChevronDown,
   ChevronUp,
   AlertOctagon,
-  Database,
-  ExternalLink,
-  SlidersHorizontal,
-  X,
-  FileCode,
   Info,
-  Bug,
   AlertTriangle,
+  SlidersHorizontal,
+  FileCode
 } from 'lucide-react';
 
 interface ApplicationLog {
@@ -28,7 +23,7 @@ interface ApplicationLog {
   provider: string;
   tenantId: string;
   endpoint: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method: string;
   statusCode: string;
   duration: string;
   requestPayload: string;
@@ -47,12 +42,12 @@ const INITIAL_LOGS: ApplicationLog[] = [
     status: 'SUCCESS',
     provider: 'AWS S3',
     tenantId: 'tenant-aws-corp-3004',
-    endpoint: '/api/v1/tenant/aws/verify',
-    method: 'POST',
+    endpoint: 's3://production-vault-sync',
+    method: 'CHECK',
     statusCode: '200 OK',
     duration: '245 ms',
-    requestPayload: JSON.stringify({ bucketName: 'production-vault-sync', region: 'us-east-1', accessKey: 'AKIA**********' }, null, 2),
-    responsePayload: JSON.stringify({ status: 'VERIFIED', accountId: '123456789012', region: 'us-east-1' }, null, 2),
+    requestPayload: JSON.stringify({ bucketName: 'production-vault-sync', region: 'us-east-1' }, null, 2),
+    responsePayload: JSON.stringify({ status: 'VERIFIED', region: 'us-east-1' }, null, 2),
   },
   {
     id: 'log-002',
@@ -63,11 +58,11 @@ const INITIAL_LOGS: ApplicationLog[] = [
     status: 'FAILED',
     provider: 'Google Drive',
     tenantId: 'gdrive-marketing-hub',
-    endpoint: '/api/v2/gdrive/upload-chunk',
-    method: 'POST',
+    endpoint: 'gdrive://marketing-assets-v2',
+    method: 'UPLOAD',
     statusCode: '401 Unauthorized',
     duration: '112 ms',
-    requestPayload: JSON.stringify({ chunkId: 'chk_9f823a', sizeBytes: 15402 }, null, 2),
+    requestPayload: JSON.stringify({ folder: 'marketing-assets-v2', sizeBytes: 15402 }, null, 2),
     responsePayload: JSON.stringify({ error: 'Auth credentials expired', code: 'TOKEN_EXPIRATION' }, null, 2),
     errorMessage: 'OAuth refresh token failed to resolve securely. Desktop client was unauthorized.',
     stackTrace: 'Error: OAuth refresh token failed\n  at GoogleOAuth.resolveToken (auth.ts:42:15)\n  at GoogleDriveAPI.uploadChunk (gdrive.ts:102:4)\n  at SyncManager.processItem (sync.ts:241:10)',
@@ -81,24 +76,24 @@ const INITIAL_LOGS: ApplicationLog[] = [
     status: 'WARNING',
     provider: 'Google Drive',
     tenantId: 'gdrive-marketing-hub',
-    endpoint: '/api/v1/auth/refresh-session',
-    method: 'GET',
+    endpoint: 'auth://token/refresh',
+    method: 'AUTH',
     statusCode: '429 Too Many Requests',
     duration: '450 ms',
     requestPayload: '{}',
-    responsePayload: JSON.stringify({ message: 'Rate limit tripped on provider check', delayMs: 2000 }, null, 2),
+    responsePayload: JSON.stringify({ message: 'Rate limit tripped on provider check', retryAfterSeconds: 2 }, null, 2),
   },
   {
     id: 'log-004',
     timestamp: '10:15:30 AM',
     level: 'DEBUG',
-    source: 'Database',
-    action: 'Local SQLite Write Operation',
+    source: 'ClientConfig',
+    action: 'Cache Parameter Write',
     status: 'SUCCESS',
     provider: 'System',
     tenantId: 'default',
-    endpoint: 'local://sqlite/sync_configuration',
-    method: 'PUT',
+    endpoint: 'local://cache/sync_requests',
+    method: 'WRITE',
     statusCode: 'OK',
     duration: '14 ms',
     requestPayload: JSON.stringify({ id: 'aws-s3-prod', lastSync: '2026-06-20 10:15:30' }, null, 2),
@@ -109,34 +104,16 @@ const INITIAL_LOGS: ApplicationLog[] = [
     timestamp: '10:20:44 AM',
     level: 'INFO',
     source: 'SyncEngine',
-    action: 'Checksum Integrity Validate',
+    action: 'Folder Hash Comparison Check',
     status: 'SUCCESS',
     provider: 'AWS S3',
     tenantId: 'tenant-aws-corp-3004',
-    endpoint: '/api/v1/tenant/aws/checksum',
-    method: 'POST',
+    endpoint: 's3://production-vault-sync',
+    method: 'COMPARE',
     statusCode: '200 OK',
     duration: '312 ms',
     requestPayload: JSON.stringify({ path: '/Users/david/designs', hashAlg: 'SHA-256' }, null, 2),
     responsePayload: JSON.stringify({ match: true, remoteCount: 1482 }, null, 2),
-  },
-  {
-    id: 'log-006',
-    timestamp: '10:25:01 AM',
-    level: 'ERROR',
-    source: 'AWS S3 API',
-    action: 'File Upload Multipart Commit',
-    status: 'FAILED',
-    provider: 'AWS S3',
-    tenantId: 'tenant-aws-corp-3004',
-    endpoint: '/api/v1/s3/multipart/commit',
-    method: 'POST',
-    statusCode: '500 Server Error',
-    duration: '854 ms',
-    requestPayload: JSON.stringify({ uploadId: 'mp_s3_9481aa', parts: 12 }, null, 2),
-    responsePayload: JSON.stringify({ error: 'Internal AWS link disconnection', code: 'AWS_FAIL_TRANSIENT' }, null, 2),
-    errorMessage: 'AWS S3 Gateway Timeout committing final parts of asset backup.',
-    stackTrace: 'AWS.S3Exception: Gateway Timeout\n  at AWS.S3Client.commitMultipart (aws.ts:24)\n  at SyncEngine.finishReplication (engine.ts:205)',
   },
 ];
 
@@ -145,28 +122,25 @@ export default function LogsPage() {
   const [selectedLogId, setSelectedLogId] = useState<string | null>('log-001');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Filtering states
-  const [logTypeFilter, setLogTypeFilter] = useState<string>('all');
+  // Filters
+  const [levelFilter, setLevelFilter] = useState<string>('all');
   const [providerFilter, setProviderFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [timeFilter, setTimeFilter] = useState<string>('all');
 
-  // Payload collapsing panel states
+  // Payload collapse state
   const [requestPayloadOpen, setRequestPayloadOpen] = useState(true);
   const [responsePayloadOpen, setResponsePayloadOpen] = useState(false);
 
-  // Clear logs action
   const handleClearTerminal = () => {
     setLogs([]);
     setSelectedLogId(null);
   };
 
-  // Export as format helpers
   const handleExportJSON = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(logs, null, 2));
+    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(logs, null, 2));
     const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `devsync_stdout_logs_${Date.now()}.json`);
+    downloadAnchor.setAttribute('href', dataStr);
+    downloadAnchor.setAttribute('download', `devsync_application_logs_${Date.now()}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -180,330 +154,289 @@ export default function LogsPage() {
     const blob = new Blob(csvRows, { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", url);
-    downloadAnchor.setAttribute("download", `devsync_stdout_logs_${Date.now()}.csv`);
+    downloadAnchor.setAttribute('href', url);
+    downloadAnchor.setAttribute('download', `devsync_application_logs_${Date.now()}.csv`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
   };
 
-  // Perform full search + filter query resolution rules
   const filteredLogs = logs.filter((log) => {
-    const query = searchQuery.toLowerCase();
+    const q = searchQuery.toLowerCase();
     const matchesSearch =
-      log.action.toLowerCase().includes(query) ||
-      log.source.toLowerCase().includes(query) ||
-      log.endpoint.toLowerCase().includes(query) ||
-      log.provider.toLowerCase().includes(query) ||
-      (log.errorMessage && log.errorMessage.toLowerCase().includes(query));
+      log.action.toLowerCase().includes(q) ||
+      log.source.toLowerCase().includes(q) ||
+      log.endpoint.toLowerCase().includes(q) ||
+      log.provider.toLowerCase().includes(q) ||
+      (log.errorMessage && log.errorMessage.toLowerCase().includes(q));
 
-    // Log Type (API Request / Response / Authentication / Synchronization etc.)
-    let matchesType = true;
-    if (logTypeFilter !== 'all') {
-      if (logTypeFilter === 'api_requests') {
-        matchesType = log.source.includes('API') || log.endpoint.startsWith('/api');
-      } else if (logTypeFilter === 'authentication') {
-        matchesType = log.source.includes('Auth') || log.action.includes('Refresh') || log.action.includes('Token');
-      } else if (logTypeFilter === 'sync') {
-        matchesType = log.source.includes('Sync') || log.action.includes('Synchroniz');
-      } else if (logTypeFilter === 'errors') {
-        matchesType = log.level === 'ERROR';
-      } else if (logTypeFilter === 'warnings') {
-        matchesType = log.level === 'WARNING';
-      }
-    }
+    const matchesLevel = levelFilter === 'all' || log.level === levelFilter;
+    const matchesProvider = providerFilter === 'all' || log.provider === providerFilter;
+    const matchesStatus = statusFilter === 'all' || log.status === statusFilter;
 
-    // Provider filter
-    let matchesProvider = true;
-    if (providerFilter !== 'all') {
-      matchesProvider = log.provider === providerFilter;
-    }
-
-    // Status filter
-    let matchesStatus = true;
-    if (statusFilter !== 'all') {
-      matchesStatus = log.status === statusFilter;
-    }
-
-    return matchesSearch && matchesType && matchesProvider && matchesStatus;
+    return matchesSearch && matchesLevel && matchesProvider && matchesStatus;
   });
 
-  // Selected Log Obj computation
   const selectedLog = logs.find((l) => l.id === selectedLogId) || null;
 
   return (
-    <div className="space-y-6">
-      {/* Upper header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-205 pb-4 dark:border-slate-850">
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-50 uppercase font-sans tracking-tight">
-            System Diagnostics console (STDOUT)
+          <h1 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+            Application Logs
           </h1>
-          <p className="text-xs text-slate-455 dark:text-slate-400 mt-1 font-mono uppercase tracking-wide">
-            Technical SQLite, MCP handshake triggers, AWS bucket headers, and gateway endpoints execution audits.
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Review detailed execution records, background transfers, and auth warnings.
           </p>
         </div>
 
-        <div className="flex gap-2 font-mono text-xs uppercase">
+        <div className="flex flex-wrap gap-2 text-xs">
           <button
             onClick={handleExportJSON}
-            className="inline-flex items-center gap-1.5 rounded-sm border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-300 px-3 py-2 font-bold cursor-pointer"
+            className="flex items-center gap-1.5 border border-slate-250 bg-white hover:bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-350 px-2.5 py-1.5 rounded font-semibold cursor-pointer select-none transition-colors"
           >
-            <Download className="h-4 w-4" /> Export JSON
+            <Download className="h-3.5 w-3.5" /> Export JSON
           </button>
           <button
             onClick={handleExportCSV}
-            className="inline-flex items-center gap-1.5 rounded-sm border border-slate-205 bg-white hover:bg-slate-50 text-slate-705 dark:border-slate-800 dark:bg-slate-950/40 dark:text-slate-300 px-3 py-2 font-bold cursor-pointer"
+            className="flex items-center gap-1.5 border border-slate-250 bg-white hover:bg-slate-50 text-slate-705 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-350 px-2.5 py-1.5 rounded font-semibold cursor-pointer select-none transition-colors"
           >
-            <FileCode className="h-4 w-4" /> Export CSV
+            <FileCode className="h-3.5 w-3.5" /> Export CSV
           </button>
           <button
             onClick={handleClearTerminal}
-            className="inline-flex items-center gap-1.5 rounded-sm bg-slate-800 text-white hover:bg-slate-750 dark:bg-slate-900 dark:hover:bg-slate-800 px-3.5 py-2 font-bold cursor-pointer"
+            className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-white dark:bg-slate-800 dark:hover:bg-slate-750 px-3 py-1.5 rounded font-semibold cursor-pointer select-none transition-colors"
           >
-            <Trash2 className="h-4 w-4" /> Clear Console
+            <Trash2 className="h-3.5 w-3.5" /> Clear Logs
           </button>
         </div>
       </div>
 
-      {/* Sliders filter settings card */}
-      <div className="rounded-sm border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950/40 shadow-xs space-y-4">
-        <div className="flex flex-col xl:flex-row gap-3.5">
-          {/* Search bar */}
+      {/* Search and Filters Bar */}
+      <div className="rounded border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 shadow-xs space-y-3">
+        <div className="flex flex-col md:flex-row gap-3">
+          {/* Search */}
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-405" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
-              placeholder="Search stderr stacktraces, endpoints, sources, errors..."
+              placeholder="Search logs by action, source, endpoint..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 w-full rounded-sm border border-slate-200 bg-slate-50 pl-10 pr-4 text-xs font-mono uppercase tracking-wide transition-colors focus:border-indigo-600 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-805 dark:text-slate-250 placeholder-slate-400"
+              className="w-full text-xs bg-slate-50 border border-slate-200 select-all dark:border-slate-805 dark:bg-slate-950 pl-9 pr-3 py-2 rounded focus:bg-white dark:focus:bg-slate-950 outline-none text-slate-800 dark:text-slate-100"
             />
           </div>
 
-          <div className="flex flex-wrap gap-2 text-xs font-mono">
-            {/* Filter 1: Log type */}
+          <div className="flex flex-wrap gap-2 text-xs">
+            {/* Filter by Level */}
             <select
-              value={logTypeFilter}
-              onChange={(e) => setLogTypeFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-sm border border-slate-200 bg-slate-50 text-[10px] font-bold uppercase dark:border-slate-800 dark:bg-slate-950 dark:text-slate-250 outline-none"
+              value={levelFilter}
+              onChange={(e) => setLevelFilter(e.target.value)}
+              className="p-2 border border-slate-200 bg-slate-50 dark:border-slate-805 dark:bg-slate-950 text-xs font-semibold rounded outline-none"
             >
-              <option value="all">Category: All logs</option>
-              <option value="api_requests">API Handshakes Only</option>
-              <option value="authentication">Auth Refresh sessions</option>
-              <option value="sync">Daemon replication crons</option>
-              <option value="errors">Critical Stack Errors</option>
-              <option value="warnings">System Warnings</option>
+              <option value="all">Levels: All</option>
+              <option value="INFO">INFO</option>
+              <option value="WARNING">WARNING</option>
+              <option value="ERROR">ERROR</option>
+              <option value="DEBUG">DEBUG</option>
             </select>
 
-            {/* Filter 2: Cloud Provider */}
+            {/* Filter by Provider */}
             <select
               value={providerFilter}
               onChange={(e) => setProviderFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-sm border border-slate-200 bg-slate-50 text-[10px] font-bold uppercase dark:border-slate-800 dark:bg-slate-950 dark:text-slate-250 outline-none"
+              className="p-2 border border-slate-200 bg-slate-50 dark:border-slate-805 dark:bg-slate-950 text-xs font-semibold rounded outline-none"
             >
-              <option value="all">Platform: All providers</option>
-              <option value="AWS S3">AWS S3 link</option>
-              <option value="Google Drive">Google Drive API</option>
-              <option value="System">Local SQLite host</option>
+              <option value="all">Providers: All</option>
+              <option value="AWS S3">AWS S3</option>
+              <option value="Google Drive">Google Drive</option>
+              <option value="System">System Local</option>
             </select>
 
-            {/* Filter 3: Status check */}
+            {/* Filter by Status */}
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-sm border border-slate-200 bg-slate-50 text-[10px] font-bold uppercase dark:border-slate-800 dark:bg-slate-950 dark:text-slate-250 outline-none"
+              className="p-2 border border-slate-200 bg-slate-50 dark:border-slate-805 dark:bg-slate-950 text-xs font-semibold rounded outline-none"
             >
-              <option value="all">Status: Checked-All</option>
-              <option value="SUCCESS">Success (200 OK)</option>
-              <option value="FAILED">Failure Exceptions</option>
-              <option value="WARNING">Warnings Throttled</option>
+              <option value="all">Statuses: All</option>
+              <option value="SUCCESS">Success</option>
+              <option value="FAILED">Failed</option>
+              <option value="WARNING">Warning</option>
             </select>
           </div>
         </div>
       </div>
 
-      {/* Double View Workspace Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Left Side: Logs List Area */}
-        <div className="lg:col-span-3 space-y-3">
+      {/* Main double column screen inspector layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+        {/* Left Side: Table */}
+        <div className="lg:col-span-3">
           {filteredLogs.length === 0 ? (
-            <div className="p-12 text-center rounded-sm border border-dashed border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950/40 text-xs font-mono uppercase">
-              <Terminal className="mx-auto h-11 w-11 text-slate-300 dark:text-slate-700 mb-3" />
-              <h3 className="font-bold text-slate-700 dark:text-slate-350">No Application Logs Found</h3>
-              <p className="text-[10px] text-slate-400 mt-1">Console is sleeping or active search matches zero indices.</p>
+            <div className="p-10 border border-dashed text-center rounded bg-white dark:border-slate-800 dark:bg-slate-900 space-y-2">
+              <Terminal className="mx-auto h-8 w-8 text-slate-300 dark:text-slate-700" />
+              <h4 className="font-bold text-slate-700 dark:text-slate-300">No Logs Matching Search</h4>
+              <p className="text-xs text-slate-400">Clear filters or try a different search phrase.</p>
             </div>
           ) : (
-            <div className="rounded-sm border border-slate-200 bg-slate-950 text-neutral-300 shadow-xl overflow-y-auto max-h-[580px]">
-              <div className="border-b border-neutral-800 p-3.5 text-neutral-500 uppercase text-[9px] font-bold flex justify-between tracking-wide">
-                <span>STDOUT STREAM • SELECT ROW TO EXPOSE PARAMETERS</span>
-                <span>POOL COUNT: {filteredLogs.length} LOG LINES</span>
-              </div>
-
-              <div className="divide-y divide-neutral-900 font-mono text-[11px] leading-relaxed">
-                {filteredLogs.map((log) => {
-                  const isErr = log.level === 'ERROR';
-                  const isWarn = log.level === 'WARNING';
-                  const isSelected = selectedLogId === log.id;
-
-                  return (
-                    <div
-                      key={log.id}
-                      onClick={() => setSelectedLogId(log.id)}
-                      className={`p-3 select-none flex items-start gap-3 cursor-pointer hover:bg-neutral-900/60 transition-colors ${
-                        isSelected ? 'bg-neutral-900 border-l-[3px] border-indigo-500 pl-2.2' : ''
-                      }`}
-                    >
-                      <span className="text-neutral-550 shrink-0 font-bold">[{log.timestamp}]</span>
-                      <span
-                        className={`font-semibold uppercase tracking-widest text-[9px] px-1.5 py-0.2 rounded-sm ${
-                          isErr ? 'bg-rose-955 text-rose-400 border border-rose-900' :
-                          isWarn ? 'bg-amber-955 text-amber-400 border border-amber-900' :
-                          log.level === 'DEBUG' ? 'bg-purple-955 text-purple-400 border border-purple-900' :
-                          'bg-emerald-955 text-emerald-400 border border-emerald-900Item'
+            <div className="border border-slate-200 dark:border-slate-800 rounded bg-white dark:bg-slate-900 overflow-hidden">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-450 font-semibold uppercase text-[10px]">
+                    <th className="p-3">Time</th>
+                    <th className="p-3">Level</th>
+                    <th className="p-3">Source/Action</th>
+                    <th className="p-3">Provider</th>
+                    <th className="p-3 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-[11px] font-mono leading-relaxed">
+                  {filteredLogs.map((log) => {
+                    const isSelected = selectedLogId === log.id;
+                    return (
+                      <tr
+                        key={log.id}
+                        onClick={() => setSelectedLogId(log.id)}
+                        className={`cursor-pointer transition-colors ${
+                          isSelected
+                            ? 'bg-indigo-50/40 dark:bg-indigo-950/20 font-semibold border-l-4 border-indigo-550'
+                            : 'hover:bg-slate-50/50 dark:hover:bg-slate-950/10'
                         }`}
                       >
-                        {log.level}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 font-bold text-neutral-101 shrink-0 text-xs">
-                          <span className="text-indigo-400">[{log.source}]</span>
-                          <span className="truncate">{log.action}</span>
-                        </div>
-                        <p className="text-neutral-450 text-[10px] transition-all truncate lowercase">
-                          {log.method} {log.endpoint} → {log.statusCode} ({log.duration})
-                        </p>
-                      </div>
-
-                      <span
-                        className={`text-[10px] font-bold text-right shrink-0 uppercase tracking-widest ${
-                          log.status === 'FAILED' ? 'text-red-500 animate-pulse' :
-                          log.status === 'WARNING' ? 'text-amber-500' : 'text-emerald-500'
-                        }`}
-                      >
-                        {log.status === 'SUCCESS' ? 'OK' : log.status}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+                        <td className="p-3 text-slate-400 dark:text-slate-500 whitespace-nowrap">{log.timestamp}</td>
+                        <td className="p-3">
+                          <span className={`inline-block px-1.5 py-0.2 rounded text-[9px] font-bold ${
+                            log.level === 'ERROR' ? 'bg-red-50 text-red-700 dark:bg-red-950/30' :
+                            log.level === 'WARNING' ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/30' :
+                            log.level === 'DEBUG' ? 'bg-purple-50 text-purple-700' :
+                            'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30'
+                          }`}>
+                            {log.level}
+                          </span>
+                        </td>
+                        <td className="p-3">
+                          <div className="font-semibold text-slate-800 dark:text-slate-200">[{log.source}]</div>
+                          <div className="text-slate-500 truncate max-w-[200px]">{log.action}</div>
+                        </td>
+                        <td className="p-3 text-slate-450">{log.provider}</td>
+                        <td className="p-3 text-right">
+                          <span className={`font-bold uppercase text-[9px] ${log.status === 'FAILED' ? 'text-red-500' : log.status === 'WARNING' ? 'text-amber-500' : 'text-emerald-500'}`}>
+                            {log.status}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
 
-        {/* Right Side: Log Detailed Inspector Panel */}
+        {/* Right Side: Log Inspector Details Panel */}
         <div className="lg:col-span-2">
           {!selectedLog ? (
-            <div className="h-full rounded-sm border border-slate-205 bg-slate-50/50 p-6 dark:border-slate-800 dark:bg-slate-950/20 flex flex-col items-center justify-center text-center font-mono text-xs uppercase text-slate-404">
-              <SlidersHorizontal className="h-10 w-10 text-slate-300 dark:text-slate-700 mb-2" />
-              <span>Diagnostic Inspector Empty</span>
-              <p className="text-[9px] text-slate-400 mt-0.5">Choose an active log row index on the left to review metrics.</p>
+            <div className="p-6 border border-dashed rounded bg-slate-50/50 dark:bg-slate-900/10 text-center text-slate-400 text-xs">
+              <SlidersHorizontal className="mx-auto h-8 w-8 text-slate-300 dark:text-slate-700 mb-2" />
+              <span>Select a log row on the left to view detailed metrics and payload variables.</span>
             </div>
           ) : (
-            <div className="rounded-sm border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-950/40 shadow-xs space-y-4 font-mono text-xs uppercase">
-              {/* Box Header */}
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 dark:border-slate-855 text-slate-900 dark:text-slate-50">
-                <h3 className="font-bold flex items-center gap-2">
-                  <SlidersHorizontal className="h-4.5 w-4.5 text-indigo-500" />
-                  STDOUT Trace Inspector
-                </h3>
-                <span className="text-[10px] font-bold text-slate-400 font-mono">ID: {selectedLog.id}</span>
+            <div className="rounded border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 shadow-xs space-y-4 text-xs font-sans">
+              <div className="flex justify-between items-center border-b pb-2.5 dark:border-slate-800 text-slate-800 dark:text-slate-100">
+                <span className="font-bold uppercase text-xs">Log Inspector</span>
+                <span className="font-mono text-slate-400 text-[10px]">ID: {selectedLog.id}</span>
               </div>
 
-              {/* Log Level Banner */}
-              <div className={`p-3 rounded-sm border flex items-center gap-2.5 ${
-                selectedLog.level === 'ERROR'
-                  ? 'bg-red-50 border-red-200 text-red-750 dark:bg-red-955/20 dark:border-red-900/60 dark:text-red-400'
-                  : selectedLog.level === 'WARNING'
-                  ? 'bg-amber-50 border-amber-200 text-amber-705 dark:bg-amber-955/20 dark:border-amber-905/60 dark:text-amber-400'
-                  : 'bg-emerald-50 border-emerald-200 text-emerald-750 dark:bg-emerald-955/20 dark:border-emerald-905/60 dark:text-emerald-450'
+              {/* Status Header */}
+              <div className={`p-3 rounded border flex items-center gap-2 ${
+                selectedLog.level === 'ERROR' ? 'bg-red-50 border-red-200 text-red-750 dark:bg-red-950/20 dark:border-red-900/60 dark:text-red-400' :
+                selectedLog.level === 'WARNING' ? 'bg-amber-50 border-amber-200 text-amber-705 dark:bg-amber-955/20 dark:border-amber-900/60' :
+                'bg-emerald-50 border-emerald-200 text-emerald-750 dark:bg-emerald-950/20'
               }`}>
-                {selectedLog.level === 'ERROR' ? <AlertOctagon className="h-5 w-5 pointer-events-none" /> : <Info className="h-5 w-5 pointer-events-none" />}
-                <div className="space-y-0.5">
-                  <span className="font-bold text-[11px] block">{selectedLog.action}</span>
-                  <p className="text-[9px] lowercase tracking-wide font-mono">timestamp epoch clock • {selectedLog.timestamp}</p>
+                {selectedLog.level === 'ERROR' ? <AlertOctagon className="h-4.5 w-4.5 shrink-0" /> : <Info className="h-4.5 w-4.5 shrink-0" />}
+                <div>
+                  <span className="font-semibold block">{selectedLog.action}</span>
+                  <span className="text-[10px] text-slate-400">{selectedLog.timestamp}</span>
                 </div>
               </div>
 
-              {/* Scope spec fields */}
-              <div className="space-y-3 pt-1">
-                {/* Section API Info */}
-                <div className="rounded-sm bg-slate-50 dark:bg-slate-900/80 border dark:border-slate-850 p-3 space-y-2 text-[10px]">
-                  <span className="text-[9px] text-slate-400 font-bold block mb-1">Trace Session Metadata</span>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 font-semibold text-slate-705 dark:text-slate-205 uppercase">
-                    <div>PROVIDER: <strong className="text-slate-805 dark:text-slate-100">{selectedLog.provider}</strong></div>
-                    <div>SOURCE: <strong className="text-slate-805 dark:text-slate-100">{selectedLog.source}</strong></div>
-                    <div className="col-span-2 truncate">NAMESPACE: <strong className="text-slate-805 dark:text-slate-100">{selectedLog.tenantId}</strong></div>
+              {/* Details table mapping */}
+              <div className="space-y-3">
+                <div className="rounded bg-slate-50 dark:bg-slate-950 p-3 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                  <header className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Metadata Variables</header>
+                  <div className="grid grid-cols-2 gap-2 text-[11px] font-mono leading-relaxed">
+                    <div>PROVIDER: <span className="font-semibold text-slate-900 dark:text-slate-100">{selectedLog.provider}</span></div>
+                    <div>SOURCE: <span className="font-semibold text-slate-900 dark:text-slate-100">{selectedLog.source}</span></div>
+                    <div className="col-span-2">NAMESPACE: <span className="font-semibold text-slate-900 dark:text-slate-100">{selectedLog.tenantId}</span></div>
                   </div>
                 </div>
 
-                {/* Section Technical Protocol */}
-                <div className="rounded-sm bg-slate-50 dark:bg-slate-900/80 border dark:border-slate-850 p-3 space-y-2 text-[10px]">
-                  <span className="text-[9px] text-slate-400 font-bold block mb-1">Gateway API Protocol</span>
-                  <div className="space-y-1 text-slate-705 dark:text-slate-205">
+                <div className="rounded bg-slate-50 dark:bg-slate-950 p-3 space-y-1 text-xs text-slate-750 dark:text-slate-300">
+                  <header className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-1">Protocol Execution</header>
+                  <div className="space-y-1.5 text-[11px] font-mono leading-relaxed">
                     <div className="flex justify-between">
-                      <span>ENDPOINT:</span>
-                      <span className="font-bold text-indigo-600 dark:text-indigo-400 lower-case font-mono">{selectedLog.method} {selectedLog.endpoint}</span>
+                      <span>ENDPOINT/URI:</span>
+                      <span className="font-semibold text-indigo-600 dark:text-indigo-400 truncate max-w-[200px] lowercase">{selectedLog.endpoint}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>STATUS CODE:</span>
-                      <span className="font-bold text-slate-858 dark:text-slate-100">{selectedLog.statusCode}</span>
+                      <span>METHOD:</span>
+                      <span className="font-bold">{selectedLog.method}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>REPLICATION LATENCY:</span>
-                      <span className="font-bold text-slate-858 dark:text-slate-105">{selectedLog.duration}</span>
+                      <span>STATUS:</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedLog.statusCode}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>LATENCY:</span>
+                      <span className="font-semibold">{selectedLog.duration}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Exception blocks on fail */}
+                {/* Error details */}
                 {selectedLog.errorMessage && (
-                  <div className="rounded-sm bg-red-50/15 border border-red-200/40 p-3.5 space-y-2 text-[10px]">
-                    <span className="text-[9px] text-red-500 font-bold flex items-center gap-1">
-                      <AlertTriangle className="h-4 w-4" /> TRACE EXCEPTION INFO
-                    </span>
-                    <p className="text-slate-800 dark:text-red-400 font-bold lowercase tracking-wide">
-                      {selectedLog.errorMessage}
-                    </p>
+                  <div className="rounded bg-red-50/10 border border-red-200/50 p-3 space-y-1.5 text-[11px]">
+                    <span className="text-[9px] text-red-500 font-bold block uppercase">Exception Stack Trace</span>
+                    <p className="text-red-750 dark:text-red-400 font-semibold font-mono">{selectedLog.errorMessage}</p>
                     {selectedLog.stackTrace && (
-                      <pre className="text-[9px] text-red-700/80 dark:text-red-550 lowercase tracking-normal overflow-x-auto bg-red-50/5 dark:bg-neutral-950 p-2 border dark:border-red-955 rounded font-mono leading-relaxed max-h-[120px]">
+                      <pre className="text-[9px] p-2 bg-neutral-950 dark:bg-neutral-950 text-red-400 rounded overflow-x-auto max-h-[100px] font-mono leading-relaxed leading-tight lowercase">
                         {selectedLog.stackTrace}
                       </pre>
                     )}
                   </div>
                 )}
 
-                {/* Nested JSON payloads collapse panels */}
-                <div className="space-y-2">
-                  {/* Panel Request Payload */}
-                  <div className="border border-slate-200 dark:border-slate-850 rounded-sm">
+                {/* Dropdowns payloads */}
+                <div className="space-y-1.5 font-mono text-[11px]">
+                  <div className="border border-slate-200 dark:border-slate-800 rounded">
                     <button
                       type="button"
                       onClick={() => setRequestPayloadOpen(!requestPayloadOpen)}
-                      className="w-full flex items-center justify-between p-2.5 bg-slate-100/60 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-850 text-[10px] font-bold"
+                      className="w-full flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-950 text-[10px] font-bold uppercase"
                     >
-                      <span>REPLICATOR REQUEST BODY (MASKED KEYS)</span>
-                      {requestPayloadOpen ? <ChevronUp className="h-3.5 w-3.5 text-slate-400" /> : <ChevronDown className="h-3.5 w-3.5 text-slate-400" />}
+                      <span>Request Payload Details</span>
+                      {requestPayloadOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                     </button>
                     {requestPayloadOpen && (
-                      <pre className="text-[10px] p-2.5 bg-neutral-950 text-emerald-400 overflow-x-auto max-h-[110px] leading-relaxed font-mono font-medium tracking-normal whitespace-pre">
+                      <pre className="p-2.5 bg-neutral-950 text-emerald-400 overflow-x-auto max-h-[100px] leading-relaxed select-all">
                         {selectedLog.requestPayload}
                       </pre>
                     )}
                   </div>
 
-                  {/* Panel Response Payload */}
-                  <div className="border border-slate-200 dark:border-slate-850 rounded-sm">
+                  <div className="border border-slate-200 dark:border-slate-800 rounded">
                     <button
                       type="button"
                       onClick={() => setResponsePayloadOpen(!responsePayloadOpen)}
-                      className="w-full flex items-center justify-between p-2.5 bg-slate-100/60 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-850 text-[10px] font-bold"
+                      className="w-full flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-950 text-[10px] font-bold uppercase"
                     >
-                      <span>GATEWAY RESPONSE PAYLOAD</span>
-                      {responsePayloadOpen ? <ChevronUp className="h-3.5 w-3.5 text-slate-400" /> : <ChevronDown className="h-3.5 w-3.5 text-slate-400" />}
+                      <span>Response Payload Details</span>
+                      {responsePayloadOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                     </button>
                     {responsePayloadOpen && (
-                      <pre className="text-[10px] p-2.5 bg-neutral-950 text-emerald-400 overflow-x-auto max-h-[110px] leading-relaxed font-mono font-medium tracking-normal whitespace-pre">
+                      <pre className="p-2.5 bg-neutral-950 text-emerald-400 overflow-x-auto max-h-[100px] leading-relaxed select-all">
                         {selectedLog.responsePayload}
                       </pre>
                     )}
