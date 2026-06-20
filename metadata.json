@@ -1,0 +1,6 @@
+{
+  "name": "DevSync",
+  "description": "Desktop-based cloud synchronization platform inspired by GitHub Desktop. Manage sync requests, schedules, and cloud provider integrations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
