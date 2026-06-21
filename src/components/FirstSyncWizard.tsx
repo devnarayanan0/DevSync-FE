@@ -22,6 +22,7 @@ import {
   X
 } from 'lucide-react';
 import { SyncRequest, Theme } from '../types';
+import { isElectron, selectDirectory } from '../lib/electron';
 
 interface FirstSyncWizardProps {
   theme: Theme;
@@ -463,29 +464,47 @@ export default function FirstSyncWizard({
                   </div>
 
                   <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setOsPickerOpen('windows');
-                        setMockCurrentDir(windowsDirectories[0].name);
-                      }}
-                      className="inline-flex items-center gap-2 px-4.5 py-3 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-xs font-bold text-slate-800 dark:text-slate-200 cursor-pointer transition-colors shadow-xs"
-                    >
-                      <Monitor className="h-4 w-4 text-blue-500" />
-                      Browse Windows Folder
-                    </button>
+                    {isElectron() ? (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const path = await selectDirectory();
+                          if (path) {
+                            setLocalPath(path);
+                          }
+                        }}
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer transition-colors shadow-md animate-pulse"
+                      >
+                        <FolderOpen className="h-4 w-4" />
+                        Select Folder Directory (Native OS Dialog)
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOsPickerOpen('windows');
+                            setMockCurrentDir(windowsDirectories[0].name);
+                          }}
+                          className="inline-flex items-center gap-2 px-4.5 py-3 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-xs font-bold text-slate-800 dark:text-slate-200 cursor-pointer transition-colors shadow-xs"
+                        >
+                          <Monitor className="h-4 w-4 text-blue-500" />
+                          Browse Windows Folder
+                        </button>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setOsPickerOpen('macos');
-                        setMockCurrentDir(macDirectories[0].name);
-                      }}
-                      className="inline-flex items-center gap-2 px-4.5 py-3 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-xs font-bold text-slate-800 dark:text-slate-200 cursor-pointer transition-colors shadow-xs"
-                    >
-                      <Tv className="h-4 w-4 text-slate-500" />
-                      Browse macOS Folder
-                    </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOsPickerOpen('macos');
+                            setMockCurrentDir(macDirectories[0].name);
+                          }}
+                          className="inline-flex items-center gap-2 px-4.5 py-3 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-xs font-bold text-slate-800 dark:text-slate-200 cursor-pointer transition-colors shadow-xs"
+                        >
+                          <Tv className="h-4 w-4 text-slate-500" />
+                          Browse macOS Folder
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
 

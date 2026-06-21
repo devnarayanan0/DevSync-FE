@@ -16,6 +16,7 @@ import {
   Tv
 } from 'lucide-react';
 import { ProviderType } from '../types';
+import { isElectron, selectDirectory } from '../lib/electron';
 
 interface CreateSyncRequestWizardProps {
   isOpen: boolean;
@@ -425,6 +426,21 @@ export default function CreateSyncRequestWizard({
 
                 {/* Simulated folder selection launcher triggers */}
                 <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
+                  {isElectron() && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const path = await selectDirectory();
+                        if (path) {
+                          setLocalFolder(path);
+                        }
+                      }}
+                      className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer transition-colors shadow-md mb-2 animate-bounce"
+                    >
+                      <FolderOpen className="h-4 w-4" />
+                      Select Folder Directory via Native OS Dialog
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => {

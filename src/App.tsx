@@ -40,9 +40,21 @@ import ActivitySchedulingPage from './components/ActivitySchedulingPage';
 import LogsPage from './components/LogsPage';
 import SettingsPage from './components/SettingsPage';
 import CreateSyncRequestWizard from './components/CreateSyncRequestWizard';
+import DesktopBootLoader from './components/DesktopBootLoader';
+import {
+  isElectron,
+  getSyncRequests,
+  saveSyncRequest,
+  deleteSyncRequest,
+  updateSyncRequestPaths,
+  updateSyncRequestStatus,
+  showNotification
+} from './lib/electron';
+
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   // Theme state system
   const [theme, setTheme] = useState<Theme>('light');
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(true);
@@ -57,53 +69,39 @@ export default function App() {
     tenant: 'Client-Org-Production',
   });
 
-  // Mock starting Sync Requests database (local + cloud synced)
-  const [syncRequests, setSyncRequests] = useState<SyncRequest[]>([
-    {
-      id: 'aws-s3-prod',
-      name: 'AWS S3 Production Backup',
-      provider: 'aws-s3',
-      status: 'syncing',
-      localPath: '/Users/david/workspace/devsync/prod-data',
-      remoteFolder: 's3://production-vault-sync-us-east-1/backups/',
-      lastSync: '2026-06-20 05:30:12',
-      schedule: 'Every 30 Minutes',
-      description: 'Backup important production data',
-    },
-    {
-      id: 'gdrive-design',
-      name: 'Design & Brand Guidelines',
-      provider: 'google-drive',
-      status: 'idle',
-      localPath: '/Users/david/designs/brand-vault',
-      remoteFolder: 'gdrive://shared-drives/design-assets-hub/',
-      lastSync: '2026-06-20 04:15:00',
-      schedule: 'Daily at 02:00 AM',
-      description: 'Design system and brand assets',
-    },
-    {
-      id: 'gdrive-budget',
-      name: 'Q2 Budgeting Sync',
-      provider: 'google-drive',
-      status: 'failed',
-      localPath: '/Users/david/finance/q2-work',
-      remoteFolder: 'gdrive://my-drive/finance-archives/q2-2026/',
-      lastSync: '2026-06-19 18:22:10',
-      schedule: 'Manual Trigger Only',
-      description: 'Finance documents and reports',
-    },
-    {
-      id: 'aws-s3-media',
-      name: 'Client Video Assets',
-      provider: 'aws-s3',
-      status: 'paused',
-      localPath: '/Users/david/videos/render-outputs',
-      remoteFolder: 's3://client-delivery-bucket-s3/master-renders/',
-      lastSync: '2026-06-18 10:45:30',
-      schedule: 'Every 6 Hours',
-      description: 'Rendered videos and final outputs',
-    },
-  ]);
+  // Sync Requests database loaded from local SQLite/localStorage
+  const [syncRequests, setSyncRequests] = useState<SyncRequest[]>([]);
+
+  // Dyn load of connections, databases and tray status registers
+  useEffect(() => {
+    async function load() {
+      const data = await getSyncRequests();
+      setSyncRequests(data);
+    }
+    load();
+  }, []);
+
+  // Listen for Tray manual synchronization events
+  useEffect(() => {
+    if (isElectron()) {
+      const unsubscribe = window.electronAPI!.onSyncTriggered((id: string) => {
+        if (id === 'all') {
+          setSyncRequests((prev) =>
+            prev.map((r) => {
+              if (r.status === 'idle' || r.status === 'failed') {
+                updateSyncRequestStatus(r.id, 'syncing');
+                return { ...r, status: 'syncing' as const };
+              }
+              return r;
+            })
+          );
+        } else {
+          handleTriggerSync(id);
+        }
+      });
+      return unsubscribe;
+    }
+  }, [syncRequests]);
 
   // Tab State Management: Dashboard is always pinned as index 0
   const [tabs, setTabs] = useState<Tab[]>([
@@ -278,7 +276,7 @@ export default function App() {
   };
 
   // Handle Wizard action to create first or subsequent sync requests
-  const handleCreateSyncRequestFromWizard = (payload: {
+  const handleCreateSyncRequestFromWizard = async (payload: {
     name: string;
     description?: string;
     provider: any;
@@ -299,8 +297,12 @@ export default function App() {
       description: payload.description || `Synchronized ${payload.provider === 'aws-s3' ? 'S3 bucket' : 'Google Drive'} data pipeline`,
     };
 
-    // Save of request
+    // Save of request to database
+    await saveSyncRequest(newReq);
     setSyncRequests([newReq, ...syncRequests]);
+
+    // Show native notification
+    showNotification('Pipeline Registered', `The sync pipeline "${payload.name}" has been registered successfully in SQLite.`);
 
     // Cleanup state
     setIsWizardOpen(false);
@@ -310,10 +312,12 @@ export default function App() {
   };
 
   // Simulating state controls
-  const handleTriggerSync = (reqId: string) => {
+  const handleTriggerSync = async (reqId: string) => {
+    await updateSyncRequestStatus(reqId, 'syncing');
     setSyncRequests((prev) =>
       prev.map((r) => {
         if (r.id === reqId) {
+          showNotification('Sync Started', `Pipeline "${r.name}" process is initiating synchronization.`);
           return { ...r, status: 'syncing' };
         }
         return r;
@@ -321,7 +325,14 @@ export default function App() {
     );
   };
 
-  const handlePauseSync = (reqId: string) => {
+  const handlePauseSync = async (reqId: string) => {
+    const found = syncRequests.find(r => r.id === reqId);
+    if (found) {
+      const nextStatus = found.status === 'paused' ? 'idle' : 'paused';
+      await updateSyncRequestStatus(reqId, nextStatus);
+      showNotification(nextStatus === 'paused' ? 'Pipeline Paused' : 'Pipeline Resumed', `Sync status of "${found.name}" is now ${nextStatus}.`);
+    }
+
     setSyncRequests((prev) =>
       prev.map((r) => {
         if (r.id === reqId) {
@@ -332,13 +343,19 @@ export default function App() {
     );
   };
 
-  const handleDisconnectRequest = (reqId: string) => {
+  const handleDisconnectRequest = async (reqId: string) => {
+    const found = syncRequests.find(r => r.id === reqId);
+    if (found) {
+      showNotification('Pipeline Terminated', `Successfully disconnected storage pipeline "${found.name}".`);
+    }
     // Close tab first if open
     handleTabClose(reqId);
+    await deleteSyncRequest(reqId);
     setSyncRequests((prev) => prev.filter((r) => r.id !== reqId));
   };
 
-  const handleUpdatePaths = (id: string, localPath: string, remoteFolder: string) => {
+  const handleUpdatePaths = async (id: string, localPath: string, remoteFolder: string) => {
+    await updateSyncRequestPaths(id, localPath, remoteFolder);
     setSyncRequests((prev) =>
       prev.map((r) => (r.id === id ? { ...r, localPath, remoteFolder } : r))
     );
@@ -349,24 +366,34 @@ export default function App() {
           : t
       )
     );
+    showNotification('Paths Updated', 'Pipeline local source and remote directories updated successfully.');
   };
 
-  const handleResetApp = () => {
+  const handleResetApp = async () => {
     setIsLoggedIn(false);
+    localStorage.removeItem('devsync_is_logged_in');
+    localStorage.removeItem('devsync_session');
+    for (const r of syncRequests) {
+      await deleteSyncRequest(r.id);
+    }
     setSyncRequests([]);
     setTabs([{ id: 'dashboard', title: 'Dashboard', type: 'dashboard' }]);
     setActiveTabId('dashboard');
+    showNotification('System Reset', 'All application pipelines, logs, and databases have been hard-reset.');
     alert('Application settings, logs, and sync pipelines successfully hard-reset.');
   };
 
   const handleLoginSuccess = (user: UserProfile, isNew: boolean) => {
     setUserProfile(user);
+    localStorage.setItem('devsync_is_logged_in', 'true');
+    localStorage.setItem('devsync_session', JSON.stringify(user));
+
     if (isNew) {
       setSyncRequests([]);
     } else {
       // Re-populate default configs if they were cleared
       if (syncRequests.length === 0) {
-        setSyncRequests([
+        const defaultReqs: SyncRequest[] = [
           {
             id: 'aws-s3-prod',
             name: 'AWS S3 Production Backup',
@@ -407,7 +434,10 @@ export default function App() {
             lastSync: '2026-06-18 10:45:30',
             schedule: 'Every 6 Hours',
           }
-        ]);
+        ];
+        setSyncRequests(defaultReqs);
+        // Save these to SQLite as well to persist them properly
+        defaultReqs.forEach(req => saveSyncRequest(req));
       }
     }
     // Switch back to dashboard tab
@@ -418,12 +448,15 @@ export default function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    localStorage.removeItem('devsync_is_logged_in');
+    localStorage.removeItem('devsync_session');
     // Reset tabs to default Dashboard
     setTabs([{ id: 'dashboard', title: 'Dashboard', type: 'dashboard' }]);
     setActiveTabId('dashboard');
   };
 
-  const handleWizardComplete = (newReq: SyncRequest) => {
+  const handleWizardComplete = async (newReq: SyncRequest) => {
+    await saveSyncRequest(newReq);
     setSyncRequests([newReq]);
     // Reset tabs to default Dashboard
     setTabs([{ id: 'dashboard', title: 'Dashboard', type: 'dashboard' }]);
@@ -439,6 +472,28 @@ export default function App() {
       r.provider.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
+
+  const handleBootComplete = (context: {
+    theme: Theme;
+    launchOnStartup: boolean;
+    syncRequests: SyncRequest[];
+    userProfile: UserProfile | null;
+    isLoggedIn: boolean;
+  }) => {
+    setTheme(context.theme);
+    setSyncRequests(context.syncRequests);
+    if (context.isLoggedIn && context.userProfile) {
+      setUserProfile(context.userProfile);
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+    setIsLoading(false);
+  };
+
+  if (isLoading) {
+    return <DesktopBootLoader onComplete={handleBootComplete} />;
+  }
 
   if (!isLoggedIn) {
     return (

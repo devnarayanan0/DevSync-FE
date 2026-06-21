@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Settings,
   Database,
@@ -13,6 +13,7 @@ import {
   X,
 } from 'lucide-react';
 import { SyncRequest, Theme } from '../types';
+import { isElectron, getAutoStart, setAutoStart } from '../lib/electron';
 
 interface SettingsPageProps {
   theme: Theme;
@@ -33,6 +34,15 @@ export default function SettingsPage({
 
   // Startup & Notifications Settings
   const [launchOnStartup, setLaunchOnStartup] = useState<boolean>(true);
+
+  // Retrieve native client configuration on mount
+  useEffect(() => {
+    async function loadAutoStart() {
+      const active = await getAutoStart();
+      setLaunchOnStartup(active);
+    }
+    loadAutoStart();
+  }, []);
   const [minimizeToTray, setMinimizeToTray] = useState<boolean>(true);
   const [startMinimized, setStartMinimized] = useState<boolean>(false);
 
@@ -186,7 +196,11 @@ export default function SettingsPage({
                   type="checkbox"
                   id="s-startup"
                   checked={launchOnStartup}
-                  onChange={(e) => setLaunchOnStartup(e.target.checked)}
+                  onChange={async (e) => {
+                    const checked = e.target.checked;
+                    setLaunchOnStartup(checked);
+                    await setAutoStart(checked);
+                  }}
                   className="mt-0.5 cursor-pointer accent-indigo-600"
                 />
                 <label htmlFor="s-startup" className="cursor-pointer space-y-0.5">
