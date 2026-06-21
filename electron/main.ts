@@ -228,7 +228,7 @@ function createWindow() {
         <div class="progress-container">
           <div class="progress-bar"></div>
         </div>
-        <div class="status-text">INITIALIZING SECURE SHELL CONTAINER...</div>
+        <div class="status-text">STARTING APPLICATION SERVICES...</div>
       </div>
     </body>
     </html>
