@@ -163,22 +163,19 @@ export default function DesktopBootLoader({ onComplete }: DesktopBootLoaderProps
       <div className="w-full max-w-md p-8 relative flex flex-col items-center z-10 animate-fade-in">
         {/* Minimalist Logo design */}
         <div className="relative mb-6 flex items-center justify-center">
-          <div className="h-16 w-16 rounded-2xl bg-white border border-slate-200/80 p-2.5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center">
+          <div className="h-24 w-24 rounded-2xl bg-white border border-slate-200/80 p-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center">
             <img src="/logo.png" alt="DevSync" className="w-full h-full object-contain" />
           </div>
-          <div className="absolute -inset-1 rounded-3xl bg-indigo-500/10 blur-md -z-10 animate-pulse" />
+          <div className="absolute -inset-2 rounded-3xl bg-indigo-500/10 blur-xl -z-10 animate-pulse" />
         </div>
-
         {/* Brand Information */}
-        <div className="text-center mb-8 space-y-1">
-          <h2 id="bootloader-title" className="text-xl font-bold tracking-tight text-slate-900">
+        <div className="text-center mb-8 space-y-2">
+          <h2 id="bootloader-title" className="text-2xl font-bold tracking-tight text-slate-900">
             DevSync
           </h2>
-          
         </div>
-
-        {/* Real Steps Container */}
-              </div>
+        <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
+      </div>
     </div>
   );
 }

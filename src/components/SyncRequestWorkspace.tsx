@@ -100,7 +100,11 @@ export default function SyncRequestWorkspace({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-theme-border pb-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className={`h-2 w-2 rounded-full ${reqData.status === 'syncing' ? 'bg-emerald-500 animate-pulse' : isActive ? 'bg-sky-500' : 'bg-slate-400'}`} />
+            {reqData.status === 'syncing' ? (
+              <video src="/loading.mp4" autoPlay loop muted className="h-6 w-6 rounded-md object-cover pointer-events-none" />
+            ) : (
+              <span className={`h-2 w-2 rounded-full ${isActive ? 'bg-sky-500' : 'bg-slate-400'}`} />
+            )}
             <h1 className="text-xl font-bold text-theme-text">{reqData.name}</h1>
             <span className="inline-flex items-center gap-1 rounded bg-theme-bg border border-theme-border px-2 py-0.5 text-[10px] font-bold text-theme-text">
               {reqData.provider === 'aws-s3' ? 'AWS S3 Container' : 'Google Drive'}
@@ -123,7 +127,11 @@ export default function SyncRequestWorkspace({
                 : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-xs'
             }`}
           >
-            <RotateCw className={`h-3.5 w-3.5 ${reqData.status === 'syncing' ? 'animate-spin' : ''}`} />
+            {reqData.status === 'syncing' ? (
+              <video src="/loading.mp4" autoPlay loop muted className="h-4 w-4 rounded-sm object-cover pointer-events-none" />
+            ) : (
+              <RotateCw className="h-3.5 w-3.5" />
+            )}
             <span>{reqData.status === 'syncing' ? 'Syncing...' : 'Sync Now'}</span>
           </button>
 

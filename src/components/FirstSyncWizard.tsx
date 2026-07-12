@@ -743,7 +743,7 @@ export default function FirstSyncWizard({
                 <div className="grid grid-cols-2 gap-3.5 font-sans">
                   {[
                     { id: 'Manual Trigger Only', title: 'Manual Only', desc: 'No background automation. Trigger sync via dashboard buttons manually.' },
-                    { id: 'Sync On Application Startup', title: 'On Startup', desc: 'Automatic files transmission whenever DevSync client daemon starts.' },
+                    { id: 'Sync On Application Startup', title: 'On Startup', desc: 'Automatic files transmission whenever DevSync starts.' },
                     { id: 'Every 5 Minutes', title: 'Every 5 Minutes', desc: 'Rapid incremental syncing cycle loops. Ideal for active files modification.' },
                     { id: 'Every 15 Minutes', title: 'Every 15 Minutes', desc: 'Standard high-frequency automatic backups for design assets.' },
                     { id: 'Every 1 Hour', title: 'Every Hour', desc: 'Standard business synchronization intervals cycle.' },

@@ -406,7 +406,7 @@ export default function App() {
     );
   }
 
-  if (syncRequests.length === 0) {
+  if (syncRequests.length === 0 && userProfile?.email !== 'dev@local') {
     return (
       <FirstSyncWizard
         theme={theme}
@@ -690,7 +690,7 @@ export default function App() {
                         <Settings className="h-4 w-4 text-indigo-500" />
                       </div>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-                        DevSync client handles automatic file scanning and syncing in the background. You can customize paths, themes, and client preferences in Settings.
+                        DevSync handles automatic file scanning and syncing in the background. You can customize paths, themes, and client preferences in Settings.
                       </p>
                       <button
                         onClick={() => handleSidebarTabNavigate('settings')}

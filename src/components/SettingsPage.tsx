@@ -435,7 +435,7 @@ export default function SettingsPage({
 
       {/* FOOTER */}
       <div className="rounded border border-theme-border bg-theme-bg p-4 font-mono text-[11px] text-slate-450 flex flex-col sm:flex-row justify-between gap-2">
-        <span>Application: <strong>DevSync Workstation Client</strong></span>
+        <span>Application: <strong>DevSync</strong></span>
         <span>Version: <strong>v1.0.0 Stable</strong></span>
         <span>Ref Channel: <strong>production.alpha.sync</strong></span>
       </div>

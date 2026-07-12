@@ -42,7 +42,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold tracking-wider font-mono uppercase text-theme-text" id="about-title">
-                      DevSync Desktop Client
+                      DevSync
                     </h3>
                     <p className="text-[10px] font-mono tracking-wide text-slate-400 dark:text-slate-500 uppercase">
                       Version 4.1.20 (Stable) — x64 Edition
@@ -61,7 +61,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
               {/* Specs & Description */}
               <div className="mt-5 space-y-4 text-xs text-slate-650 dark:text-slate-350">
                 <p className="leading-relaxed">
-                  DevSync is a desktop client designed for efficient filesystem synchronization between host workstations and secure cloud providers (AWS S3, Google Drive).
+                  DevSync is designed for efficient filesystem synchronization between host workstations and secure cloud providers (AWS S3, Google Drive).
                 </p>
 
                 <div className="rounded-sm bg-theme-bg p-4 border border-theme-border space-y-2.5 font-mono text-[11px]">
