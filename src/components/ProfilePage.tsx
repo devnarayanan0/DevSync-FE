@@ -112,7 +112,7 @@ export default function ProfilePage({
     );
   };
 
-  const handleMockAction = (msg: string) => {
+  const handleSystemAction = (msg: string) => {
     alert(msg);
   };
 
@@ -172,7 +172,7 @@ export default function ProfilePage({
 
             <div className="space-y-2.5">
               <button
-                onClick={() => handleMockAction('Initiating secure system configuration export... Archive downloaded as devsync-secrets-export.json')}
+                onClick={() => handleSystemAction('Initiating secure system configuration export... Archive downloaded as devsync-secrets-export.json')}
                 className="w-full flex items-center justify-between px-3.5 py-2 rounded-sm border border-theme-border text-xs font-mono uppercase tracking-wide text-theme-text bg-theme-bg hover:bg-theme-border transition-colors cursor-pointer"
               >
                 <span className="flex items-center gap-2">
@@ -183,7 +183,7 @@ export default function ProfilePage({
               </button>
 
               <button
-                onClick={() => handleMockAction('Please confirm with your system administrator to completely remove your workstation authorization.')}
+                onClick={() => handleSystemAction('Please confirm with your system administrator to completely remove your workstation authorization.')}
                 className="w-full flex items-center justify-between px-3.5 py-2 rounded-sm border border-red-500/20 text-xs font-mono uppercase tracking-wide text-red-550 bg-red-500/5 hover:bg-red-500/10 transition-colors cursor-pointer"
               >
                 <span className="flex items-center gap-2">
@@ -272,7 +272,7 @@ export default function ProfilePage({
 
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => handleMockAction(`Displaying connection parameters for ${ten.name} security scopes.`)}
+                          onClick={() => handleSystemAction(`Displaying connection parameters for ${ten.name} security scopes.`)}
                           className="px-2.5 py-1 rounded bg-theme-border hover:bg-theme-border/70 text-[10px] font-bold uppercase text-theme-text cursor-pointer transition-colors"
                         >
                           View Details

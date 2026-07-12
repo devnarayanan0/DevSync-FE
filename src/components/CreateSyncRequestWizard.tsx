@@ -48,8 +48,8 @@ export default function CreateSyncRequestWizard({
   const [localFolder, setLocalFolder] = useState<string>('');
   const [osPickerOpen, setOsPickerOpen] = useState<'windows' | 'macos' | null>(null);
 
-  // States inside mock OS Picker
-  const [mockCurrentDir, setMockCurrentDir] = useState<string>('');
+  
+  const [currentDir, setCurrentDir] = useState<string>('');
   const [osSearchQuery, setOsSearchQuery] = useState('');
 
   // Step 4: Provider Authentication Setup
@@ -440,7 +440,7 @@ export default function CreateSyncRequestWizard({
                     type="button"
                     onClick={() => {
                       setOsPickerOpen('windows');
-                      setMockCurrentDir(windowsDirectories[0].name);
+                      setCurrentDir(windowsDirectories[0].name);
                     }}
                     className="inline-flex items-center gap-2 px-4.5 py-3 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-xs font-bold text-neutral-800 dark:text-neutral-200 cursor-pointer transition-colors shadow-xs"
                     id="browse-windows"
@@ -453,7 +453,7 @@ export default function CreateSyncRequestWizard({
                     type="button"
                     onClick={() => {
                       setOsPickerOpen('macos');
-                      setMockCurrentDir(macDirectories[0].name);
+                      setCurrentDir(macDirectories[0].name);
                     }}
                     className="inline-flex items-center gap-2 px-4.5 py-3 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-xs font-bold text-neutral-800 dark:text-neutral-200 cursor-pointer transition-colors shadow-xs"
                     id="browse-macos"
@@ -871,7 +871,7 @@ export default function CreateSyncRequestWizard({
                 {/* Path input bar */}
                 <div className="flex-1 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-2.5 py-1 text-xs text-zinc-750 dark:text-zinc-200 flex items-center gap-1">
                   <span className="text-zinc-455">📁</span>
-                  <span className="font-mono font-medium truncate">{mockCurrentDir || 'This PC > Local Disk (D:) > Projects'}</span>
+                  <span className="font-mono font-medium truncate">{currentDir || 'This PC > Local Disk (D:) > Projects'}</span>
                 </div>
 
                 {/* Filter and search Explorer style icon */}
@@ -914,11 +914,11 @@ export default function CreateSyncRequestWizard({
                   {windowsDirectories
                     .filter(dir => dir.label.toLowerCase().includes(osSearchQuery.toLowerCase()))
                     .map((dir) => {
-                      const isSel = mockCurrentDir === dir.name;
+                      const isSel = currentDir === dir.name;
                       return (
                         <div
                           key={dir.name}
-                          onClick={() => setMockCurrentDir(dir.name)}
+                          onClick={() => setCurrentDir(dir.name)}
                           className={`p-2 rounded flex items-center gap-2.5 cursor-pointer border transition-all ${
                             isSel
                               ? 'bg-blue-50/10 border-blue-500 text-blue-600 dark:text-blue-400 font-bold'
@@ -940,7 +940,7 @@ export default function CreateSyncRequestWizard({
               <div className="p-3 bg-[#f0f0f0] dark:bg-zinc-900 border-t border-zinc-250 dark:border-zinc-850 flex items-center justify-between select-none">
                 <div className="flex items-center gap-1.5">
                   <span className="text-zinc-450 block font-bold text-[10px] uppercase font-mono">Folders Selection:</span>
-                  <span className="font-mono text-zinc-850 dark:text-zinc-150 font-bold bg-[#dedede] dark:bg-zinc-800 px-2 py-0.5 rounded border border-zinc-300 dark:border-zinc-700">{mockCurrentDir}</span>
+                  <span className="font-mono text-zinc-850 dark:text-zinc-150 font-bold bg-[#dedede] dark:bg-zinc-800 px-2 py-0.5 rounded border border-zinc-300 dark:border-zinc-700">{currentDir}</span>
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -954,7 +954,7 @@ export default function CreateSyncRequestWizard({
                   <button
                     type="button"
                     onClick={() => {
-                      setLocalFolder(mockCurrentDir);
+                      setLocalFolder(currentDir);
                       setOsPickerOpen(null);
                     }}
                     className="px-5 py-1.5 bg-[#0078d7] text-white hover:bg-[#1885de] border border-[#006cc2] font-semibold rounded cursor-pointer shadow-xs"
@@ -1009,11 +1009,11 @@ export default function CreateSyncRequestWizard({
                   {macDirectories
                     .filter(dir => dir.label.toLowerCase().includes(osSearchQuery.toLowerCase()))
                     .map((dir) => {
-                      const isSel = mockCurrentDir === dir.name;
+                      const isSel = currentDir === dir.name;
                       return (
                         <div
                           key={dir.name}
-                          onClick={() => setMockCurrentDir(dir.name)}
+                          onClick={() => setCurrentDir(dir.name)}
                           className={`p-2 rounded flex items-center gap-2.5 cursor-pointer border transition-all ${
                             isSel
                               ? 'bg-blue-50/10 border-blue-500 text-blue-600 dark:text-blue-400 font-bold'
@@ -1033,7 +1033,7 @@ export default function CreateSyncRequestWizard({
 
               {/* macOS Dialog footer actions bar */}
               <div className="p-3 bg-[#ececec] dark:bg-neutral-900 border-t border-neutral-250 dark:border-neutral-800 flex items-center justify-between select-none">
-                <span className="font-mono text-[10px] text-neutral-500 truncate max-w-xs">{mockCurrentDir}</span>
+                <span className="font-mono text-[10px] text-neutral-500 truncate max-w-xs">{currentDir}</span>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -1045,7 +1045,7 @@ export default function CreateSyncRequestWizard({
                   <button
                     type="button"
                     onClick={() => {
-                      setLocalFolder(mockCurrentDir);
+                      setLocalFolder(currentDir);
                       setOsPickerOpen(null);
                     }}
                     className="px-4.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded cursor-pointer font-bold shadow-xs"

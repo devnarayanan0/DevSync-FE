@@ -70,7 +70,7 @@ export function showNotification(title: string, message: string): void {
   if (isElectron()) {
     window.electronAPI!.showNotification(title, message);
   } else {
-    console.log(`[Notification Mock] ${title}: ${message}`);
+    console.log(`[Notification] ${title}: ${message}`);
   }
 }
 
@@ -100,15 +100,15 @@ export async function authLogin(email: string, password: string): Promise<any> {
   if (isElectron()) {
     return await window.electronAPI!.authLogin(email, password);
   }
-  const mockUser: UserProfile = {
+  const localUser: UserProfile = {
     name: email.split('@')[0],
     email: email,
     role: 'Local Admin',
     tenant: 'Local System',
   };
   localStorage.setItem('devsync_is_logged_in', 'true');
-  localStorage.setItem('devsync_user_profile', JSON.stringify(mockUser));
-  return { isLoggedIn: true, token: 'browser-token', user: mockUser };
+  localStorage.setItem('devsync_user_profile', JSON.stringify(localUser));
+  return { isLoggedIn: true, token: 'browser-token', user: localUser };
 }
 
 export async function authLogout(): Promise<boolean> {
@@ -124,16 +124,16 @@ export async function authGetSession(): Promise<{ isLoggedIn: boolean; token: st
     return await window.electronAPI!.authGetSession();
   }
   const isLoggedIn = localStorage.getItem('devsync_is_logged_in') === 'true';
-  let mockUser: UserProfile | null = null;
+  let localUser: UserProfile | null = null;
   if (isLoggedIn) {
     const storedUser = localStorage.getItem('devsync_user_profile');
     if (storedUser) {
-      mockUser = JSON.parse(storedUser);
+      localUser = JSON.parse(storedUser);
     } else {
-      mockUser = { name: 'Browser User', email: 'browser@local.dev', role: 'Local Admin', tenant: 'Local System' };
+      localUser = { name: 'Browser User', email: 'browser@local.dev', role: 'Local Admin', tenant: 'Local System' };
     }
   }
-  return { isLoggedIn, token: isLoggedIn ? 'browser-token' : '', user: mockUser };
+  return { isLoggedIn, token: isLoggedIn ? 'browser-token' : '', user: localUser };
 }
 
 export async function tenantCreate(tenantName: string, provider: 'AWS' | 'GDRIVE'): Promise<any> {

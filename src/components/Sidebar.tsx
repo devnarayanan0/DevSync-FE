@@ -79,17 +79,8 @@ export default function Sidebar({
       }`}
       id="devsync-navigation-sidebar"
     >
-      {/* Top Sidebar Badge */}
-      <div className="flex h-12 items-center px-4 border-b border-theme-border/60 justify-between">
-        {isExpanded ? (
-          <div className="flex items-center gap-2"><img src="/logo.png" alt="Logo" className="w-6 h-6 object-contain" /><span className="text-[10px] uppercase tracking-[0.16em] font-bold text-indigo-600 dark:text-indigo-400">DevSync</span></div>
-        ) : (
-          <img src="/logo.png" alt="DevSync" className="w-6 h-6 object-contain" />
-        )}
-      </div>
-
       {/* Main Nav Items List */}
-      <nav className="flex-1 space-y-1.5 p-2">
+      <nav className="flex-1 space-y-1.5 p-2 pt-4">
         {navigationItems.map((item) => {
           const IconComponent = item.icon;
           const isActive = activeTabId === item.id;

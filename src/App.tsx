@@ -61,7 +61,7 @@ export default function App() {
   const [aboutOpen, setAboutOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  // Mock initial logged user
+  
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // Sync Requests database loaded from local SQLite/localStorage

@@ -31,7 +31,7 @@ interface SyncRequestWorkspaceProps {
   onUpdatePaths: (id: string, localPath: string, remoteFolder: string) => void;
 }
 
-// Simple human-readable mock activities
+
 const WORKSPACE_ACTIVITIES = [
   { id: '1', time: '10:15:30 AM', operation: 'UPLOAD', status: 'SUCCESS', message: 'budget_q2_draft.xlsx synchronized successfully.' },
   { id: '2', time: '10:15:32 AM', operation: 'UPLOAD', status: 'SUCCESS', message: 'sales_forecast_final.pdf uploaded.' },
@@ -85,7 +85,7 @@ export default function SyncRequestWorkspace({
   };
 
   // Directory browse options
-  const mockDirectories: string[] = [];
+  const directories: string[] = [];
 
   const handleApplyPaths = (newLocal: string, newRemote: string) => {
     onUpdatePaths(reqData.id, newLocal, newRemote);
@@ -692,8 +692,8 @@ export default function SyncRequestWorkspace({
             </div>
 
             <div className="space-y-2 max-h-[200px] overflow-y-auto">
-              {mockDirectories.length === 0 && <div className="text-center text-xs text-neutral-500 py-4">No local directories indexed</div>}
-              {mockDirectories.map((dir, idx) => (
+              {directories.length === 0 && <div className="text-center text-xs text-neutral-500 py-4">No local directories indexed</div>}
+              {directories.map((dir, idx) => (
                 <div
                   key={idx}
                   onClick={() => {
