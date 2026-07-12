@@ -29,35 +29,35 @@ export default function DesktopBootLoader({ onComplete }: DesktopBootLoaderProps
     {
       id: 1,
       label: 'Loading user settings',
-      detail: 'Retrieving client preferences and startup rules...',
+      detail: 'Retrieving preferences...',
       icon: Settings,
       status: 'pending',
     },
     {
       id: 2,
       label: 'Loading local SQLite database',
-      detail: isElectron() ? 'Initializing connection to devsync.db...' : 'Allocating local persistence buffers...',
+      detail: 'Initializing connection...',
       icon: Database,
       status: 'pending',
     },
     {
       id: 3,
       label: 'Loading sync requests',
-      detail: 'Fetching registered replication pipelines...',
+      detail: 'Fetching configuration...',
       icon: RefreshCw,
       status: 'pending',
     },
     {
       id: 4,
       label: 'Connecting to backend',
-      detail: 'Connecting to client control plane...',
+      detail: 'Connecting to network...',
       icon: Network,
       status: 'pending',
     },
     {
       id: 5,
       label: 'Preparing workspace',
-      detail: 'Mounting secure storage sandbox...',
+      detail: 'Preparing environment...',
       icon: Monitor,
       status: 'pending',
     },
@@ -164,7 +164,7 @@ export default function DesktopBootLoader({ onComplete }: DesktopBootLoaderProps
         {/* Minimalist Logo design */}
         <div className="relative mb-6 flex items-center justify-center">
           <div className="h-16 w-16 rounded-2xl bg-white border border-slate-200/80 p-2.5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center">
-            <span className="font-mono text-2xl font-bold tracking-tighter bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">DS</span>
+            <img src="/logo.png" alt="DevSync" className="w-full h-full object-contain" />
           </div>
           <div className="absolute -inset-1 rounded-3xl bg-indigo-500/10 blur-md -z-10 animate-pulse" />
         </div>
@@ -172,68 +172,13 @@ export default function DesktopBootLoader({ onComplete }: DesktopBootLoaderProps
         {/* Brand Information */}
         <div className="text-center mb-8 space-y-1">
           <h2 id="bootloader-title" className="text-xl font-bold tracking-tight text-slate-900">
-            DevSync Client
+            DevSync
           </h2>
-          <p className="text-[10px] font-mono text-slate-400 tracking-wider uppercase">
-            {isElectron() ? 'Native Client Shell' : 'Workspace Secure Node'}
-          </p>
+          
         </div>
 
         {/* Real Steps Container */}
-        <div className="w-full space-y-3.5 bg-white border border-slate-200/60 p-5 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.02)]">
-          {steps.map((step) => {
-            const IconComponent = step.icon;
-            const isPending = step.status === 'pending';
-            const isRunning = step.status === 'running';
-            const isSuccess = step.status === 'success';
-
-            return (
-              <div
-                key={step.id}
-                className={`flex gap-3.5 items-center transition-all duration-300 ${
-                  isPending ? 'opacity-35 filter grayscale' : 'opacity-100'
-                }`}
-              >
-                <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-lg border transition-colors ${
-                    isSuccess
-                      ? 'bg-emerald-50 border-emerald-100 text-emerald-600'
-                      : isRunning
-                      ? 'bg-indigo-50 border-indigo-100 text-indigo-600'
-                      : 'bg-slate-50 border-slate-100 text-slate-400'
-                  }`}
-                >
-                  {isRunning ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : isSuccess ? (
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                  ) : (
-                    <IconComponent className="h-3.5 w-3.5" />
-                  )}
-                </div>
-
-                <div className="flex-1 overflow-hidden">
-                  <div className="flex justify-between items-baseline">
-                    <span className="text-xs font-semibold text-slate-800">{step.label}</span>
-                    <span className="text-[9px] font-mono text-slate-400 uppercase">
-                      {isSuccess ? 'ready' : isRunning ? 'active' : 'queued'}
-                    </span>
-                  </div>
-                  <p className="text-[10px] font-mono text-slate-400 truncate mt-0.5">
-                    {step.detail}
-                  </p>
-                </div>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Elegant minimal progress meter */}
-        <div className="mt-8 flex items-center gap-2 text-slate-400 font-mono text-[9px] uppercase tracking-widest">
-          <Disc className="h-3 w-3 text-indigo-500 animate-spin" />
-          <span>Local Environment Primed</span>
-        </div>
-      </div>
     </div>
   );
 }

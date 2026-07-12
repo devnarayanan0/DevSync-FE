@@ -101,21 +101,19 @@ export default function LoginPage({
             <Moon className="h-4 w-4 text-slate-600" />
           )}
         </button>
+        <button
+          onClick={() => onLoginSuccess({ name: 'Dev', email: 'dev@local', role: 'Admin', tenant: 'Local' }, false)}
+          className="ml-2 rounded-sm p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-200 transition-colors text-[10px] font-mono font-bold uppercase"
+        >
+          Dev Bypass
+        </button>
       </div>
 
       <div className="w-full max-w-md px-6">
         {/* Logo Section */}
         <div className="mb-6 flex flex-col items-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-indigo-600 text-white shadow-xs">
-            <svg
-              className="h-6 w-6 animate-spin-slow text-white"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H17" />
-            </svg>
+          <div className="flex h-12 w-12 items-center justify-center rounded-sm text-white shadow-xs">
+            <img src="/logo.png" alt="DevSync Logo" className="h-full w-full object-contain" />
           </div>
           <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 font-sans uppercase">
             DevSync

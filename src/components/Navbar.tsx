@@ -105,7 +105,7 @@ export default function Navbar({
         <button
           onClick={onOpenAbout}
           className="rounded-sm p-2 text-slate-500 hover:bg-theme-border hover:text-slate-700 dark:text-slate-450 dark:hover:bg-theme-border dark:hover:text-slate-200 transition-colors"
-          title="About DevSync Client"
+          title="About DevSync"
           aria-label="About DevSync client details"
           id="about-button"
         >

@@ -339,54 +339,7 @@ export default function App() {
     if (isNew) {
       setSyncRequests([]);
     } else {
-      // Re-populate default configs if they were cleared
-      if (syncRequests.length === 0) {
-        const defaultReqs: SyncRequest[] = [
-          {
-            id: 'aws-s3-prod',
-            name: 'AWS S3 Production Backup',
-            provider: 'aws-s3',
-            status: 'syncing',
-            localPath: '/Users/david/workspace/devsync/prod-data',
-            remoteFolder: 's3://production-vault-sync-us-east-1/backups/',
-            lastSync: '2026-06-20 05:30:12',
-            schedule: 'Every 30 Minutes',
-          },
-          {
-            id: 'gdrive-design',
-            name: 'Design & Brand Guidelines',
-            provider: 'google-drive',
-            status: 'idle',
-            localPath: '/Users/david/designs/brand-vault',
-            remoteFolder: 'gdrive://shared-drives/design-assets-hub/',
-            lastSync: '2026-06-20 04:15:00',
-            schedule: 'Daily at 02:00 AM',
-          },
-          {
-            id: 'gdrive-budget',
-            name: 'Q2 Budgeting Sync',
-            provider: 'google-drive',
-            status: 'failed',
-            localPath: '/Users/david/finance/q2-work',
-            remoteFolder: 'gdrive://my-drive/finance-archives/q2-2026/',
-            lastSync: '2026-06-19 18:22:10',
-            schedule: 'Manual Trigger Only',
-          },
-          {
-            id: 'aws-s3-media',
-            name: 'Client Video Assets',
-            provider: 'aws-s3',
-            status: 'paused',
-            localPath: '/Users/david/videos/render-outputs',
-            remoteFolder: 's3://client-delivery-bucket-s3/master-renders/',
-            lastSync: '2026-06-18 10:45:30',
-            schedule: 'Every 6 Hours',
-          }
-        ];
-        setSyncRequests(defaultReqs);
-        // Save these to SQLite as well to persist them properly
-        defaultReqs.forEach(req => saveSyncRequest(req));
-      }
+      // No default configs
     }
     // Switch back to dashboard tab
     setTabs([{ id: 'dashboard', title: 'Dashboard', type: 'dashboard' }]);
@@ -568,7 +521,7 @@ export default function App() {
                     </div>
                     <div className="mt-2.5 flex items-baseline space-x-1.5 font-mono">
                       <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                        2
+                        {new Set(syncRequests.map(r => r.provider)).size}
                       </span>
                       <span className="text-[10px] uppercase text-slate-400 tracking-wider">Cloud Integrations</span>
                     </div>
@@ -700,72 +653,34 @@ export default function App() {
                   {/* Right Column: API Connectivity, Statuses, and Coming Soon placeholders */}
                   <div className="space-y-4">
                     {/* Cloud Connections */}
+                    
                     <div className="rounded-xl border border-theme-border bg-theme-card p-4.5 shadow-xs space-y-4">
                       <h2 className="text-sm font-bold text-neutral-800 dark:text-neutral-100">
                         Connected Providers
                       </h2>
-
                       <div className="space-y-2.5">
-                        {/* AWS Provider */}
-                        <div className="flex items-center justify-between rounded-lg border border-theme-border p-2.5 bg-theme-bg">
-                          <div className="flex items-center space-x-2 overflow-hidden">
-                            <div className="h-7 w-7 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-xs shrink-0">
-                              S3
+                        {syncRequests.length === 0 ? (
+                          <div className="text-xs text-neutral-500 py-2">No active cloud integrations.</div>
+                        ) : (
+                          Array.from(new Set(syncRequests.map(r => r.provider))).map(provider => (
+                            <div key={provider} className="flex items-center justify-between rounded-lg border border-theme-border p-2.5 bg-theme-bg">
+                              <div className="flex items-center space-x-2 overflow-hidden">
+                                <div className="h-7 w-7 rounded bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0 uppercase">
+                                  {provider.substring(0, 2)}
+                                </div>
+                                <div className="overflow-hidden">
+                                  <h4 className="text-xs font-semibold text-neutral-900 dark:text-white truncate uppercase">{provider.replace('-', ' ')}</h4>
+                                  <p className="text-[10px] text-neutral-400 truncate">Configured via Pipeline</p>
+                                </div>
+                              </div>
+                              <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-bold text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                Active
+                              </span>
                             </div>
-                            <div className="overflow-hidden">
-                              <h4 className="text-xs font-semibold text-neutral-900 dark:text-white truncate">AWS S3 Integration</h4>
-                              <p className="text-[10px] text-neutral-400 truncate">Token expires in 6 hours</p>
-                            </div>
-                          </div>
-                          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-bold text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                            Active
-                          </span>
-                        </div>
-
-                        {/* Google Drive Provider */}
-                        <div className="flex items-center justify-between rounded-lg border border-theme-border p-2.5 bg-theme-bg">
-                          <div className="flex items-center space-x-2 overflow-hidden">
-                            <div className="h-7 w-7 rounded bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold text-xs shrink-0">
-                              GD
-                            </div>
-                            <div className="overflow-hidden">
-                              <h4 className="text-xs font-semibold text-neutral-900 dark:text-white truncate">Google Drive OAuth</h4>
-                              <p className="text-[10px] text-neutral-400 truncate">Approved Tenant Scope</p>
-                            </div>
-                          </div>
-                          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-bold text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                            Active
-                          </span>
-                        </div>
-
-                        {/* MS Azure - Coming Soon */}
-                        <div className="flex items-center justify-between rounded-lg border border-theme-border p-2.5 bg-theme-bg opacity-65">
-                          <div className="flex items-center space-x-2">
-                            <div className="h-7 w-7 rounded bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 flex items-center justify-center font-bold text-[10px] shrink-0">
-                              AZ
-                            </div>
-                            <div>
-                              <h4 className="text-xs font-semibold text-neutral-400 dark:text-neutral-500">Microsoft Azure Blob</h4>
-                              <p className="text-[10px] text-neutral-400">Status: Coming Soon</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Dropbox - Coming Soon */}
-                        <div className="flex items-center justify-between rounded-lg border border-theme-border p-2.5 bg-theme-bg opacity-65">
-                          <div className="flex items-center space-x-2">
-                            <div className="h-7 w-7 rounded bg-sky-505/10 text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0">
-                              DB
-                            </div>
-                            <div>
-                              <h4 className="text-xs font-semibold text-neutral-400 dark:text-neutral-500">Dropbox Synclink</h4>
-                              <p className="text-[10px] text-neutral-400">Status: Coming Soon</p>
-                            </div>
-                          </div>
-                        </div>
+                          ))
+                        )}
                       </div>
                     </div>
-
                     {/* Scheduling automation quick check */}
                     <div className="rounded-xl border border-theme-border bg-indigo-900/5 p-4.5 space-y-3 dark:bg-indigo-950/10">
                       <div className="flex items-center justify-between">

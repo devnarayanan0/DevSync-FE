@@ -210,12 +210,12 @@ export async function getSyncRequests(): Promise<SyncRequest[]> {
       folderId: row.folderId || undefined
     }));
   }
-  const stored = localStorage.getItem('devsync_requests');
+  const stored = localStorage.getItem('devsync_user_requests');
   if (stored) {
     try {
       return JSON.parse(stored);
     } catch (e) {
-      console.error('Failed to parse devsync_requests', e);
+      console.error('Failed to parse devsync_user_requests', e);
     }
   }
   return [];
@@ -232,7 +232,7 @@ export async function saveSyncRequest(req: SyncRequest): Promise<boolean> {
   } else {
     reqs.push(req);
   }
-  localStorage.setItem('devsync_requests', JSON.stringify(reqs));
+  localStorage.setItem('devsync_user_requests', JSON.stringify(reqs));
   return true;
 }
 
@@ -242,7 +242,7 @@ export async function deleteSyncRequest(id: string): Promise<boolean> {
   }
   const reqs = await getSyncRequests();
   const filtered = reqs.filter(r => r.id !== id);
-  localStorage.setItem('devsync_requests', JSON.stringify(filtered));
+  localStorage.setItem('devsync_user_requests', JSON.stringify(filtered));
   return true;
 }
 
@@ -252,7 +252,7 @@ export async function updateSyncRequestPaths(id: string, localPath: string, remo
   }
   const reqs = await getSyncRequests();
   const updated = reqs.map(r => r.id === id ? { ...r, localPath, remoteFolder } : r);
-  localStorage.setItem('devsync_requests', JSON.stringify(updated));
+  localStorage.setItem('devsync_user_requests', JSON.stringify(updated));
   return true;
 }
 
@@ -262,7 +262,7 @@ export async function updateSyncRequestStatus(id: string, status: 'syncing' | 'i
   }
   const reqs = await getSyncRequests();
   const updated = reqs.map(r => r.id === id ? { ...r, status } : r);
-  localStorage.setItem('devsync_requests', JSON.stringify(updated));
+  localStorage.setItem('devsync_user_requests', JSON.stringify(updated));
   return true;
 }
 

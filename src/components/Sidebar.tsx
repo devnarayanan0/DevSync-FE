@@ -82,13 +82,9 @@ export default function Sidebar({
       {/* Top Sidebar Badge */}
       <div className="flex h-12 items-center px-4 border-b border-theme-border/60 justify-between">
         {isExpanded ? (
-          <span className="text-[10px] uppercase tracking-[0.16em] font-bold text-indigo-600 dark:text-indigo-400">
-            DevSync
-          </span>
+          <div className="flex items-center gap-2"><img src="/logo.png" alt="Logo" className="w-6 h-6 object-contain" /><span className="text-[10px] uppercase tracking-[0.16em] font-bold text-indigo-600 dark:text-indigo-400">DevSync</span></div>
         ) : (
-          <span className="mx-auto text-[10px] font-mono font-bold text-slate-400 dark:text-slate-500">
-            DS
-          </span>
+          <img src="/logo.png" alt="DevSync" className="w-6 h-6 object-contain" />
         )}
       </div>
 

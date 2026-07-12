@@ -277,7 +277,7 @@ export default function SyncRequestWorkspace({
           
           {isLoadingChanges ? (
             <div className="p-10 text-center border border-dashed border-theme-border rounded bg-theme-card text-xs">
-              <RotateCw className="mx-auto h-6 w-6 text-indigo-500 animate-spin mb-2" />
+              <video src="/loading.mp4" autoPlay loop muted className="w-16 h-16 mx-auto mb-2 rounded-lg object-cover pointer-events-none" />
               <h4 className="font-bold text-theme-text">Scanning differences...</h4>
             </div>
           ) : !changesPreview ? (
