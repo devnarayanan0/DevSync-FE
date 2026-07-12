@@ -62,12 +62,7 @@ export default function App() {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   // Mock initial logged user
-  const [userProfile, setUserProfile] = useState<UserProfile>({
-    name: 'Current User',
-    email: 'current.user@devsync.io',
-    role: 'Storage Lead',
-    tenant: 'Client-Org-Production',
-  });
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // Sync Requests database loaded from local SQLite/localStorage
   const [syncRequests, setSyncRequests] = useState<SyncRequest[]>([]);
@@ -122,56 +117,9 @@ export default function App() {
   const [workspaceSubTabs, setWorkspaceSubTabs] = useState<Record<string, 'overview' | 'settings' | 'analytics' | 'activity'>>({});
 
   // Real-time simulated logs data pool
-  const [logMessages, setLogMessages] = useState<Array<{ timestamp: string; level: 'INFO' | 'WARN' | 'ERROR'; source: string; message: string }>>([
-    { timestamp: '12:40:02', level: 'INFO', source: 'client', message: 'Local workspace folder scan completed successfully' },
-    { timestamp: '12:40:15', level: 'INFO', source: 'aws-prov', message: 'Verifying AWS credentials for prod-vault-sync' },
-    { timestamp: '12:40:18', level: 'INFO', source: 'sync-engine', message: 'Detected 12 file changes in local directories' },
-    { timestamp: '12:40:22', level: 'INFO', source: 'sync-engine', message: 'Uploading file updates to s3://production-vault-sync-us-east-1...' },
-    { timestamp: '12:41:05', level: 'WARN', source: 'gdrive-prov', message: 'Approaching monthly resource quota limits' },
-    { timestamp: '12:42:10', level: 'ERROR', source: 'sync-engine', message: 'Authentication failure: Google Drive integration invalid credentials' },
-    { timestamp: '12:43:00', level: 'INFO', source: 'client', message: 'Synchronization local records consolidated successfully.' },
-  ]);
+  const [logMessages, setLogMessages] = useState<Array<{ timestamp: string; level: 'INFO' | 'WARN' | 'ERROR'; source: string; message: string }>>([]);
 
-  // Auto-simulation timer to prove live state & client updates in "Desktop Dashboard"
-  useEffect(() => {
-    const timer = setInterval(() => {
-      // Simulate random sync engine transfers occasionally
-      setSyncRequests((prev) =>
-        prev.map((req) => {
-          if (req.status === 'syncing' && Math.random() > 0.7) {
-            return {
-              ...req,
-              lastSync: new Date().toISOString().replace('T', ' ').substring(0, 19),
-            };
-          }
-          return req;
-        })
-      );
-
-      // Append random mock log statements occasionally to show dynamic activity
-      if (Math.random() > 0.8) {
-        const sources = ['client', 'aws-prov', 'gdrive-prov', 'scheduler'];
-        const levels: ('INFO' | 'WARN')[] = ['INFO', 'WARN'];
-        const messages = [
-          'Calculated metadata hash validation matching remotely',
-          'Hourly scheduled job verification executed',
-          'Disk storage threshold check: 78% remaining healthy',
-          'Established cloud store connection successfully',
-        ];
-        const randomSource = sources[Math.floor(Math.random() * sources.length)];
-        const randomLevel = levels[Math.floor(Math.random() * levels.length)];
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        const curTime = new Date().toTimeString().split(' ')[0];
-
-        setLogMessages((prev) => [
-          ...prev,
-          { timestamp: curTime, level: randomLevel, source: randomSource, message: randomMessage },
-        ].slice(-40)); // keep last 40 logs
-      }
-    }, 4500);
-
-    return () => clearInterval(timer);
-  }, []);
+    // Auto-simulation timer removed.
 
   // Update HTML element on toggle theme
   useEffect(() => {
@@ -511,7 +459,8 @@ export default function App() {
         theme={theme}
         onThemeToggle={handleToggleTheme}
         onWizardComplete={handleWizardComplete}
-        userEmail={userProfile.email}
+        userEmail={userProfile!.email}
+        onLogout={handleLogout}
       />
     );
   }
@@ -523,7 +472,7 @@ export default function App() {
         theme={theme}
         onThemeToggle={handleToggleTheme}
         onOpenAbout={() => setAboutOpen(true)}
-        user={userProfile}
+        user={userProfile!}
         onLogout={handleLogout}
         onNavigateToTab={handleSidebarTabNavigate}
         onSearchChange={setSearchTerm}
@@ -573,7 +522,7 @@ export default function App() {
                 <div className="flex flex-col justify-between border-b border-slate-100 pb-5 dark:border-slate-850 md:flex-row md:items-center">
                   <div>
                     <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50 uppercase font-sans">
-                      Welcome Back, {userProfile.name}
+                      Welcome Back, {userProfile!.name}
                     </h1>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                       Manage and monitor your cloud synchronization requests.
@@ -730,6 +679,7 @@ export default function App() {
                         </div>
                       </div>
                       <div className="bg-neutral-950 p-4 font-mono text-[11px] leading-relaxed text-neutral-300 space-y-1.5 overflow-hidden">
+                        {logMessages.length === 0 && <div className="text-neutral-500 text-center py-2">No recent system logs</div>}
                         {logMessages.slice(-5).map((log, index) => (
                           <div key={index} className="flex space-x-2">
                             <span className="text-neutral-500">[{log.timestamp}]</span>

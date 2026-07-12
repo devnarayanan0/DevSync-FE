@@ -1,97 +1,29 @@
 import { app, BrowserWindow, ipcMain, dialog, Notification, Tray, Menu, nativeImage } from 'electron';
 import * as path from 'path';
-import Database from 'better-sqlite3';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+// Load environment variables
+const envPath = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
+dotenv.config({ path: path.resolve(process.cwd(), envPath) });
+// Fallback
+dotenv.config();
+
+// Import local services
+import { initDatabase, getDb, getSetting, setSetting } from './services/DatabaseService';
+import { AuthService } from './services/AuthService';
+import { TenantService } from './services/TenantService';
+import { AwsService } from './services/AwsService';
+import { GoogleDriveService } from './services/GoogleDriveService';
+import { SyncService } from './services/SyncService';
+import { FolderWatcherService } from './services/FolderWatcherService';
+import { SyncSchedulerService } from './services/SyncSchedulerService';
+
+// Resolve directory name under ESM if needed (since main.js is compiled to CommonJS via esbuild, __dirname will be populated by esbuild automatically)
+const actualDirName = __dirname;
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
-let db: Database.Database | null = null;
-
-// Initialize SQLite database in application user data path
-function initDatabase() {
-  try {
-    const dbPath = path.join(app.getPath('userData'), 'devsync.db');
-    console.log(`Connecting SQLite database at: ${dbPath}`);
-    db = new Database(dbPath);
-    
-    // Create sync_requests table
-    db.prepare(`
-      CREATE TABLE IF NOT EXISTS sync_requests (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        provider TEXT NOT NULL,
-        status TEXT NOT NULL,
-        localPath TEXT NOT NULL,
-        remoteFolder TEXT NOT NULL,
-        lastSync TEXT,
-        schedule TEXT,
-        description TEXT
-      )
-    `).run();
-
-    // Check if table has seed data (optional mockup values)
-    const countResult = db.prepare('SELECT count(*) as count FROM sync_requests').get() as { count: number };
-    if (countResult.count === 0) {
-      console.log('Seeding SQLite database with default Sync Requests...');
-      const seedStatements = [
-        {
-          id: 'aws-s3-prod',
-          name: 'AWS S3 Production Backup',
-          provider: 'aws-s3',
-          status: 'syncing',
-          localPath: '/Users/david/workspace/devsync/prod-data',
-          remoteFolder: 's3://production-vault-sync-us-east-1/backups/',
-          lastSync: '2026-06-20 05:30:12',
-          schedule: 'Every 30 Minutes',
-          description: 'Backup important production data',
-        },
-        {
-          id: 'gdrive-design',
-          name: 'Design & Brand Guidelines',
-          provider: 'google-drive',
-          status: 'idle',
-          localPath: '/Users/david/designs/brand-vault',
-          remoteFolder: 'gdrive://shared-drives/design-assets-hub/',
-          lastSync: '2026-06-20 04:15:00',
-          schedule: 'Daily at 02:00 AM',
-          description: 'Design system and brand assets',
-        },
-        {
-          id: 'gdrive-budget',
-          name: 'Q2 Budgeting Sync',
-          provider: 'google-drive',
-          status: 'failed',
-          localPath: '/Users/david/finance/q2-work',
-          remoteFolder: 'gdrive://my-drive/finance-archives/q2-2026/',
-          lastSync: '2026-06-19 18:22:10',
-          schedule: 'Manual Trigger Only',
-          description: 'Finance documents and reports',
-        },
-        {
-          id: 'aws-s3-media',
-          name: 'Client Video Assets',
-          provider: 'aws-s3',
-          status: 'paused',
-          localPath: '/Users/david/videos/render-outputs',
-          remoteFolder: 's3://client-delivery-bucket-s3/master-renders/',
-          lastSync: '2026-06-18 10:45:30',
-          schedule: 'Every 6 Hours',
-          description: 'Rendered videos and final outputs',
-        },
-      ];
-
-      const insertStmt = db.prepare(`
-        INSERT INTO sync_requests (id, name, provider, status, localPath, remoteFolder, lastSync, schedule, description)
-        VALUES (@id, @name, @provider, @status, @localPath, @remoteFolder, @lastSync, @schedule, @description)
-      `);
-
-      for (const item of seedStatements) {
-        insertStmt.run(item);
-      }
-    }
-  } catch (err) {
-    console.error('Failed to initialize SQLite Database:', err);
-  }
-}
 
 function createWindow() {
   const isDev = process.env.NODE_ENV !== 'production';
@@ -243,7 +175,7 @@ function createWindow() {
     show: false,
     title: 'DevSync Desktop Native App Client',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(actualDirName, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
     },
@@ -252,12 +184,11 @@ function createWindow() {
   if (isDev) {
     mainWindow.loadURL('http://localhost:3000');
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+    mainWindow.loadFile(path.join(actualDirName, '../dist/index.html'));
   }
 
   // Once-ready transition
   mainWindow.once('ready-to-show', () => {
-    // Elegant transition sequence - simulated delay for seamless asset rendering
     setTimeout(() => {
       if (splash && !splash.isDestroyed()) {
         splash.close();
@@ -278,7 +209,6 @@ function createWindow() {
 }
 
 function createTray() {
-  // Use a base64 16x16 blue block icon as fallback or default tray icon
   const trayIcon = nativeImage.createFromDataURL(
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMklEQVR42mNkHPjfz4AEYGTYyYBMgK4eG6C7BhsgmgbYkB6NYEA0g6GBAV0uGMDmgg8AAPmDFXm0eC0YAAAAAElFTkSuQmCC'
   );
@@ -330,7 +260,7 @@ function createTray() {
   });
 }
 
-// IPC Handlers
+// IPC Handlers wiring
 function setupIpcHandlers() {
   // Folder picker dialog
   ipcMain.handle('select-directory', async () => {
@@ -365,9 +295,63 @@ function setupIpcHandlers() {
     return app.getLoginItemSettings().openAtLogin;
   });
 
-  // DB Handlers
+  // Authentication IPCs
+  ipcMain.handle('auth:register', async (_event, { email, password }) => {
+    return await AuthService.register(email, password);
+  });
+
+  ipcMain.handle('auth:login', async (_event, { email, password }) => {
+    return await AuthService.login(email, password);
+  });
+
+  ipcMain.handle('auth:logout', async () => {
+    await AuthService.logout();
+    return true;
+  });
+
+  ipcMain.handle('auth:getSession', () => {
+    return AuthService.getSession();
+  });
+
+  // Tenant / Cloud connection IPCs
+  ipcMain.handle('connection:create', async (_event, { tenantName, provider }) => {
+    return await TenantService.createTenant(tenantName, provider);
+  });
+
+  ipcMain.handle('connection:getActive', () => {
+    return TenantService.getActiveTenant();
+  });
+
+  // AWS operations
+  ipcMain.handle('connection:verifyAws', async (_event, { tenantId, accessKey, secretKey, region }) => {
+    return await AwsService.verifyConnection(tenantId, accessKey, secretKey, region);
+  });
+
+  ipcMain.handle('operations:aws:listBuckets', async (_event, tenantId) => {
+    return await AwsService.listBuckets(tenantId);
+  });
+
+  ipcMain.handle('operations:aws:createBucket', async (_event, { tenantId, bucketName }) => {
+    await AwsService.createBucket(tenantId, bucketName);
+    return true;
+  });
+
+  // Google Drive operations
+  ipcMain.handle('connection:getGdriveAuthUrl', async (_event, tenantId) => {
+    return await GoogleDriveService.getAuthUrl(tenantId);
+  });
+
+  ipcMain.handle('operations:gdrive:listFolders', async (_event, { tenantId, folderId }) => {
+    return await GoogleDriveService.listFolders(tenantId, folderId);
+  });
+
+  ipcMain.handle('operations:gdrive:createFolder', async (_event, { tenantId, folderName, parentFolderId }) => {
+    return await GoogleDriveService.createFolder(tenantId, folderName, parentFolderId);
+  });
+
+  // Database Handlers for sync requests
   ipcMain.handle('db-get-sync-requests', () => {
-    if (!db) return [];
+    const db = getDb();
     try {
       return db.prepare('SELECT * FROM sync_requests').all();
     } catch (err) {
@@ -377,13 +361,32 @@ function setupIpcHandlers() {
   });
 
   ipcMain.handle('db-save-sync-request', (_event, req) => {
-    if (!db) return false;
+    const db = getDb();
     try {
       const stmt = db.prepare(`
-        INSERT OR REPLACE INTO sync_requests (id, name, provider, status, localPath, remoteFolder, lastSync, schedule, description)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT OR REPLACE INTO sync_requests (
+          id, name, provider, status, localPath, remoteFolder, lastSync, schedule, description, tenantId, bucketName, folderId
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
-      stmt.run(req.id, req.name, req.provider, req.status, req.localPath, req.remoteFolder, req.lastSync, req.schedule, req.description || '');
+      stmt.run(
+        req.id,
+        req.name,
+        req.provider,
+        req.status,
+        req.localPath,
+        req.remoteFolder,
+        req.lastSync || '',
+        req.schedule || '',
+        req.description || '',
+        req.tenantId || null,
+        req.bucketName || null,
+        req.folderId || null
+      );
+
+      // Re-initialize watchers and schedules for changes to take action
+      FolderWatcherService.startWatcher(req);
+      SyncSchedulerService.scheduleRequest(req);
       return true;
     } catch (err) {
       console.error('db-save-sync-request error:', err);
@@ -392,9 +395,11 @@ function setupIpcHandlers() {
   });
 
   ipcMain.handle('db-delete-sync-request', (_event, id: string) => {
-    if (!db) return false;
+    const db = getDb();
     try {
       db.prepare('DELETE FROM sync_requests WHERE id = ?').run(id);
+      FolderWatcherService.stopWatcher(id);
+      SyncSchedulerService.unscheduleRequest(id);
       return true;
     } catch (err) {
       console.error('db-delete-sync-request error:', err);
@@ -403,9 +408,13 @@ function setupIpcHandlers() {
   });
 
   ipcMain.handle('db-update-sync-request-paths', (_event, { id, localPath, remoteFolder }) => {
-    if (!db) return false;
+    const db = getDb();
     try {
       db.prepare('UPDATE sync_requests SET localPath = ?, remoteFolder = ? WHERE id = ?').run(localPath, remoteFolder, id);
+      const req = db.prepare('SELECT * FROM sync_requests WHERE id = ?').get(id) as any;
+      if (req) {
+        FolderWatcherService.startWatcher(req);
+      }
       return true;
     } catch (err) {
       console.error('db-update-sync-request-paths error:', err);
@@ -414,20 +423,81 @@ function setupIpcHandlers() {
   });
 
   ipcMain.handle('db-update-sync-request-status', (_event, { id, status }) => {
-    if (!db) return false;
+    const db = getDb();
     try {
       db.prepare('UPDATE sync_requests SET status = ? WHERE id = ?').run(status, id);
+      const req = db.prepare('SELECT * FROM sync_requests WHERE id = ?').get(id) as any;
+      if (req) {
+        if (status === 'paused') {
+          FolderWatcherService.stopWatcher(id);
+          SyncSchedulerService.unscheduleRequest(id);
+        } else {
+          FolderWatcherService.startWatcher(req);
+          SyncSchedulerService.scheduleRequest(req);
+        }
+      }
       return true;
     } catch (err) {
       console.error('db-update-sync-request-status error:', err);
       return false;
     }
   });
+
+  // Sync execution triggers
+  ipcMain.handle('sync:triggerSync', async (_event, requestId) => {
+    return await SyncService.runSync(requestId);
+  });
+
+  ipcMain.handle('sync:previewChanges', async (_event, requestId) => {
+    return await SyncService.previewChanges(requestId);
+  });
+
+  ipcMain.handle('sync:getQueue', (_event, requestId) => {
+    const db = getDb();
+    try {
+      if (requestId) {
+        return db.prepare('SELECT * FROM sync_queue WHERE sync_request_id = ? ORDER BY created_at DESC').all(requestId);
+      }
+      return db.prepare('SELECT * FROM sync_queue ORDER BY created_at DESC LIMIT 100').all();
+    } catch (err) {
+      console.error('sync:getQueue error:', err);
+      return [];
+    }
+  });
+
+  ipcMain.handle('sync:getActivityLog', (_event, requestId) => {
+    const db = getDb();
+    try {
+      if (requestId) {
+        return db.prepare('SELECT * FROM activity_log WHERE sync_request_id = ? ORDER BY timestamp DESC').all(requestId);
+      }
+      return db.prepare('SELECT * FROM activity_log ORDER BY timestamp DESC LIMIT 200').all();
+    } catch (err) {
+      console.error('sync:getActivityLog error:', err);
+      return [];
+    }
+  });
+
+  // Local settings
+  ipcMain.handle('settings:get', (_event, { key, defaultValue }) => {
+    return getSetting(key, defaultValue);
+  });
+
+  ipcMain.handle('settings:set', (_event, { key, value }) => {
+    setSetting(key, value);
+    return true;
+  });
 }
 
+// App lifecycle
 app.whenReady().then(() => {
   initDatabase();
   setupIpcHandlers();
+  
+  // Start the background services
+  FolderWatcherService.initWatchers();
+  SyncSchedulerService.initSchedules();
+
   createWindow();
   
   try {

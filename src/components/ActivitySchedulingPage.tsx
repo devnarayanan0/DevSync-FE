@@ -50,64 +50,13 @@ export default function ActivitySchedulingPage({
   const [retryInterval, setRetryInterval] = useState('5 Minutes');
 
   // Groups
-  const [syncGroups, setSyncGroups] = useState<SyncGroup[]>([
-    {
-      id: 'group-mkt',
-      name: 'Marketing Sync Group',
-      requestCount: 2,
-      schedule: 'Every 15 Minutes',
-      status: 'ACTIVE',
-      requestsMappedRef: ['aws-s3-prod', 'gdrive-design'],
-    },
-    {
-      id: 'group-fin',
-      name: 'Financial Archive Group',
-      requestCount: 1,
-      schedule: 'Daily at 02:00 AM',
-      status: 'INACTIVE',
-      requestsMappedRef: ['gdrive-budget'],
-    },
-  ]);
+  const [syncGroups, setSyncGroups] = useState<SyncGroup[]>([]);
 
   // Scheduled requests
-  const [schedules, setSchedules] = useState<ScheduleItem[]>([
-    {
-      id: 'sched-1',
-      requestName: 'AWS S3 Production Backup',
-      scheduleType: 'Every 30 Minutes',
-      nextRun: '10:45 AM',
-      status: 'ACTIVE',
-    },
-    {
-      id: 'sched-2',
-      requestName: 'Design & Brand Guidelines',
-      scheduleType: 'Daily at 02:00 AM',
-      nextRun: '02:00 AM',
-      status: 'ACTIVE',
-    },
-    {
-      id: 'sched-3',
-      requestName: 'Q2 Budgeting Sync',
-      scheduleType: 'Manual Trigger Only',
-      nextRun: 'Manual Trigger Only',
-      status: 'DISABLED',
-    },
-    {
-      id: 'sched-4',
-      requestName: 'Client Video Assets',
-      scheduleType: 'Every 6 Hours',
-      nextRun: '12:00 PM',
-      status: 'ACTIVE',
-    },
-  ]);
+  const [schedules, setSchedules] = useState<ScheduleItem[]>([]);
 
   // Recent Activity timeline
-  const [recentEvents, setRecentEvents] = useState([
-    { id: 'ev-1', time: '10:00 AM', request: 'AWS S3 Production Backup', operation: 'SYNC STARTED', status: 'SUCCESS', msg: 'Checking folder integrity.' },
-    { id: 'ev-2', time: '10:02 AM', request: 'AWS S3 Production Backup', operation: 'UPLOAD', status: 'SUCCESS', msg: 'production_index.sql uploaded successfully.' },
-    { id: 'ev-3', time: '10:03 AM', request: 'Design & Brand Guidelines', operation: 'DOWNLOAD', status: 'SUCCESS', msg: 'logos_v2_pack.zip downloaded locally.' },
-    { id: 'ev-4', time: '10:30 AM', request: 'Q2 Budgeting Sync', operation: 'UPLOAD', status: 'SUCCESS', msg: 'budget_sheet.csv synced cleanly.' },
-  ]);
+  const [recentEvents, setRecentEvents] = useState<any[]>([]);
 
   const [filterType, setFilterType] = useState<'all' | 'success' | 'failed' | 'uploads' | 'downloads'>('all');
 
@@ -253,7 +202,7 @@ export default function ActivitySchedulingPage({
             </div>
 
             <div className="space-y-3">
-              {syncGroups.map((g) => {
+              {syncGroups.length === 0 ? <div className="text-center text-xs text-neutral-500 py-6">No Sync Groups</div> : syncGroups.map((g) => {
                 const isGroupActive = g.status === 'ACTIVE';
                 return (
                   <div key={g.id} className="p-3 border rounded border-theme-border bg-theme-bg text-xs">
@@ -309,7 +258,7 @@ export default function ActivitySchedulingPage({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-theme-border">
-                  {schedules.map((s) => {
+                {schedules.length === 0 ? <tr><td colSpan={5} className="text-center text-xs text-neutral-500 py-6">No Schedules Configured</td></tr> : schedules.map((s) => {
                     const isSchedActive = s.status === 'ACTIVE';
                     return (
                       <tr key={s.id} className="hover:bg-theme-border/20 text-[11px] select-none text-theme-text font-mono transition-colors">
@@ -367,7 +316,7 @@ export default function ActivitySchedulingPage({
             </div>
 
             <div className="space-y-3 font-mono text-xs max-h-[190px] overflow-y-auto">
-              {recentEvents
+              {recentEvents.length === 0 ? <div className="text-center text-xs text-neutral-500 py-6">No Activity Recorded</div> : recentEvents
                 .filter((ev) => {
                   if (filterType === 'all') return true;
                   if (filterType === 'success') return ev.status === 'SUCCESS';

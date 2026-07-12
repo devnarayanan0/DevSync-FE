@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   RotateCw,
   Pause,
@@ -16,9 +16,12 @@ import {
   Folder,
   Sliders,
   TrendingUp,
-  X
+  X,
+  Plus,
+  Edit2
 } from 'lucide-react';
 import { SyncRequest, ProviderType } from '../types';
+import { syncPreviewChanges } from '../lib/electron';
 
 interface SyncRequestWorkspaceProps {
   reqData: SyncRequest;
@@ -48,7 +51,7 @@ export default function SyncRequestWorkspace({
   onDeleteRequest,
   onUpdatePaths,
 }: SyncRequestWorkspaceProps) {
-  const [activeSubTab, setActiveSubTab] = useState<'overview' | 'connection' | 'analytics' | 'activity'>('overview');
+  const [activeSubTab, setActiveSubTab] = useState<'overview' | 'changes' | 'connection' | 'analytics' | 'activity'>('overview');
   const [activityFilter, setActivityFilter] = useState<'all' | 'uploads' | 'downloads' | 'errors'>('all');
 
   // Input States
@@ -58,14 +61,31 @@ export default function SyncRequestWorkspace({
   const [showLocalExplorer, setShowLocalExplorer] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  // Changes state
+  const [changesPreview, setChangesPreview] = useState<any>(null);
+  const [isLoadingChanges, setIsLoadingChanges] = useState(false);
+
+  // Fetch preview when switching to changes tab
+  useEffect(() => {
+    if (activeSubTab === 'changes' && !changesPreview) {
+      loadPreview();
+    }
+  }, [activeSubTab]);
+
+  const loadPreview = async () => {
+    setIsLoadingChanges(true);
+    try {
+      const data = await syncPreviewChanges(reqData.id);
+      setChangesPreview(data);
+    } catch (err) {
+      console.error('Failed to load preview:', err);
+    } finally {
+      setIsLoadingChanges(false);
+    }
+  };
+
   // Directory browse options
-  const mockDirectories = [
-    '/Users/david/Documents/Work',
-    '/Users/david/Documents/Marketing',
-    '/Users/david/Downloads',
-    '/Users/david/workspace/project-sync',
-    '/Users/david/local-vaults/backups'
-  ];
+  const mockDirectories: string[] = [];
 
   const handleApplyPaths = (newLocal: string, newRemote: string) => {
     onUpdatePaths(reqData.id, newLocal, newRemote);
@@ -137,9 +157,10 @@ export default function SyncRequestWorkspace({
       </div>
 
       {/* Tabs navigation */}
-      <div className="flex border-b border-theme-border">
+      <div className="flex border-b border-theme-border overflow-x-auto no-scrollbar">
         {[
           { id: 'overview', label: 'Overview' },
+          { id: 'changes', label: 'Changes' },
           { id: 'connection', label: 'Connection Settings' },
           { id: 'analytics', label: 'Analytics' },
           { id: 'activity', label: 'Activity' },
@@ -236,6 +257,106 @@ export default function SyncRequestWorkspace({
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Changes Tab */}
+      {activeSubTab === 'changes' && (
+        <div className="space-y-4">
+          <div className="rounded border border-theme-border bg-theme-card p-4 shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs">
+            <span className="font-semibold text-theme-text font-sans">Pending Changes Preview</span>
+            <button
+              onClick={loadPreview}
+              disabled={isLoadingChanges}
+              className={`inline-flex items-center gap-1.5 rounded bg-theme-bg border border-theme-border px-3 py-1.5 text-xs font-semibold cursor-pointer transition-colors ${isLoadingChanges ? 'opacity-50' : 'hover:bg-theme-border'}`}
+            >
+              <RotateCw className={`h-3.5 w-3.5 ${isLoadingChanges ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+          </div>
+          
+          {isLoadingChanges ? (
+            <div className="p-10 text-center border border-dashed border-theme-border rounded bg-theme-card text-xs">
+              <RotateCw className="mx-auto h-6 w-6 text-indigo-500 animate-spin mb-2" />
+              <h4 className="font-bold text-theme-text">Scanning differences...</h4>
+            </div>
+          ) : !changesPreview ? (
+            <div className="p-10 text-center border border-dashed border-theme-border rounded bg-theme-card text-xs">
+              <h4 className="font-bold text-theme-text">No preview data available</h4>
+            </div>
+          ) : changesPreview.uploads.length === 0 && changesPreview.downloads.length === 0 ? (
+            <div className="p-10 text-center border border-dashed border-theme-border rounded bg-theme-card text-xs">
+              <CheckCircle className="mx-auto h-8 w-8 text-emerald-500 mb-2" />
+              <h4 className="font-bold text-theme-text text-base">Up to Date</h4>
+              <p className="text-slate-500 mt-1">Both sides are perfectly synchronized.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Uploads */}
+              <div className="rounded border border-theme-border bg-theme-card shadow-xs overflow-hidden flex flex-col max-h-[500px]">
+                <div className="bg-theme-bg p-3 border-b border-theme-border flex justify-between items-center">
+                  <h3 className="font-bold text-xs uppercase tracking-wider text-theme-text flex items-center gap-2">
+                    <Cloud className="h-4 w-4 text-indigo-500" />
+                    Pending Uploads
+                  </h3>
+                  <span className="bg-indigo-500/20 text-indigo-500 font-bold px-2 py-0.5 rounded text-[10px]">
+                    {changesPreview.uploads.length} files
+                  </span>
+                </div>
+                <div className="overflow-y-auto flex-1 p-2 space-y-1">
+                  {changesPreview.uploads.length === 0 ? (
+                    <p className="text-xs text-slate-500 text-center py-4">No local changes.</p>
+                  ) : (
+                    changesPreview.uploads.map((file: any, i: number) => (
+                      <div key={i} className="flex items-center gap-3 p-2 rounded hover:bg-theme-bg border border-transparent hover:border-theme-border text-xs transition-colors">
+                        {file.type === 'added' ? (
+                          <Plus className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                        ) : (
+                          <Edit2 className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                        )}
+                        <span className="font-mono text-theme-text truncate flex-1">{file.path}</span>
+                        <span className={`text-[9px] uppercase font-bold ${file.type === 'added' ? 'text-emerald-500' : 'text-amber-500'}`}>
+                          {file.type}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Downloads */}
+              <div className="rounded border border-theme-border bg-theme-card shadow-xs overflow-hidden flex flex-col max-h-[500px]">
+                <div className="bg-theme-bg p-3 border-b border-theme-border flex justify-between items-center">
+                  <h3 className="font-bold text-xs uppercase tracking-wider text-theme-text flex items-center gap-2">
+                    <HardDrive className="h-4 w-4 text-sky-500" />
+                    Pending Downloads
+                  </h3>
+                  <span className="bg-sky-500/20 text-sky-500 font-bold px-2 py-0.5 rounded text-[10px]">
+                    {changesPreview.downloads.length} files
+                  </span>
+                </div>
+                <div className="overflow-y-auto flex-1 p-2 space-y-1">
+                  {changesPreview.downloads.length === 0 ? (
+                    <p className="text-xs text-slate-500 text-center py-4">No remote changes.</p>
+                  ) : (
+                    changesPreview.downloads.map((file: any, i: number) => (
+                      <div key={i} className="flex items-center gap-3 p-2 rounded hover:bg-theme-bg border border-transparent hover:border-theme-border text-xs transition-colors">
+                        {file.type === 'added' ? (
+                          <Plus className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                        ) : (
+                          <Edit2 className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                        )}
+                        <span className="font-mono text-theme-text truncate flex-1">{file.path}</span>
+                        <span className={`text-[9px] uppercase font-bold ${file.type === 'added' ? 'text-emerald-500' : 'text-amber-500'}`}>
+                          {file.type}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -563,6 +684,7 @@ export default function SyncRequestWorkspace({
             </div>
 
             <div className="space-y-2 max-h-[200px] overflow-y-auto">
+              {mockDirectories.length === 0 && <div className="text-center text-xs text-neutral-500 py-4">No local directories indexed</div>}
               {mockDirectories.map((dir, idx) => (
                 <div
                   key={idx}

@@ -122,21 +122,11 @@ export default function DesktopBootLoader({ onComplete }: DesktopBootLoaderProps
           stepDelay = 400;
         } else if (currentStepIndex === 4) {
           // 5. Preparing workspace
-          const isLogged = localStorage.getItem('devsync_is_logged_in') === 'true';
-          let profile: UserProfile | null = null;
-          try {
-            const raw = localStorage.getItem('devsync_session');
-            if (raw) {
-              profile = JSON.parse(raw);
-            }
-          } catch (e) {
-            console.error('Failed to parse persisted session', e);
-          }
-
+          // We always direct the user to the Login or Register page first after loading
           setBootContext((prev) => ({
             ...prev,
-            isLoggedIn: isLogged,
-            userProfile: profile,
+            isLoggedIn: false,
+            userProfile: null,
           }));
           stepDelay = 450;
         }

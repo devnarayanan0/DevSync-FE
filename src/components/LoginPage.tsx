@@ -25,35 +25,7 @@ export default function LoginPage({
   const [regTenant, setRegTenant] = useState<string>('');
   const [regPasswordConfirm, setRegPasswordConfirm] = useState<string>('');
 
-  const handlePresetLogin = (type: 'existing' | 'new') => {
-    setIsSubmitting(true);
-    setErrorMsg('');
-    setTimeout(() => {
-      setIsSubmitting(false);
-      if (type === 'existing') {
-        onLoginSuccess(
-          {
-            name: 'David Vance',
-            email: 'david.vance@devsync.io',
-            role: 'Storage Lead',
-            tenant: 'Client-Org-Production',
-          },
-          false
-        );
-      } else {
-        onLoginSuccess(
-          {
-            name: 'Alex Mercer',
-            email: 'alex.mercer@devsync.io',
-            role: 'DevOps Engineer',
-            tenant: 'Client-Sandbox-Beta',
-          },
-          true
-        );
-      }
-    }, 800);
-  };
-
+  
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -317,41 +289,7 @@ export default function LoginPage({
           </div>
         </div>
 
-        {/* Preset accounts for quick and flawless eval capability */}
-        {!isRegistering && (
-          <div className="mt-6 rounded-sm border border-slate-200 bg-slate-100/50 p-4 dark:border-slate-800 dark:bg-slate-900/40">
-            <h3 className="mb-2 text-[10px] font-mono font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500">
-              Interactive Dev Evaluation Presets
-            </h3>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => handlePresetLogin('existing')}
-                disabled={isSubmitting}
-                className="flex flex-col items-center justify-center rounded-sm border border-slate-200 bg-white p-2.5 text-center transition-all hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:hover:bg-slate-900"
-              >
-                <span className="text-[10px] font-mono font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">
-                  Existing User
-                </span>
-                <span className="text-[9px] font-mono text-slate-450 mt-1 uppercase">
-                  Loads 4 Sync configurations
-                </span>
-              </button>
-              <button
-                onClick={() => handlePresetLogin('new')}
-                disabled={isSubmitting}
-                className="flex flex-col items-center justify-center rounded-sm border border-slate-200 bg-white p-2.5 text-center transition-all hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:hover:bg-slate-900"
-              >
-                <span className="text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-450 uppercase tracking-widest">
-                  New User
-                </span>
-                <span className="text-[9px] font-mono text-slate-450 mt-1 uppercase">
-                  Launches Step-by-Step Wizard
-                </span>
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+        </div>
     </div>
   );
 }

@@ -54,8 +54,8 @@ export default function CreateSyncRequestWizard({
 
   // Step 4: Provider Authentication Setup
   // AWS S3 Keys
-  const [awsAccessKey, setAwsAccessKey] = useState('AKIAIOSFODNN7EXAMPLE');
-  const [awsSecretKey, setAwsSecretKey] = useState('wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY');
+  const [awsAccessKey, setAwsAccessKey] = useState('');
+  const [awsSecretKey, setAwsSecretKey] = useState('');
   const [awsRegion, setAwsRegion] = useState('us-east-1');
   const [isAwsVerifying, setIsAwsVerifying] = useState(false);
   const [isAwsVerified, setIsAwsVerified] = useState(false);
@@ -65,20 +65,15 @@ export default function CreateSyncRequestWizard({
   const [isGDriveConnecting, setIsGDriveConnecting] = useState(false);
 
   // Step 5: Resource Selection Mapping
-  const s3Buckets = [
-    's3://production-data-vault',
-    's3://marketing-media-bucket',
-    's3://backup-archives-us-east',
-    's3://client-assets-distribution'
-  ];
-  const [selectedS3Bucket, setSelectedS3Bucket] = useState(s3Buckets[0]);
+  const s3Buckets: string[] = [];
+  const [selectedS3Bucket, setSelectedS3Bucket] = useState('');
   const [s3FolderPath, setS3FolderPath] = useState('backups/');
 
-  const gDrives = ['My Drive', 'Shared Design Team Drive', 'Billing Archives', 'Corporate Assets Workspace'];
-  const [selectedGDrive, setSelectedGDrive] = useState(gDrives[0]);
+  const gDrives: string[] = [];
+  const [selectedGDrive, setSelectedGDrive] = useState('');
 
-  const gFolders = ['/Root Folders', '/Archive Projects', '/Company Sync Root', '/Assets Hub', '/Deliverables/2026'];
-  const [selectedGFolder, setSelectedGFolder] = useState(gFolders[0]);
+  const gFolders: string[] = [];
+  const [selectedGFolder, setSelectedGFolder] = useState('');
 
   // Step 6: Choose Synchronize Schedule
   const [schedule, setSchedule] = useState('Every 1 Hour');

@@ -29,13 +29,15 @@ interface FirstSyncWizardProps {
   onThemeToggle: () => void;
   onWizardComplete: (newRequest: SyncRequest) => void;
   userEmail?: string;
+  onLogout?: () => void;
 }
 
 export default function FirstSyncWizard({
   theme,
   onThemeToggle,
   onWizardComplete,
-  userEmail = 'alex.mercer@devsync.io'
+  userEmail = 'alex.mercer@devsync.io',
+  onLogout
 }: FirstSyncWizardProps) {
   const [step, setStep] = useState<number>(1);
   const [wizardErrorMsg, setWizardErrorMsg] = useState<string>('');
@@ -57,8 +59,8 @@ export default function FirstSyncWizard({
 
   // Step 4: Provider Authentication Setup
   // AWS step
-  const [awsAccessKey, setAwsAccessKey] = useState<string>('AKIAIOSFODNN7EXAMPLE');
-  const [awsSecretKey, setAwsSecretKey] = useState<string>('wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY');
+  const [awsAccessKey, setAwsAccessKey] = useState<string>('');
+  const [awsSecretKey, setAwsSecretKey] = useState<string>('');
   const [awsRegion, setAwsRegion] = useState<string>('us-east-1');
   const [isAwsVerifying, setIsAwsVerifying] = useState<boolean>(false);
   const [isAwsVerified, setIsAwsVerified] = useState<boolean>(false);
@@ -68,19 +70,15 @@ export default function FirstSyncWizard({
   const [isGoogleOAuthRunning, setIsGoogleOAuthRunning] = useState<boolean>(false);
 
   // Step 5: Resource Selection Mapping
-  const s3Buckets = [
-    's3://production-workspace-vault-us-east-1',
-    's3://archives-static-assets-vault',
-    's3://marketing-shared-deliverys3'
-  ];
-  const [selectedS3Bucket, setSelectedS3Bucket] = useState(s3Buckets[0]);
+  const s3Buckets: string[] = [];
+  const [selectedS3Bucket, setSelectedS3Bucket] = useState('');
   const [s3FolderPath, setS3FolderPath] = useState('backups/');
 
-  const gDrives = ['My Drive', 'Shared Design Team Drive', 'Billing Archives', 'Corporate Assets Workspace'];
-  const [selectedGDrive, setSelectedGDrive] = useState(gDrives[0]);
+  const gDrives: string[] = [];
+  const [selectedGDrive, setSelectedGDrive] = useState('');
 
-  const gFolders = ['/Root Folders', '/Archive Projects', '/Company Sync Root', '/Assets Hub', '/Deliverables/2026'];
-  const [selectedGFolder, setSelectedGFolder] = useState(gFolders[0]);
+  const gFolders: string[] = [];
+  const [selectedGFolder, setSelectedGFolder] = useState('');
 
   // Step 6: Choose Synchronize Schedule
   const [schedule, setSchedule] = useState<string>('Every 1 Hour');
@@ -231,6 +229,14 @@ export default function FirstSyncWizard({
               <Moon className="h-4 w-4 text-slate-600" />
             )}
           </button>
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="inline-flex items-center space-x-1 rounded-lg border border-theme-border bg-theme-bg px-3 py-1.5 text-xs font-semibold text-slate-500 hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer font-mono"
+            >
+              Sign Out
+            </button>
+          )}
         </div>
       </header>
 
