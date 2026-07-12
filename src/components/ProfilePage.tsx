@@ -52,29 +52,21 @@ export default function ProfilePage({
   const [isUpdatingPwd, setIsUpdatingPwd] = useState<boolean>(false);
 
   // Connection tenants
-  const [tenants, setTenants] = useState<ConnectedTenant[]>([
-    {
-      id: 'tenant-aws-prod',
-      name: 'AWS Backup Workspace',
-      provider: 'AWS S3',
-      status: 'VERIFIED',
-      createdDate: '12 June 2026',
-    },
-    {
-      id: 'tenant-gdrive-marketing',
-      name: 'Marketing Drive',
-      provider: 'Google Drive',
-      status: 'VERIFIED',
-      createdDate: '14 June 2026',
-    },
-    {
-      id: 'tenant-azure-legacy',
-      name: 'Azure Blob Sandbox',
-      provider: 'Azure Storage',
-      status: 'DISCONNECTED',
-      createdDate: '18 June 2026',
-    },
-  ]);
+  const [tenants, setTenants] = useState<ConnectedTenant[]>(() => {
+    const map = new Map<string, ConnectedTenant>();
+    syncRequests.forEach((req, idx) => {
+      if (!map.has(req.provider)) {
+        map.set(req.provider, {
+          id: `tenant-${req.provider}-${idx}`,
+          name: `${req.provider.replace('-', ' ').toUpperCase()} WORKSPACE`,
+          provider: req.provider.replace('-', ' ').toUpperCase(),
+          status: req.status === 'failed' ? 'DISCONNECTED' : 'VERIFIED',
+          createdDate: '12 July 2026',
+        });
+      }
+    });
+    return Array.from(map.values());
+  });
 
   const handleUpdatePassword = (e: FormEvent) => {
     e.preventDefault();
@@ -167,7 +159,7 @@ export default function ProfilePage({
               </div>
               <div className="flex items-center justify-between text-xs font-mono uppercase font-medium">
                 <span className="text-slate-455 font-medium">System Joined:</span>
-                <span className="text-theme-text font-bold">12 June 2026</span>
+                <span className="text-theme-text font-bold">12 July 2026</span>
               </div>
             </div>
           </div>
