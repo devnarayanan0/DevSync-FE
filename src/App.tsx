@@ -30,6 +30,7 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import TabBar from './components/TabBar';
 import AboutModal from './components/AboutModal';
+import TitleBar from './components/TitleBar';
 import { Tab, Theme, AccentColor, SyncRequest, UserProfile } from './types';
 import LoginPage from './components/LoginPage';
 import FirstSyncWizard from './components/FirstSyncWizard';
@@ -427,6 +428,7 @@ export default function App() {
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-theme-bg text-theme-text selection:bg-indigo-600/10">
+      <TitleBar />
       {/* Main Body */}
       <div className="flex flex-1 overflow-hidden" id="main-frame-layout">
         {/* Sidebar Nav */}

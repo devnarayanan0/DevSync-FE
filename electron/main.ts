@@ -9,6 +9,8 @@ dotenv.config({ path: path.resolve(process.cwd(), envPath) });
 // Fallback
 dotenv.config();
 
+app.name = 'DevSync';
+
 // Import local services
 import { initDatabase, getDb, getSetting, setSetting } from './services/DatabaseService';
 import { AuthService } from './services/AuthService';
@@ -28,152 +30,18 @@ let tray: Tray | null = null;
 function createWindow() {
   const isDev = process.env.NODE_ENV !== 'production';
 
-  // Create native frameless loading/splash window first
-  const splash = new BrowserWindow({
-    width: 500,
-    height: 350,
-    transparent: true,
-    frame: false,
-    alwaysOnTop: true,
-    webPreferences: {
-      nodeIntegration: false,
-    },
-  });
-
-  // Load beautifully structured inline loader sequence
-  const splashHTML = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <title>Loading DevSync Desktop...</title>
-      <style>
-        body {
-          background-color: #0b0f19;
-          color: #f1f5f9;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 100vh;
-          margin: 0;
-          overflow: hidden;
-          border-radius: 16px;
-          border: 1px solid rgba(99, 102, 241, 0.25);
-        }
-        .main-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-          padding: 30px;
-        }
-        .logo {
-          position: relative;
-          width: 72px;
-          height: 72px;
-          margin-bottom: 24px;
-        }
-        .logo-pulse {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          border: 2px solid #6366f1;
-          border-radius: 20px;
-          animation: ringPulse 2s infinite ease-in-out;
-          opacity: 0.8;
-        }
-        .logo-core {
-          position: absolute;
-          inset: 6px;
-          background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
-          border-radius: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 800;
-          font-size: 24px;
-          color: #ffffff;
-          box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
-        }
-        h1 {
-          font-size: 22px;
-          font-weight: 700;
-          margin: 0 0 6px 0;
-          letter-spacing: -0.025em;
-          background: linear-gradient(to right, #ffffff 30%, #94a3b8 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-        .subtitle {
-          font-size: 11px;
-          color: #64748b;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          margin: 0 0 28px 0;
-          font-weight: 600;
-        }
-        .progress-container {
-          width: 260px;
-          height: 5px;
-          background-color: #1e293b;
-          border-radius: 10px;
-          overflow: hidden;
-          position: relative;
-        }
-        .progress-bar {
-          position: absolute;
-          height: 100%;
-          width: 35%;
-          background: linear-gradient(90deg, #6366f1, #a855f7);
-          border-radius: 10px;
-          animation: loadAnim 1.6s infinite ease-in-out;
-        }
-        .status-text {
-          margin-top: 14px;
-          font-size: 10px;
-          color: #475569;
-          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-          letter-spacing: 0.05em;
-        }
-        @keyframes ringPulse {
-          0% { transform: scale(1); opacity: 0.8; }
-          50% { transform: scale(1.18); opacity: 0.2; }
-          100% { transform: scale(1); opacity: 0.8; }
-        }
-        @keyframes loadAnim {
-          0% { left: -40%; }
-          50% { left: 40%; width: 50%; }
-          100% { left: 100%; }
-        }
-      </style>
-    </head>
-    <body>
-      <div class="main-container">
-        <div class="logo">
-          <div class="logo-pulse"></div>
-          <div class="logo-core">DS</div>
-        </div>
-        <h1>DevSync Desktop</h1>
-        <div class="subtitle">Secure Storage Synchronizer</div>
-        <div class="progress-container">
-          <div class="progress-bar"></div>
-        </div>
-        <div class="status-text">STARTING APPLICATION SERVICES...</div>
-      </div>
-    </body>
-    </html>
-  `;
-  
-  splash.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(splashHTML)}`);
-
   // Create main window with show: false
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     show: false,
-    title: 'DevSync Desktop Native App Client',
+    title: 'DevSync',
+    titleBarStyle: 'hidden',
+    titleBarOverlay: process.platform === 'win32' ? {
+      color: '#06070A',
+      symbolColor: '#ffffff',
+      height: 32
+    } : false,
     webPreferences: {
       preload: path.join(actualDirName, 'preload.js'),
       contextIsolation: true,
@@ -189,18 +57,10 @@ function createWindow() {
 
   // Once-ready transition
   mainWindow.once('ready-to-show', () => {
-    setTimeout(() => {
-      if (splash && !splash.isDestroyed()) {
-        splash.close();
-      }
-      if (mainWindow) {
-        mainWindow.show();
-        mainWindow.focus();
-        if (isDev) {
-          mainWindow.webContents.openDevTools();
-        }
-      }
-    }, 1800);
+    if (mainWindow) {
+      mainWindow.show();
+      mainWindow.focus();
+    }
   });
 
   mainWindow.on('closed', () => {
@@ -213,7 +73,7 @@ function createTray() {
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMklEQVR42mNkHPjfz4AEYGTYyYBMgK4eG6C7BhsgmgbYkB6NYEA0g6GBAV0uGMDmgg8AAPmDFXm0eC0YAAAAAElFTkSuQmCC'
   );
   tray = new Tray(trayIcon);
-  
+
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Launch DevSync Control Dashboard',
@@ -493,13 +353,13 @@ function setupIpcHandlers() {
 app.whenReady().then(() => {
   initDatabase();
   setupIpcHandlers();
-  
+
   // Start the background services
   FolderWatcherService.initWatchers();
   SyncSchedulerService.initSchedules();
 
   createWindow();
-  
+
   try {
     createTray();
   } catch (err) {

@@ -12,6 +12,8 @@
     "lint": "tsc --noEmit",
     "electron:build:main": "esbuild electron/main.ts electron/preload.ts --bundle --platform=node --format=cjs --outdir=dist-electron --external:electron --external:better-sqlite3 --external:node-cron --external:axios --external:chokidar --external:dotenv && node -e \"const fs = require('fs'); if (!fs.existsSync('dist-electron')) fs.mkdirSync('dist-electron'); fs.writeFileSync('dist-electron/package.json', JSON.stringify({type: 'commonjs'}));\"",
     "electron:start": "npm run electron:build:main && electron .",
+    "electron:prod": "npm run build && NODE_ENV=production electron .",
+    "dev:all": "npm run electron:build:main && concurrently \"npm run dev\" \"electron .\"",
     "electron:pack": "npm run build && electron-builder"
   },
   "dependencies": {

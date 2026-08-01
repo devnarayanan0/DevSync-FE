@@ -3,6 +3,7 @@ import { Settings, Database, RefreshCw, Network, Monitor, CheckCircle2, Loader2,
 import { motion } from 'motion/react';
 import { isElectron, getSyncRequests, getAutoStart } from '../lib/electron';
 import { SyncRequest, UserProfile } from '../types';
+import TitleBar from './TitleBar';
 
 interface BootContext {
   theme: 'light' | 'dark';
@@ -155,18 +156,30 @@ export default function DesktopBootLoader({ onComplete }: DesktopBootLoaderProps
   }, [currentStepIndex, onComplete, steps.length]);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-theme-bg text-theme-text font-sans select-none overflow-hidden">
-      {/* Soft background ambient glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-500/10 blur-[130px] rounded-full pointer-events-none" />
+    <div className="fixed inset-0 z-50 flex flex-col bg-theme-bg text-theme-text font-sans select-none overflow-hidden">
+      <TitleBar />
+      
+      {/* Centered content area */}
+      <div className="flex-1 flex flex-col items-center justify-center relative">
+        {/* Soft background ambient glow */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-500/10 blur-[130px] rounded-full pointer-events-none" />
 
-      <div className="w-full max-w-md p-8 relative flex flex-col items-center z-10 animate-fade-in">
-        {/* Minimalist Logo design */}
-        <div className="relative mb-6 flex items-center justify-center">
-          <div className="flex h-16 w-52 items-center justify-center rounded-2xl border border-[#b8d5cb] bg-[#D6E8E1] p-3 shadow-xl hover:shadow-2xl transition-all">
-            <img src="/logo.png" alt="DevSync" className="w-full h-full object-contain" />
+        <div className="w-full max-w-md p-8 relative flex flex-col items-center z-10 animate-fade-in">
+          {/* Minimalist Logo design with rotating border */}
+          <div className="relative mb-6 flex items-center justify-center">
+            <div className="relative flex h-16 w-52 items-center justify-center rounded-2xl p-[2px] overflow-hidden bg-slate-200/50 dark:bg-neutral-800/50 shadow-xl">
+              {/* Rotating gradient background */}
+              <div 
+                className="absolute inset-[-100%] animate-spin bg-[conic-gradient(from_0deg,transparent_40%,#84cc16_100%)]" 
+                style={{ animationDuration: '2.5s' }}
+              />
+              {/* Inner card content */}
+              <div className="relative w-full h-full flex items-center justify-center rounded-[14px] bg-[#D6E8E1] p-3">
+                <img src="/logo.png" alt="DevSync" className="w-full h-full object-contain" />
+              </div>
+            </div>
           </div>
         </div>
-        <Loader2 className="h-6 w-6 animate-spin text-lime-500" />
       </div>
     </div>
   );

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { SyncRequest, Theme } from '../types';
 import { isElectron, selectDirectory } from '../lib/electron';
+import TitleBar from './TitleBar';
 
 interface FirstSyncWizardProps {
   theme: Theme;
@@ -202,7 +203,8 @@ export default function FirstSyncWizard({
   const stepInfo = getStepHeaderInfo();
 
   return (
-    <div className="relative flex min-h-screen w-screen flex-col bg-theme-bg text-theme-text transition-colors duration-200 font-sans">
+    <div className="flex h-screen w-screen flex-col bg-theme-bg text-theme-text transition-colors duration-200 font-sans overflow-hidden">
+      <TitleBar />
       
       {/* Top Wizard Branding Header bar */}
       <header className="flex h-16 w-full items-center justify-between border-b border-theme-border bg-theme-card px-6">

@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { Eye, EyeOff, Sun, Moon, Lock, Mail, RefreshCw } from 'lucide-react';
 import { Theme, UserProfile } from '../types';
+import TitleBar from './TitleBar';
 
 interface LoginPageProps {
   theme: Theme;
@@ -48,35 +49,40 @@ export default function LoginPage({
     }
 
     if (isRegistering) {
-      if (!regName) {
-        setErrorMsg('Please provide your Display Name.');
+      if (!regName || !regTenant || !regPasswordConfirm) {
+        setErrorMsg('All registration fields are mandatory.');
         return;
       }
       if (password !== regPasswordConfirm) {
-        setErrorMsg('Passwords do not match.');
+        setErrorMsg('Password parameters do not match confirmation.');
         return;
       }
     }
 
     setIsSubmitting(true);
+
+    // Mock network authentication delay
     setTimeout(() => {
       setIsSubmitting(false);
+
       if (isRegistering) {
-        // Register succeeds, swap to login
-        setIsRegistering(false);
-        setPassword('');
-        setRegPasswordConfirm('');
-        // Show simulated notification
-        alert('Registration successful! Please login with your credentials.');
+        // Automatically success register mock
+        onLoginSuccess(
+          {
+            name: regName,
+            email: email.toLowerCase(),
+            role: 'DevSync Operator',
+            tenant: regTenant,
+          },
+          true
+        );
       } else {
-        // Is it a new or existing user?
-        // Let's decide based on whether email has 'new' or is from a new user checkbox/domain
         const isNew = email.toLowerCase().includes('new') || email.toLowerCase() === 'alex@devsync.io';
         onLoginSuccess(
           {
-            name: email.split('@')[0].split('.').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' '),
-            email: email,
-            role: 'User',
+            name: isNew ? 'Alex Mercer' : 'Dev Operator',
+            email: email.toLowerCase(),
+            role: 'Administrator',
             tenant: isNew ? 'DevSync-Sandbox-Alpha' : 'Client-Org-Production',
           },
           isNew
@@ -86,36 +92,47 @@ export default function LoginPage({
   };
 
   return (
-    <div className="relative flex min-h-screen w-screen flex-col items-center justify-center bg-theme-bg text-theme-text transition-colors duration-200 font-sans">
-      {/* Top Right Header Theme Selector */}
-      <button
-        onClick={() => onLoginSuccess({ name: 'Dev', email: 'dev@local', role: 'User', tenant: 'Local' }, false)}
-        className="ml-2 rounded-lg p-2 text-slate-700 hover:bg-theme-card hover:text-black dark:text-slate-300 dark:hover:text-white transition-colors text-[10px] font-mono font-bold uppercase cursor-pointer"
-      >
-        Bypass
-      </button>
-      <div className="absolute top-6 right-6">
-        <button
-          onClick={onThemeToggle}
-          className="rounded-lg p-2 text-slate-700 hover:bg-theme-card hover:text-black dark:text-slate-300 dark:hover:text-white transition-colors"
-          title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-          id="login-theme-toggle"
-        >
-          {theme === 'dark' ? (
-            <Sun className="h-4 w-4 text-amber-550" />
-          ) : (
-            <Moon className="h-4 w-4 text-slate-600" />
-          )}
-        </button>
-      </div>
+    <div className="flex h-screen w-screen flex-col bg-theme-bg text-theme-text transition-colors duration-200 font-sans overflow-hidden">
+      <TitleBar />
 
-      <div className="w-full max-w-md px-6">
-        {/* Logo Section */}
-        <div className="mb-6 flex flex-col items-center">
-          <div className="flex h-16 w-52 items-center justify-center rounded-2xl border border-[#b8d5cb] bg-[#D6E8E1] p-3 shadow-xl hover:shadow-2xl transition-all">
-            <img src="/logo.png" alt="DevSync Logo" className="h-full w-full object-contain" />
-          </div>
+      <div className="flex-1 relative flex flex-col items-center justify-center">
+        {/* Top Right Header Theme Selector & Bypass */}
+        <div className="absolute top-4 right-6 flex items-center space-x-2">
+          <button
+            onClick={() => onLoginSuccess({ name: 'Dev', email: 'dev@local', role: 'User', tenant: 'Local' }, false)}
+            className="rounded-lg p-2 text-slate-700 hover:bg-theme-card hover:text-black dark:text-slate-300 dark:hover:text-white transition-colors text-[10px] font-mono font-bold uppercase cursor-pointer"
+          >
+            Bypass
+          </button>
+          <button
+            onClick={onThemeToggle}
+            className="rounded-lg p-2 text-slate-700 hover:bg-theme-card hover:text-black dark:text-slate-300 dark:hover:text-white transition-colors"
+            title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+            id="login-theme-toggle"
+          >
+            {theme === 'dark' ? (
+              <Sun className="h-4 w-4 text-amber-550" />
+            ) : (
+              <Moon className="h-4 w-4 text-slate-600" />
+            )}
+          </button>
         </div>
+
+        <div className="w-full max-w-md px-6">
+          {/* Logo Section with rotating border */}
+          <div className="mb-6 flex flex-col items-center">
+            <div className="relative flex h-16 w-52 items-center justify-center rounded-2xl p-[2px] overflow-hidden bg-slate-200/50 dark:bg-neutral-800/50 shadow-xl">
+              {/* Rotating gradient background */}
+              <div 
+                className="absolute inset-[-100%] animate-spin bg-[conic-gradient(from_0deg,transparent_40%,#84cc16_100%)]" 
+                style={{ animationDuration: '2.5s' }}
+              />
+              {/* Inner card content */}
+              <div className="relative w-full h-full flex items-center justify-center rounded-[14px] bg-[#D6E8E1] p-3">
+                <img src="/logo.png" alt="DevSync Logo" className="h-full w-full object-contain" />
+              </div>
+            </div>
+          </div>
 
         {/* Auth form card */}
         <div className="rounded-xl border border-theme-border bg-theme-card p-7 shadow-xl">
@@ -285,5 +302,6 @@ export default function LoginPage({
 
       </div>
     </div>
+  </div>
   );
 }
