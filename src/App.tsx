@@ -131,7 +131,13 @@ export default function App() {
   }, [theme]);
 
   const handleToggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+    if (document.startViewTransition) {
+      document.startViewTransition(() => {
+        setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+      });
+    } else {
+      setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+    }
   };
 
   // Switch tabs
@@ -420,18 +426,6 @@ export default function App() {
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-theme-bg text-theme-text selection:bg-indigo-600/10">
-      {/* Top Navigation Bar */}
-      <Navbar
-        theme={theme}
-        onThemeToggle={handleToggleTheme}
-        onOpenAbout={() => setAboutOpen(true)}
-        user={userProfile!}
-        onLogout={handleLogout}
-        onNavigateToTab={handleSidebarTabNavigate}
-        onSearchChange={setSearchTerm}
-        searchTerm={searchTerm}
-      />
-
       {/* Main Body */}
       <div className="flex flex-1 overflow-hidden" id="main-frame-layout">
         {/* Sidebar Nav */}
@@ -441,6 +435,9 @@ export default function App() {
           activeTabId={tabs.find((t) => t.id === activeTabId)?.type === 'sync-request-workspace' ? 'requests' : activeTabId}
           onSelectTab={handleSidebarTabNavigate}
           syncRequestsCount={syncRequests.length}
+          user={userProfile!}
+          theme={theme}
+          onThemeToggle={handleToggleTheme}
         />
 
         {/* Workspace Display Area */}
@@ -472,22 +469,19 @@ export default function App() {
             {activeTabId === 'dashboard' && (
               <div className="space-y-6">
                 {/* Header Welcome Card */}
-                <div className="flex flex-col justify-between border-b border-slate-100 pb-5 dark:border-slate-850 md:flex-row md:items-center">
+                <div className="flex flex-col justify-between border-b border-theme-border pb-5 md:flex-row md:items-center">
                   <div>
-                    <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50 uppercase font-sans">
-                      Welcome Back, {userProfile!.name}
+                    <h1 className="page-title-heading">
+                      Welcome, {userProfile!.name}
                     </h1>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                      Manage and monitor your cloud synchronization requests.
-                    </p>
                   </div>
                   <div className="mt-4 flex space-x-2 md:mt-0">
                     <button
                       onClick={() => setIsWizardOpen(true)}
-                      className="inline-flex items-center space-x-1.5 rounded-sm bg-indigo-600 px-3.5 py-2 text-xs font-bold font-mono uppercase tracking-wider text-white shadow-xs hover:bg-indigo-500 transform transition-all cursor-pointer"
+                      className="inline-flex items-center space-x-2 rounded-xl bg-lime-500 px-4 py-2.5 text-xs font-extrabold font-sans uppercase tracking-wider text-black shadow-md hover:bg-lime-400 transform transition-all cursor-pointer"
                       id="dashboard-new-sync-btn"
                     >
-                      <Plus className="h-4 w-4" />
+                      <Plus className="h-4 w-4 stroke-[2.5]" />
                       <span>New Sync Request</span>
                     </button>
                   </div>
@@ -496,50 +490,50 @@ export default function App() {
                 {/* Dashboard Quick Stats Grid */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   {/* Stat Card 1: Sync Requests count */}
-                  <div className="rounded-sm border border-theme-border bg-theme-card p-4.5 shadow-xs">
+                  <div className="rounded-lg border border-theme-border bg-theme-card p-5 shadow-md">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest font-mono">
+                      <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider font-mono">
                         Sync Requests
                       </span>
-                      <FolderSync className="h-4 w-4 text-indigo-500" />
+                      <FolderSync className="h-4.5 w-4.5 text-lime-600 dark:text-lime-400" />
                     </div>
-                    <div className="mt-2.5 flex items-baseline space-x-1.5 font-mono">
-                      <span className="text-2xl font-bold text-slate-900 dark:text-white">
+                    <div className="mt-3 flex items-baseline space-x-2 font-mono">
+                      <span className="text-3xl font-extrabold text-black dark:text-white">
                         {syncRequests.length}
                       </span>
-                      <span className="text-[10px] uppercase text-slate-400 tracking-wider">Configured Mappings</span>
+                      <span className="text-[11px] font-bold uppercase text-slate-700 dark:text-slate-300 tracking-wider">Configured Mappings</span>
                     </div>
                   </div>
 
                   {/* Stat Card 2: Connected Providers count */}
-                  <div className="rounded-sm border border-theme-border bg-theme-card p-4.5 shadow-xs">
+                  <div className="rounded-lg border border-theme-border bg-theme-card p-5 shadow-md">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest font-mono">
+                      <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider font-mono">
                         Connected Providers
                       </span>
-                      <CloudLightning className="h-4 w-4 text-emerald-500 animate-pulse" />
+                      <CloudLightning className="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400 animate-pulse" />
                     </div>
-                    <div className="mt-2.5 flex items-baseline space-x-1.5 font-mono">
-                      <span className="text-2xl font-bold text-slate-900 dark:text-white">
+                    <div className="mt-3 flex items-baseline space-x-2 font-mono">
+                      <span className="text-3xl font-extrabold text-black dark:text-white">
                         {new Set(syncRequests.map(r => r.provider)).size}
                       </span>
-                      <span className="text-[10px] uppercase text-slate-400 tracking-wider">Cloud Integrations</span>
+                      <span className="text-[11px] font-bold uppercase text-slate-700 dark:text-slate-300 tracking-wider">Cloud Integrations</span>
                     </div>
                   </div>
 
                   {/* Stat Card 3: System Status */}
-                  <div className="rounded-sm border border-theme-border bg-theme-card p-4.5 shadow-xs">
+                  <div className="rounded-lg border border-theme-border bg-theme-card p-5 shadow-md">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest font-mono">
+                      <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider font-mono">
                         Sync Status
                       </span>
-                      <Database className="h-4 w-4 text-sky-500" />
+                      <Database className="h-4.5 w-4.5 text-sky-600 dark:text-sky-400" />
                     </div>
-                    <div className="mt-2.5 flex items-baseline space-x-1.5 font-mono">
-                      <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-450 uppercase">
+                    <div className="mt-3 flex items-baseline space-x-2 font-mono">
+                      <span className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 uppercase">
                         Active
                       </span>
-                      <span className="text-[10px] uppercase text-slate-400 tracking-wider">Ready</span>
+                      <span className="text-[11px] font-bold uppercase text-slate-700 dark:text-slate-300 tracking-wider">Ready</span>
                     </div>
                   </div>
                 </div>
@@ -548,44 +542,44 @@ export default function App() {
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                   {/* Left Column: Sync Requests quick overview panel */}
                   <div className="lg:col-span-2 space-y-4">
-                    <div className="rounded-sm border border-theme-border bg-theme-card shadow-xs overflow-hidden">
-                      <div className="flex items-center justify-between border-b border-theme-border bg-theme-bg px-4 py-3.5">
+                    <div className="rounded-lg border border-theme-border bg-theme-card shadow-md overflow-hidden">
+                      <div className="flex items-center justify-between border-b border-theme-border bg-theme-bg/50 px-5 py-4">
                         <div className="flex items-center space-x-2">
-                          <FolderSync className="h-4 w-4 text-indigo-500" />
-                          <h2 className="text-xs font-bold font-mono uppercase tracking-wider text-slate-900 dark:text-white">
+                          <FolderSync className="h-4.5 w-4.5 text-lime-600 dark:text-lime-400" />
+                          <h2 className="text-xs font-bold font-mono uppercase tracking-wider text-black dark:text-white">
                             Sync Requests
                           </h2>
                         </div>
                         <button
                           onClick={() => handleSidebarTabNavigate('requests')}
-                          className="text-xs font-mono uppercase tracking-wider text-indigo-600 hover:text-indigo-800 font-bold dark:text-indigo-400 dark:hover:text-indigo-300"
+                          className="text-xs font-mono uppercase tracking-wider text-lime-600 hover:text-lime-700 font-extrabold dark:text-lime-400 dark:hover:text-lime-300 cursor-pointer"
                         >
                           View All ({syncRequests.length})
                         </button>
                       </div>
 
                       {/* Sync request list items inside bento card */}
-                      <div className="divide-y divide-slate-100 dark:divide-slate-850">
+                      <div className="divide-y divide-theme-border">
                         {filteredRequests.map((req) => (
                           <div
                             key={req.id}
-                            className="flex flex-col justify-between p-4 hover:bg-neutral-50/50 dark:hover:bg-neutral-900/30 md:flex-row md:items-center transition-colors"
+                            className="flex flex-col justify-between p-4 hover:bg-theme-bg/30 md:flex-row md:items-center transition-colors"
                           >
                             <div className="space-y-1 overflow-hidden pr-3">
                               <div className="flex items-center space-x-2">
                                 <span className={`h-2 w-2 rounded-full ${
                                   req.status === 'syncing' ? 'bg-emerald-500 animate-ping' :
-                                  req.status === 'idle' ? 'bg-indigo-400' :
-                                  req.status === 'paused' ? 'bg-neutral-400' : 'bg-rose-500'
+                                  req.status === 'idle' ? 'bg-lime-500' :
+                                  req.status === 'paused' ? 'bg-slate-400' : 'bg-rose-500'
                                 }`} />
-                                <h3 className="text-xs font-semibold text-neutral-900 dark:text-neutral-50 truncate">
+                                <h3 className="text-xs font-bold text-black dark:text-white truncate">
                                   {req.name}
                                 </h3>
-                                <span className="rounded bg-neutral-100 px-1.5 py-0.5 text-[9px] font-mono font-medium text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
+                                <span className="rounded-md bg-theme-bg px-2 py-0.5 text-[10px] font-mono font-bold text-slate-800 dark:text-slate-200 border border-theme-border">
                                   {req.provider === 'aws-s3' ? 'AWS S3' : 'GDrive'}
                                 </span>
                               </div>
-                              <p className="text-[10px] font-mono text-neutral-400 truncate whitespace-nowrap">
+                              <p className="text-[11px] font-mono font-semibold text-slate-700 dark:text-slate-300 truncate whitespace-nowrap">
                                 {req.localPath}
                               </p>
                             </div>
@@ -593,28 +587,28 @@ export default function App() {
                             <div className="mt-3 flex items-center space-x-2.5 md:mt-0">
                               <button
                                 onClick={() => handleOpenSyncWorkspace(req.id)}
-                                className="rounded bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-850 dark:hover:bg-neutral-800 dark:text-indigo-300 dark:hover:text-indigo-200 px-2.5 py-1 text-[11px] font-medium text-indigo-700 transition-all flex items-center gap-1 cursor-pointer"
+                                className="rounded-lg bg-theme-bg hover:bg-theme-border text-black dark:text-white px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border border-theme-border"
                               >
                                 <span>Open Workspace</span>
-                                <ChevronRight className="h-3 w-3" />
+                                <ChevronRight className="h-3.5 w-3.5" />
                               </button>
                               <button
                                 onClick={() => handleTriggerSync(req.id)}
                                 disabled={req.status === 'syncing'}
-                                className={`rounded px-2.5 py-1 text-[11px] font-semibold transition-all flex items-center gap-1 ${
+                                className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1 ${
                                   req.status === 'syncing'
-                                    ? 'bg-emerald-50 text-emerald-500 dark:bg-emerald-950/20 dark:text-emerald-400 cursor-not-allowed'
-                                    : 'bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer'
+                                    ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 cursor-not-allowed border border-emerald-300'
+                                    : 'bg-lime-500 hover:bg-lime-400 text-black font-extrabold cursor-pointer shadow-xs'
                                 }`}
                               >
-                                <Play className="h-3 w-3" />
+                                <Play className="h-3.5 w-3.5" />
                                 <span>Sync</span>
                               </button>
                             </div>
                           </div>
                         ))}
                         {filteredRequests.length === 0 && (
-                          <div className="p-8 text-center text-xs text-neutral-400 dark:text-neutral-500">
+                          <div className="p-8 text-center text-xs font-extrabold text-black dark:text-white">
                             No sync requests found mapping search criteria.
                           </div>
                         )}
@@ -622,55 +616,54 @@ export default function App() {
                     </div>
 
                     {/* Simulation Engine Logs Overview snippet */}
-                    <div className="rounded-xl border border-theme-border bg-theme-card shadow-xs overflow-hidden">
-                      <div className="flex items-center justify-between border-b border-theme-border bg-theme-bg px-4 py-3">
+                    <div className="rounded-lg border border-theme-border bg-theme-card shadow-md overflow-hidden">
+                      <div className="flex items-center justify-between border-b border-theme-border bg-theme-bg/50 px-4 py-3">
                         <div className="flex items-center space-x-2">
-                          <Terminal className="h-4 w-4 text-sky-500" />
-                          <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">
+                          <Terminal className="h-4.5 w-4.5 text-sky-500" />
+                          <h2 className="text-sm font-bold text-black dark:text-white">
                             Recent Activity
                           </h2>
                         </div>
                       </div>
-                      <div className="bg-neutral-950 p-4 font-mono text-[11px] leading-relaxed text-neutral-300 space-y-1.5 overflow-hidden">
-                        {logMessages.length === 0 && <div className="text-neutral-500 text-center py-2">No recent system logs</div>}
+                      <div className="bg-slate-950 p-4 font-mono text-[11px] leading-relaxed text-white space-y-1.5 overflow-hidden">
+                        {logMessages.length === 0 && <div className="text-white font-bold text-center py-3">No recent system logs</div>}
                         {logMessages.slice(-5).map((log, index) => (
                           <div key={index} className="flex space-x-2">
-                            <span className="text-neutral-500">[{log.timestamp}]</span>
+                            <span className="text-slate-400">[{log.timestamp}]</span>
                             <span className={`font-semibold ${
                               log.level === 'INFO' ? 'text-emerald-400' :
                               log.level === 'WARN' ? 'text-amber-400' : 'text-rose-400'
                             }`}>
                               [{log.level}]
                             </span>
-                            <span className="text-sky-450 font-bold">[{log.source}]</span>
-                            <span className="text-neutral-300 truncate max-w-lg">{log.message}</span>
+                            <span className="text-sky-400 font-bold">[{log.source}]</span>
+                            <span className="text-white truncate max-w-lg">{log.message}</span>
                           </div>
                         ))}
                       </div>
                     </div>
                   </div>
 
-                  {/* Right Column: API Connectivity, Statuses, and Coming Soon placeholders */}
+                  {/* Right Column: API Connectivity, Statuses */}
                   <div className="space-y-4">
                     {/* Cloud Connections */}
-                    
-                    <div className="rounded-xl border border-theme-border bg-theme-card p-4.5 shadow-xs space-y-4">
-                      <h2 className="text-sm font-bold text-neutral-800 dark:text-neutral-100">
+                    <div className="rounded-xl border border-theme-border bg-theme-card p-5 shadow-md space-y-4">
+                      <h2 className="text-sm font-extrabold text-black dark:text-white">
                         Connected Providers
                       </h2>
                       <div className="space-y-2.5">
                         {syncRequests.length === 0 ? (
-                          <div className="text-xs text-neutral-500 py-2">No active cloud integrations.</div>
+                          <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 py-2">No active cloud integrations.</div>
                         ) : (
                           Array.from(new Set(syncRequests.map(r => r.provider))).map(provider => (
-                            <div key={provider} className="flex items-center justify-between rounded-lg border border-theme-border p-2.5 bg-theme-bg">
-                              <div className="flex items-center space-x-2 overflow-hidden">
-                                <div className="h-7 w-7 rounded bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0 uppercase">
-                                  {provider.substring(0, 2)}
+                            <div key={String(provider)} className="flex items-center justify-between rounded-lg border border-theme-border p-3 bg-theme-bg/50">
+                              <div className="flex items-center space-x-2.5 overflow-hidden">
+                                <div className="h-8 w-8 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0 uppercase border border-indigo-500/20">
+                                  {String(provider).substring(0, 2)}
                                 </div>
                                 <div className="overflow-hidden">
-                                  <h4 className="text-xs font-semibold text-neutral-900 dark:text-white truncate uppercase">{provider.replace('-', ' ')}</h4>
-                                  <p className="text-[10px] text-neutral-400 truncate">Configured via Pipeline</p>
+                                  <h4 className="text-xs font-bold text-black dark:text-white truncate uppercase">{String(provider).replace('-', ' ')}</h4>
+                                  <p className="text-[11px] font-medium text-slate-700 dark:text-slate-300 truncate">Configured via Pipeline</p>
                                 </div>
                               </div>
                               <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-bold text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
@@ -681,24 +674,7 @@ export default function App() {
                         )}
                       </div>
                     </div>
-                    {/* Scheduling automation quick check */}
-                    <div className="rounded-xl border border-theme-border bg-indigo-900/5 p-4.5 space-y-3 dark:bg-indigo-950/10">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-indigo-800 dark:text-indigo-400">
-                          Application Settings
-                        </span>
-                        <Settings className="h-4 w-4 text-indigo-500" />
-                      </div>
-                      <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-                        DevSync handles automatic file scanning and syncing in the background. You can customize paths, themes, and client preferences in Settings.
-                      </p>
-                      <button
-                        onClick={() => handleSidebarTabNavigate('settings')}
-                        className="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 flex items-center gap-1"
-                      >
-                        Go to Application Settings <ArrowRight className="h-3 w-3" />
-                      </button>
-                    </div>
+
                   </div>
                 </div>
               </div>

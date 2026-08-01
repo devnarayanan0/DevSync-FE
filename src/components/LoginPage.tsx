@@ -25,7 +25,7 @@ export default function LoginPage({
   const [regTenant, setRegTenant] = useState<string>('');
   const [regPasswordConfirm, setRegPasswordConfirm] = useState<string>('');
 
-  
+
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -76,7 +76,7 @@ export default function LoginPage({
           {
             name: email.split('@')[0].split('.').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' '),
             email: email,
-            role: isNew ? 'Storage Auditor' : 'Systems Lead',
+            role: 'User',
             tenant: isNew ? 'DevSync-Sandbox-Alpha' : 'Client-Org-Production',
           },
           isNew
@@ -86,12 +86,18 @@ export default function LoginPage({
   };
 
   return (
-    <div className="relative flex min-h-screen w-screen flex-col items-center justify-center bg-slate-50 text-slate-800 transition-colors duration-200 dark:bg-slate-950 dark:text-slate-100">
+    <div className="relative flex min-h-screen w-screen flex-col items-center justify-center bg-theme-bg text-theme-text transition-colors duration-200 font-sans">
       {/* Top Right Header Theme Selector */}
+      <button
+        onClick={() => onLoginSuccess({ name: 'Dev', email: 'dev@local', role: 'User', tenant: 'Local' }, false)}
+        className="ml-2 rounded-lg p-2 text-slate-700 hover:bg-theme-card hover:text-black dark:text-slate-300 dark:hover:text-white transition-colors text-[10px] font-mono font-bold uppercase cursor-pointer"
+      >
+        Bypass
+      </button>
       <div className="absolute top-6 right-6">
         <button
           onClick={onThemeToggle}
-          className="rounded-sm p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-200 transition-colors"
+          className="rounded-lg p-2 text-slate-700 hover:bg-theme-card hover:text-black dark:text-slate-300 dark:hover:text-white transition-colors"
           title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
           id="login-theme-toggle"
         >
@@ -101,29 +107,20 @@ export default function LoginPage({
             <Moon className="h-4 w-4 text-slate-600" />
           )}
         </button>
-        <button
-          onClick={() => onLoginSuccess({ name: 'Dev', email: 'dev@local', role: 'Admin', tenant: 'Local' }, false)}
-          className="ml-2 rounded-sm p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-200 transition-colors text-[10px] font-mono font-bold uppercase"
-        >
-          Dev Bypass
-        </button>
       </div>
 
       <div className="w-full max-w-md px-6">
         {/* Logo Section */}
         <div className="mb-6 flex flex-col items-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-sm text-white shadow-xs">
+          <div className="flex h-16 w-52 items-center justify-center rounded-2xl border border-[#b8d5cb] bg-[#D6E8E1] p-3 shadow-xl hover:shadow-2xl transition-all">
             <img src="/logo.png" alt="DevSync Logo" className="h-full w-full object-contain" />
           </div>
-          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 font-sans uppercase">
-            DevSync
-          </h1>
         </div>
 
         {/* Auth form card */}
-        <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-md dark:border-slate-800 dark:bg-slate-900">
-          <h2 className="mb-5 text-sm font-bold font-mono tracking-wider uppercase text-slate-400 dark:text-slate-500">
-            {isRegistering ? 'Register account' : 'Client Access Authorization'}
+        <div className="rounded-xl border border-theme-border bg-theme-card p-7 shadow-xl">
+          <h2 className="mb-5 text-xs font-extrabold font-mono tracking-wider uppercase text-black dark:text-white">
+            {isRegistering ? 'REGISTER' : 'LOGIN'}
           </h2>
 
           {errorMsg && (
@@ -137,12 +134,12 @@ export default function LoginPage({
               <>
                 <div>
                   <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
-                    Display Name
+                    Name
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="E.G. ALEX MERCER"
+                    placeholder="Dev"
                     value={regName}
                     onChange={(e) => setRegName(e.target.value)}
                     className="h-10 w-full rounded-sm border border-slate-200 bg-slate-50 px-3 text-xs font-mono uppercase tracking-wide transition-colors focus:border-indigo-600 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:focus:border-indigo-500"
@@ -151,12 +148,12 @@ export default function LoginPage({
 
                 <div>
                   <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
-                    Organization Tenant
+                    UCN
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="E.G. CLIENT-SANDBOX"
+                    placeholder="UNIQUE CLIENT NO"
                     value={regTenant}
                     onChange={(e) => setRegTenant(e.target.value)}
                     className="h-10 w-full rounded-sm border border-slate-200 bg-slate-50 px-3 text-xs font-mono uppercase tracking-wide transition-colors focus:border-indigo-600 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:focus:border-indigo-500"
@@ -166,32 +163,32 @@ export default function LoginPage({
             )}
 
             <div>
-              <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1" id="email-label">
-                Email Address
+              <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                EMAIL
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Mail className="h-3.5 w-3.5 text-slate-400" />
+                  <Mail className="h-3.5 w-3.5 text-slate-500" />
                 </div>
                 <input
                   type="email"
                   required
-                  placeholder={isRegistering ? "E.G. DEV@DEVSYNC.IO" : "ENTER EMAIL ADDRESS..."}
+                  placeholder={isRegistering ? "DEV@DEVSYNC.IO" : "EMAIL"}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-10 w-full rounded-sm border border-slate-200 bg-slate-50 px-3 pl-9 text-xs font-mono uppercase tracking-wide transition-colors placeholder:text-slate-350 focus:border-indigo-600 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:placeholder:text-slate-600 dark:focus:border-indigo-500 text-slate-800 dark:text-slate-250"
+                  className="h-10 w-full rounded-lg border border-theme-border bg-theme-bg/60 px-3 pl-9 text-xs font-sans font-semibold transition-colors placeholder:text-slate-400 focus:border-indigo-600 focus:bg-theme-card focus:outline-none text-black dark:text-white"
                   id="email-input"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1" id="password-label">
-                Password
+              <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                PASSWORD
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Lock className="h-3.5 w-3.5 text-slate-400" />
+                  <Lock className="h-3.5 w-3.5 text-slate-500" />
                 </div>
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -199,13 +196,13 @@ export default function LoginPage({
                   placeholder="******"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-10 w-full rounded-sm border border-slate-200 bg-slate-50 px-3 pl-9 pr-10 text-xs font-mono uppercase tracking-wide transition-colors placeholder:text-slate-350 focus:border-indigo-600 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:placeholder:text-slate-600 dark:focus:border-indigo-500 text-slate-800 dark:text-slate-250"
+                  className="h-10 w-full rounded-lg border border-theme-border bg-theme-bg/60 px-3 pl-9 pr-10 text-xs font-sans font-semibold transition-colors placeholder:text-slate-400 focus:border-indigo-600 focus:bg-theme-card focus:outline-none text-black dark:text-white"
                   id="password-input"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 hover:text-black dark:hover:text-white focus:outline-none"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                   id="password-toggle"
                 >
@@ -221,7 +218,7 @@ export default function LoginPage({
             {isRegistering && (
               <div>
                 <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
-                  Confirm Password
+                  CONFIRM PASSWORD
                 </label>
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -237,9 +234,8 @@ export default function LoginPage({
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`flex h-10 w-full items-center justify-center rounded-sm bg-indigo-600 text-xs font-mono font-bold uppercase tracking-wider text-white shadow-xs transition-all hover:bg-indigo-550 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-                isSubmitting ? 'opacity-80 cursor-not-allowed' : ''
-              }`}
+              className={`flex h-11 w-full items-center justify-center rounded-xl bg-lime-500 text-xs font-sans font-extrabold uppercase tracking-wider text-black shadow-md transition-all hover:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-lime-400 ${isSubmitting ? 'opacity-80 cursor-not-allowed' : 'cursor-pointer'
+                }`}
               id="login-submit-button"
             >
               {isSubmitting ? (
@@ -287,7 +283,7 @@ export default function LoginPage({
           </div>
         </div>
 
-        </div>
+      </div>
     </div>
   );
 }

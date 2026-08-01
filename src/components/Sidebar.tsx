@@ -7,9 +7,11 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck,
-  Sparkles,
+  Sun,
+  Moon,
+  User,
 } from 'lucide-react';
+import { Theme, UserProfile } from '../types';
 
 interface SidebarProps {
   isExpanded: boolean;
@@ -17,6 +19,9 @@ interface SidebarProps {
   activeTabId: string;
   onSelectTab: (tabId: string) => void;
   syncRequestsCount: number;
+  user: UserProfile;
+  theme: Theme;
+  onThemeToggle: () => void;
 }
 
 export default function Sidebar({
@@ -25,6 +30,9 @@ export default function Sidebar({
   activeTabId,
   onSelectTab,
   syncRequestsCount,
+  user,
+  theme,
+  onThemeToggle,
 }: SidebarProps) {
   // Navigation layout configurations
   const navigationItems = [
@@ -46,7 +54,6 @@ export default function Sidebar({
       id: 'activity',
       label: 'Activity',
       icon: CalendarCheck,
-      badge: 'Auto',
       disabled: false,
     },
     {
@@ -60,25 +67,66 @@ export default function Sidebar({
       id: 'mcp',
       label: 'MCP Toolkit',
       icon: Cpu,
-      badge: 'Coming Soon',
+      badge: 'Soon',
       disabled: true,
-    },
-    {
-      id: 'settings',
-      label: 'Settings',
-      icon: Settings,
-      badge: null,
-      disabled: false,
     },
   ];
 
   return (
     <aside
-      className={`flex flex-col border-r border-theme-border bg-theme-bg transition-all duration-201 ease-in-out ${
-        isExpanded ? 'w-56' : 'w-16'
-      }`}
+      className={`flex flex-col border-r border-slate-900 bg-[#06070A] text-white transition-all duration-300 ease-in-out ${isExpanded ? 'w-56' : 'w-16'
+        }`}
       id="devsync-navigation-sidebar"
     >
+      {/* Top Sidebar Branding Header: Logo + Collapse/Expand Arrow */}
+      <div className="flex h-14 items-center px-3 border-b border-slate-900/80 justify-between shrink-0">
+        {isExpanded ? (
+          /* Expanded: DevSync text + collapse arrow side by side */
+          <>
+            <button
+              onClick={() => onSelectTab('dashboard')}
+              className="flex items-center focus:outline-none cursor-pointer group"
+              title="Go to Dashboard"
+            >
+              <span className="text-lg font-extrabold tracking-tight text-white font-heading uppercase group-hover:text-lime-400 transition-colors">
+                DevSync
+              </span>
+            </button>
+            <button
+              onClick={onToggleExpand}
+              className="h-7 w-7 flex items-center justify-center rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              title="Collapse Sidebar"
+              id="nav-item-collapse-toggle"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+          </>
+        ) : (
+          /* Collapsed: DS text hides on hover, expand arrow reveals */
+          <div className="relative flex items-center justify-center w-full h-full group">
+            {/* DS logo — visible by default, hidden on hover */}
+            <button
+              onClick={() => onSelectTab('dashboard')}
+              className="flex items-center justify-center focus:outline-none cursor-pointer w-full"
+              title="Go to Dashboard"
+            >
+              <span className="text-lg font-extrabold tracking-tight text-white font-heading uppercase transition-opacity duration-200 group-hover:opacity-0">
+                DS
+              </span>
+            </button>
+            {/* Expand arrow — hidden by default, revealed on hover */}
+            <button
+              onClick={onToggleExpand}
+              className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer text-slate-400 hover:text-white"
+              title="Expand Sidebar"
+              id="nav-item-collapse-toggle"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Main Nav Items List */}
       <nav className="flex-1 space-y-1.5 p-2 pt-4">
         {navigationItems.map((item) => {
@@ -90,16 +138,16 @@ export default function Sidebar({
             return (
               <div
                 key={item.id}
-                className={`relative flex items-center rounded-sm px-3 py-2 text-[11px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-600 cursor-not-allowed group`}
+                className={`relative flex items-center rounded-lg px-3 py-2.5 text-[11px] font-sans font-semibold tracking-wide text-slate-500 cursor-not-allowed group`}
                 title={`${item.label} (Under Development)`}
               >
                 <div className="flex items-center w-full justify-between">
                   <div className="flex items-center space-x-2.5">
-                    <IconComponent className="h-4 w-4 opacity-65" />
+                    <IconComponent className="h-4 w-4 opacity-50" />
                     {isExpanded && <span className="truncate">{item.label}</span>}
                   </div>
                   {isExpanded && item.badge && (
-                    <span className="rounded-sm bg-slate-200/60 px-1.5 py-0.5 text-[8px] font-bold text-slate-500 dark:bg-slate-900 dark:text-slate-500">
+                    <span className="rounded-full bg-slate-900 px-2 py-0.5 text-[8px] font-bold text-slate-500 border border-slate-800">
                       Soon
                     </span>
                   )}
@@ -107,7 +155,7 @@ export default function Sidebar({
 
                 {/* Collapsed Badge Indicator */}
                 {!isExpanded && (
-                  <div className="absolute left-14 z-50 hidden rounded-sm bg-slate-950 px-2 py-1 text-[10px] text-white shadow-xs group-hover:block whitespace-nowrap">
+                  <div className="absolute left-14 z-50 hidden rounded-md bg-slate-900 px-2 py-1 text-[10px] text-white shadow-xs group-hover:block whitespace-nowrap">
                     {item.label} (Coming Soon)
                   </div>
                 )}
@@ -115,24 +163,22 @@ export default function Sidebar({
             );
           }
 
-          // Active Item as bordered card, general state as minimalist gray style
+          {/* Active / Inactive Nav Items */ }
           return (
             <button
               key={item.id}
               onClick={() => onSelectTab(item.id)}
-              className={`relative flex w-full items-center rounded-sm px-3 py-2 text-[11px] font-mono uppercase tracking-wider transition-all group ${
-                isActive
-                  ? 'bg-theme-card border border-theme-border text-indigo-600 dark:text-indigo-400 font-bold shadow-xs'
-                  : 'text-slate-450 hover:bg-theme-card hover:text-slate-800 dark:text-slate-400 dark:hover:bg-theme-card dark:hover:text-slate-200'
-              }`}
+              className={`relative flex w-full items-center rounded-lg px-3 py-2.5 text-xs font-sans tracking-wide transition-all group cursor-pointer ${isActive
+                ? 'bg-lime-500 text-black font-extrabold shadow-sm border border-lime-600'
+                : 'text-white font-bold hover:bg-slate-900/80 hover:text-lime-300'
+                }`}
               id={`nav-item-${item.id}`}
             >
               <div className="flex items-center w-full justify-between">
                 <div className="flex items-center space-x-2.5">
                   <IconComponent
-                    className={`h-4 w-4 ${
-                      isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200'
-                    }`}
+                    className={`h-4 w-4 ${isActive ? 'text-black' : 'text-white group-hover:text-lime-300'
+                      }`}
                   />
                   {isExpanded && <span className="truncate">{item.label}</span>}
                 </div>
@@ -140,11 +186,10 @@ export default function Sidebar({
                 {/* Optional Action Badge */}
                 {isExpanded && item.badge && (
                   <span
-                    className={`rounded-sm px-1.5 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider ${
-                      item.id === 'activity'
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50 dark:bg-emerald-950/30 dark:text-emerald-400'
-                        : 'bg-indigo-50 text-indigo-700 border border-indigo-200/50 dark:bg-indigo-950/30 dark:text-indigo-400'
-                    }`}
+                    className={`rounded-full px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider ${item.id === 'activity'
+                      ? 'bg-lime-500/20 text-lime-400 border border-lime-500/30'
+                      : 'bg-slate-800 text-white border border-slate-700'
+                      }`}
                   >
                     {item.badge}
                   </span>
@@ -153,9 +198,9 @@ export default function Sidebar({
 
               {/* Hover tooltip for collapsed state */}
               {!isExpanded && (
-                <div className="absolute left-14 z-50 hidden rounded-sm bg-slate-950 px-2 py-1.5 text-xs text-white shadow-md group-hover:block whitespace-nowrap dark:bg-slate-800 border dark:border-slate-700">
+                <div className="absolute left-14 z-50 hidden rounded-md bg-slate-900 px-2.5 py-1.5 text-xs font-bold text-white shadow-md group-hover:block whitespace-nowrap border border-slate-800">
                   {item.label}
-                  {item.badge && <span className="ml-1.5 text-[10px] text-indigo-400">({item.badge})</span>}
+                  {item.badge && <span className="ml-1.5 text-[10px] text-lime-400">({item.badge})</span>}
                 </div>
               )}
             </button>
@@ -163,42 +208,74 @@ export default function Sidebar({
         })}
       </nav>
 
-      {/* System Status Indicators in Sidebar */}
-      {isExpanded && (
-        <div className="mx-3 my-2 p-3.5 rounded-sm bg-theme-card border border-theme-border shadow-xs font-sans text-xs">
-          <div className="flex items-center space-x-1.5 text-slate-400 dark:text-slate-500 font-bold text-[10px] uppercase tracking-wider mb-2">
-            <Sparkles className="h-3 w-3 text-indigo-500" />
-            <span>Sync Status</span>
-          </div>
-          <div className="flex items-center justify-between text-[11px] mb-1.5 text-slate-650 dark:text-slate-350 font-mono">
-            <span>Status:</span>
-            <span className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center bg-emerald-50 dark:bg-emerald-950/40 px-1 py-0.5 rounded-sm text-[9px]">
-              <span className="h-1 w-1 rounded-full bg-emerald-500 mr-1 animate-pulse" />
-              Active
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-[11px] text-slate-650 dark:text-slate-350 font-mono">
-            <span>Uptime:</span>
-            <span className="font-mono text-slate-500 dark:text-slate-400">99.98%</span>
-          </div>
-        </div>
-      )}
-
-      {/* Toggle Expand Button and Footer info */}
-      <div className="p-2 border-t border-theme-border flex flex-col items-center">
+      {/* Sidebar Footer: Theme → Settings → Profile (top to bottom) */}
+      <div className="p-2 border-t border-slate-900 flex flex-col space-y-1 bg-[#06070A]">
+        {/* Theme Toggle Button */}
         <button
-          onClick={onToggleExpand}
-          className="w-full flex justify-center items-center rounded-sm p-1.5 text-slate-400 hover:bg-theme-card hover:text-slate-600 dark:hover:text-theme-card dark:hover:text-slate-200 transition-all font-mono text-[10px] uppercase"
-          title={isExpanded ? 'Collapse Navigation Bar' : 'Expand Navigation Bar'}
-          id="sidebar-toggle-expand-button"
+          onClick={onThemeToggle}
+          className="relative flex w-full items-center rounded-lg px-3 py-2.5 text-xs font-sans font-bold tracking-wide text-white hover:bg-slate-900/80 hover:text-lime-300 transition-all group cursor-pointer"
+          title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+          aria-label="Toggle theme"
+          id="sidebar-theme-toggle"
         >
-          {isExpanded ? (
-            <div className="flex items-center space-x-1 text-xs">
-              <ChevronLeft className="h-4 w-4" />
-              <span>Collapse Sidebar</span>
+          <div className="flex items-center space-x-2.5">
+            {theme === 'dark' ? (
+              <Sun className="h-4 w-4 text-amber-400" />
+            ) : (
+              <Moon className="h-4 w-4 text-slate-300" />
+            )}
+            {isExpanded && <span className="truncate">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
+          </div>
+          {!isExpanded && (
+            <div className="absolute left-14 z-50 hidden rounded-md bg-slate-900 px-2.5 py-1.5 text-xs font-bold text-white shadow-md group-hover:block whitespace-nowrap border border-slate-800">
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
             </div>
-          ) : (
-            <ChevronRight className="h-4 w-4" />
+          )}
+        </button>
+
+        {/* Settings Button */}
+        <button
+          onClick={() => onSelectTab('settings')}
+          className={`relative flex w-full items-center rounded-lg px-3 py-2.5 text-xs font-sans tracking-wide transition-all group cursor-pointer ${activeTabId === 'settings'
+            ? 'bg-lime-500 text-black font-extrabold shadow-sm border border-lime-600'
+            : 'text-white font-bold hover:bg-slate-900/80 hover:text-lime-300'
+            }`}
+          id="nav-item-settings"
+        >
+          <div className="flex items-center space-x-2.5">
+            <Settings
+              className={`h-4 w-4 ${activeTabId === 'settings' ? 'text-black' : 'text-white group-hover:text-lime-300'
+                }`}
+            />
+            {isExpanded && <span className="truncate">Settings</span>}
+          </div>
+          {!isExpanded && (
+            <div className="absolute left-14 z-50 hidden rounded-md bg-slate-900 px-2.5 py-1.5 text-xs font-bold text-white shadow-md group-hover:block whitespace-nowrap border border-slate-800">
+              Settings
+            </div>
+          )}
+        </button>
+
+        {/* Profile Button */}
+        <button
+          onClick={() => onSelectTab('profile')}
+          className={`relative flex w-full items-center rounded-lg px-3 py-2.5 text-xs font-sans tracking-wide transition-all group cursor-pointer ${activeTabId === 'profile'
+            ? 'bg-lime-500 text-black font-extrabold shadow-sm border border-lime-600'
+            : 'text-white font-bold hover:bg-slate-900/80 hover:text-lime-300'
+            }`}
+          title="User Profile"
+          id="nav-item-profile"
+        >
+          <div className="flex items-center space-x-2.5">
+            <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-lime-500 text-black font-extrabold text-[9px]">
+              {user?.name ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'U'}
+            </div>
+            {isExpanded && <span className="truncate">Profile</span>}
+          </div>
+          {!isExpanded && (
+            <div className="absolute left-14 z-50 hidden rounded-md bg-slate-900 px-2.5 py-1.5 text-xs font-bold text-white shadow-md group-hover:block whitespace-nowrap border border-slate-800">
+              Profile
+            </div>
           )}
         </button>
       </div>

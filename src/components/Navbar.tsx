@@ -28,34 +28,18 @@ export default function Navbar({
 
   return (
     <nav
-      className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-theme-border bg-theme-card px-6 transition-colors duration-205 text-theme-text"
+      className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-slate-200/80 bg-white backdrop-blur-md px-6 text-black shadow-xs"
       id="devsync-top-navbar"
     >
       {/* Left branding */}
       <div className="flex items-center space-x-6">
         <button
           onClick={() => onNavigateToTab('dashboard')}
-          className="group flex items-center space-x-2.5 hover:opacity-90 focus:outline-none"
+          className="group flex items-center hover:opacity-90 focus:outline-none cursor-pointer"
           title="Go to Dashboard"
           id="branding-logo-trigger"
         >
-          <div className="relative flex h-8 w-8 items-center justify-center rounded-sm bg-indigo-600 text-white shadow-xs">
-            {/* Minimal dual sync arrow representation as SVG */}
-            <svg
-              className="h-4 w-4 animate-spin-slow text-white"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H17" />
-            </svg>
-            <span className="absolute -top-1 -right-1 flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
-            </span>
-          </div>
-          <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50 font-sans uppercase">
+          <span className="text-xl font-extrabold tracking-tight text-black font-heading uppercase">
             DevSync
           </span>
         </button>
@@ -63,21 +47,21 @@ export default function Navbar({
 
       {/* Center Interactive Search */}
       <div className="relative mx-4 flex w-full max-w-sm flex-1 items-center md:max-w-md">
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          <Search className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+          <Search className="h-4 w-4 text-slate-400" />
         </div>
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="SEARCH FILES, LOGS, SCHEDULES..."
-          className="h-10 w-full rounded-sm border border-theme-border bg-theme-bg px-3 pl-9 text-xs font-mono uppercase tracking-wide transition-colors placeholder:text-slate-400 focus:border-indigo-650 focus:bg-theme-card focus:outline-none text-theme-text dark:placeholder:text-slate-500"
+          placeholder="Search files, logs, schedules..."
+          className="h-10 w-full rounded-full border border-slate-200 bg-slate-100/80 px-4 pl-10 text-xs font-sans font-medium transition-all placeholder:text-slate-400 focus:border-lime-500 focus:bg-white focus:outline-none text-black shadow-xs"
           id="global-search-input"
         />
         {searchTerm && (
           <button
             onClick={() => onSearchChange('')}
-            className="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs font-bold text-slate-500 hover:text-black cursor-pointer"
           >
             Clear
           </button>
@@ -89,42 +73,31 @@ export default function Navbar({
         {/* Toggle Theme System */}
         <button
           onClick={onThemeToggle}
-          className="rounded-sm p-2 text-slate-500 hover:bg-theme-border hover:text-slate-700 dark:text-slate-450 dark:hover:bg-theme-border dark:hover:text-slate-200 transition-colors"
+          className="h-9 w-9 rounded-full border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-black transition-all flex items-center justify-center shadow-xs cursor-pointer"
           title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
           aria-label="Toggle theme appearance"
           id="theme-toggle-button"
         >
           {theme === 'dark' ? (
-            <Sun className="h-4 w-4 text-amber-550" />
+            <Sun className="h-4 w-4 text-amber-500" />
           ) : (
-            <Moon className="h-4 w-4 text-slate-600" />
+            <Moon className="h-4 w-4 text-slate-700" />
           )}
         </button>
 
-        {/* About App Info trigger */}
-        <button
-          onClick={onOpenAbout}
-          className="rounded-sm p-2 text-slate-500 hover:bg-theme-border hover:text-slate-700 dark:text-slate-450 dark:hover:bg-theme-border dark:hover:text-slate-200 transition-colors"
-          title="About DevSync"
-          aria-label="About DevSync client details"
-          id="about-button"
-        >
-          <Info className="h-4 w-4" />
-        </button>
-
         {/* Vertical Separator */}
-        <div className="h-6 w-px bg-theme-border" />
+        <div className="h-6 w-px bg-slate-200" />
 
         {/* User Status Avatar with Dropdown */}
         <div className="relative">
           <button
             onClick={() => setProfileOpen(!profileOpen)}
-            className="flex items-center space-x-2.5 rounded-sm p-1 focus:outline-none"
+            className="flex items-center space-x-2 rounded-full p-0.5 focus:outline-none cursor-pointer"
             aria-haspopup="true"
             aria-expanded={profileOpen}
             id="avatar-trigger-button"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-theme-border bg-theme-bg text-xs font-bold text-theme-text dark:bg-theme-card">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-lime-400 bg-lime-500 text-black font-extrabold text-xs shadow-xs">
               {user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
             </div>
           </button>

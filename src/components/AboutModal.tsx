@@ -37,8 +37,8 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
               {/* Header */}
               <div className="flex items-center justify-between border-b border-theme-border pb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-indigo-50 text-indigo-600 dark:bg-theme-bg dark:text-indigo-400">
-                    <Cpu className="h-5 w-5" />
+                  <div className="flex h-10 w-24 items-center justify-center rounded-lg bg-[#D6E8E1] border border-[#b8d5cb] p-1 shadow-xs">
+                    <img src="/logo.png" alt="DevSync Logo" className="h-full w-full object-contain" />
                   </div>
                   <div>
                     <h3 className="text-sm font-bold tracking-wider font-mono uppercase text-theme-text" id="about-title">

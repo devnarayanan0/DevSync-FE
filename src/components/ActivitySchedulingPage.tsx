@@ -110,17 +110,14 @@ export default function ActivitySchedulingPage({
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-theme-border pb-3">
         <div>
-          <h1 className="text-lg font-bold text-theme-text font-sans">
+          <h1 className="page-title-heading">
             Activity & Scheduling
           </h1>
-          <p className="text-xs text-slate-400">
-            Configure sync schedules, automation triggers, and transfer groups.
-          </p>
         </div>
         {onTriggerSyncAll && (
           <button
             onClick={onTriggerSyncAll}
-            className="rounded bg-indigo-605 hover:bg-indigo-500 text-white font-bold text-xs px-3.5 py-2 cursor-pointer shadow-xs transition-colors"
+            className="rounded-xl bg-lime-500 hover:bg-lime-400 text-black font-extrabold text-xs px-4 py-2.5 cursor-pointer shadow-md transition-all uppercase tracking-wider"
           >
             Trigger All Schedules
           </button>
@@ -131,50 +128,95 @@ export default function ActivitySchedulingPage({
         {/* Left Column: Rules & Groups */}
         <div className="space-y-5">
           {/* Section 1 - Global Sync Rules */}
-          <div className="rounded border border-theme-border bg-theme-card p-5 shadow-xs space-y-4 text-theme-text">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-theme-text border-b border-theme-border pb-2 flex items-center gap-1.5">
-              <Sliders className="h-4 w-4 text-indigo-505" />
+          <div className="rounded-lg border border-theme-border bg-theme-card p-5 shadow-md space-y-4 text-theme-text">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-black dark:text-white border-b border-theme-border pb-3 flex items-center gap-2">
+              <Sliders className="h-4.5 w-4.5 text-lime-600 dark:text-lime-400" />
               Global Sync Rules
             </h3>
 
             <div className="space-y-4 text-xs font-sans">
               <div className="flex items-center justify-between">
-                <div>
-                  <span className="font-semibold text-theme-text block text-xs">Sync on Startup</span>
-                  <p className="text-[11px] text-slate-400">Automatically trigger sync when opening DevSync.</p>
+                <div className="group relative cursor-help" title="Automatically trigger sync when opening DevSync.">
+                  <span className="font-bold text-black dark:text-white block text-xs hover:text-lime-500 transition-colors">
+                    Sync on Startup
+                  </span>
+                  <div className="absolute left-0 top-full mt-1 hidden group-hover:block z-20 rounded bg-slate-900 px-2 py-1 text-[10px] text-white shadow-md whitespace-nowrap dark:bg-slate-800 border dark:border-slate-700">
+                    Automatically trigger sync when opening DevSync.
+                  </div>
                 </div>
-                <button onClick={() => setSyncOnStartup(!syncOnStartup)} className="cursor-pointer">
-                  {syncOnStartup ? <ToggleRight className="h-6 w-6 text-indigo-600" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
+                <button
+                  type="button"
+                  onClick={() => setSyncOnStartup(!syncOnStartup)}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    syncOnStartup ? 'bg-lime-500' : 'bg-slate-300 dark:bg-slate-700'
+                  }`}
+                  aria-label="Toggle Sync on Startup"
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-black shadow-xs ring-0 transition duration-200 ease-in-out ${
+                      syncOnStartup ? 'translate-x-4' : 'translate-x-0'
+                    }`}
+                  />
                 </button>
               </div>
 
               <div className="flex items-center justify-between">
-                <div>
-                  <span className="font-semibold text-theme-text block text-xs">Sync on Internet Connect</span>
-                  <p className="text-[11px] text-slate-400">Resume transfer when internet is restored.</p>
+                <div className="group relative cursor-help" title="Resume transfer when internet is restored.">
+                  <span className="font-bold text-black dark:text-white block text-xs hover:text-lime-500 transition-colors">
+                    Sync on Internet Connect
+                  </span>
+                  <div className="absolute left-0 top-full mt-1 hidden group-hover:block z-20 rounded bg-slate-900 px-2 py-1 text-[10px] text-white shadow-md whitespace-nowrap dark:bg-slate-800 border dark:border-slate-700">
+                    Resume transfer when internet is restored.
+                  </div>
                 </div>
-                <button onClick={() => setSyncOnInternet(!syncOnInternet)} className="cursor-pointer">
-                  {syncOnInternet ? <ToggleRight className="h-6 w-6 text-indigo-600" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
+                <button
+                  type="button"
+                  onClick={() => setSyncOnInternet(!syncOnInternet)}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    syncOnInternet ? 'bg-lime-500' : 'bg-slate-300 dark:bg-slate-700'
+                  }`}
+                  aria-label="Toggle Sync on Internet Connect"
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-black shadow-xs ring-0 transition duration-200 ease-in-out ${
+                      syncOnInternet ? 'translate-x-4' : 'translate-x-0'
+                    }`}
+                  />
                 </button>
               </div>
 
               <div className="flex items-center justify-between">
-                <div>
-                  <span className="font-semibold text-theme-text block text-xs">Automatic Retry</span>
-                  <p className="text-[11px] text-slate-400">Re-attempt failing downloads/uploads.</p>
+                <div className="group relative cursor-help" title="Re-attempt failing downloads/uploads.">
+                  <span className="font-bold text-black dark:text-white block text-xs hover:text-lime-500 transition-colors">
+                    Automatic Retry
+                  </span>
+                  <div className="absolute left-0 top-full mt-1 hidden group-hover:block z-20 rounded bg-slate-900 px-2 py-1 text-[10px] text-white shadow-md whitespace-nowrap dark:bg-slate-800 border dark:border-slate-700">
+                    Re-attempt failing downloads/uploads.
+                  </div>
                 </div>
-                <button onClick={() => setAutoRetry(!autoRetry)} className="cursor-pointer">
-                  {autoRetry ? <ToggleRight className="h-6 w-6 text-indigo-600" /> : <ToggleLeft className="h-6 w-6 text-slate-400" />}
+                <button
+                  type="button"
+                  onClick={() => setAutoRetry(!autoRetry)}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    autoRetry ? 'bg-lime-500' : 'bg-slate-300 dark:bg-slate-700'
+                  }`}
+                  aria-label="Toggle Automatic Retry"
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-black shadow-xs ring-0 transition duration-200 ease-in-out ${
+                      autoRetry ? 'translate-x-4' : 'translate-x-0'
+                    }`}
+                  />
                 </button>
               </div>
 
               {autoRetry && (
-                <div className="pt-2 border-t border-theme-border space-y-1">
-                  <label className="text-[10px] text-slate-400 font-semibold uppercase block">Retry Interval</label>
+                <div className="pt-2 border-t border-theme-border space-y-1.5">
+                  <label className="text-[10px] text-slate-800 dark:text-slate-200 font-bold uppercase block">Retry Interval</label>
                   <select
                     value={retryInterval}
                     onChange={(e) => setRetryInterval(e.target.value)}
-                    className="w-full text-xs p-1.5 rounded border border-theme-border bg-theme-bg text-theme-text outline-none font-medium cursor-pointer"
+                    className="w-full text-xs p-2 rounded-lg border border-theme-border bg-theme-bg/60 text-black dark:text-white outline-none font-semibold cursor-pointer"
                   >
                     <option value="1 Minute">1 Minute</option>
                     <option value="5 Minutes">5 Minutes</option>
@@ -187,45 +229,45 @@ export default function ActivitySchedulingPage({
           </div>
 
           {/* Section 2 - Sync Groups */}
-          <div className="rounded border border-theme-border bg-theme-card p-5 shadow-xs space-y-4 text-theme-text">
-            <div className="flex justify-between items-center border-b border-theme-border pb-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-theme-text flex items-center gap-1.5">
-                <Layers className="h-4 w-4 text-indigo-505" />
+          <div className="rounded-lg border border-theme-border bg-theme-card p-5 shadow-md space-y-4 text-theme-text">
+            <div className="flex justify-between items-center border-b border-theme-border pb-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-black dark:text-white flex items-center gap-2">
+                <Layers className="h-4.5 w-4.5 text-lime-600 dark:text-lime-400" />
                 Sync Groups
               </h3>
               <button
                 onClick={() => setCreateGroupModalOpen(true)}
-                className="text-[10px] bg-theme-bg border border-theme-border text-theme-text font-bold px-2 py-0.5 rounded cursor-pointer transition-all uppercase hover:bg-theme-border"
+                className="text-[11px] bg-lime-500 text-black hover:bg-lime-400 font-extrabold px-3 py-1.5 rounded-lg cursor-pointer transition-all uppercase shadow-xs"
               >
-                + Create
+                + Create Group
               </button>
             </div>
 
             <div className="space-y-3">
-              {syncGroups.length === 0 ? <div className="text-center text-xs text-neutral-500 py-6">No Sync Groups</div> : syncGroups.map((g) => {
+              {syncGroups.length === 0 ? <div className="text-center text-xs font-extrabold text-black dark:text-white py-6">No Sync Groups</div> : syncGroups.map((g) => {
                 const isGroupActive = g.status === 'ACTIVE';
                 return (
-                  <div key={g.id} className="p-3 border rounded border-theme-border bg-theme-bg text-xs">
+                  <div key={g.id} className="p-3 border rounded-xl border-theme-border bg-theme-bg/50 text-xs">
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-theme-text">{g.name}</span>
-                      <span className={`px-1 rounded text-[9px] font-bold ${isGroupActive ? 'bg-emerald-50/10 text-emerald-400 border border-emerald-900/30' : 'bg-theme-border text-slate-400'}`}>
+                      <span className="font-extrabold text-black dark:text-white">{g.name}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${isGroupActive ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-theme-border text-slate-700 dark:text-slate-300'}`}>
                         {g.status}
                       </span>
                     </div>
-                    <div className="text-[11px] text-slate-400 space-y-0.5 mt-1 font-mono uppercase">
+                    <div className="text-[11px] text-slate-700 dark:text-slate-300 font-semibold space-y-0.5 mt-1.5 font-mono uppercase">
                       <div>Mapped Context: {g.requestCount} nodes</div>
                       <div className="lowercase">Period: {g.schedule}</div>
                     </div>
-                    <div className="flex justify-end gap-1.5 mt-2 pt-1 border-t border-theme-border">
+                    <div className="flex justify-end gap-2 mt-2 pt-2 border-t border-theme-border">
                       <button
                         onClick={() => handleToggleGroup(g.id)}
-                        className="text-[10px] font-semibold text-indigo-550 dark:text-indigo-400 hover:underline cursor-pointer"
+                        className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
                       >
                         {isGroupActive ? 'Disable' : 'Enable'}
                       </button>
                       <button
                         onClick={() => setSyncGroups(syncGroups.filter((sg) => sg.id !== g.id))}
-                        className="text-[10px] font-semibold text-red-500 hover:underline cursor-pointer"
+                        className="text-[11px] font-bold text-red-600 hover:underline cursor-pointer"
                       >
                         Delete
                       </button>
@@ -240,33 +282,33 @@ export default function ActivitySchedulingPage({
         {/* Right 2 Columns: Scheduled Requests & Recent Activity */}
         <div className="xl:col-span-2 space-y-5">
           {/* Section 3 - Scheduled Requests */}
-          <div className="rounded border border-theme-border bg-theme-card p-5 shadow-xs space-y-4 text-theme-text">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-theme-text border-b border-theme-border pb-2 flex items-center gap-1.5 font-sans">
-              <Calendar className="h-4 w-4 text-indigo-505" />
+          <div className="rounded-lg border border-theme-border bg-theme-card p-5 shadow-md space-y-4 text-theme-text">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-black dark:text-white border-b border-theme-border pb-3 flex items-center gap-2 font-sans">
+              <Calendar className="h-4.5 w-4.5 text-indigo-600 dark:text-indigo-400" />
               Schedules
             </h3>
 
-            <div className="overflow-x-auto border border-theme-border bg-theme-card rounded">
+            <div className="overflow-x-auto border border-theme-border bg-theme-card rounded-xl">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-theme-bg font-semibold border-b border-theme-border text-slate-400">
-                    <th className="p-2.5">Sync Request</th>
-                    <th className="p-2.5">Schedule Type</th>
-                    <th className="p-2.5">Next Run</th>
-                    <th className="p-2.5">Status</th>
-                    <th className="p-2.5 text-right">Actions</th>
+                  <tr className="bg-theme-bg/50 font-bold border-b border-theme-border text-black dark:text-white uppercase text-[10px]">
+                    <th className="p-3">Sync Request</th>
+                    <th className="p-3">Schedule Type</th>
+                    <th className="p-3">Next Run</th>
+                    <th className="p-3">Status</th>
+                    <th className="p-3 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-theme-border">
-                {schedules.length === 0 ? <tr><td colSpan={5} className="text-center text-xs text-neutral-500 py-6">No Schedules Configured</td></tr> : schedules.map((s) => {
+                {schedules.length === 0 ? <tr><td colSpan={5} className="text-center text-xs font-extrabold text-black dark:text-white py-6">No Schedules Configured</td></tr> : schedules.map((s) => {
                     const isSchedActive = s.status === 'ACTIVE';
                     return (
-                      <tr key={s.id} className="hover:bg-theme-border/20 text-[11px] select-none text-theme-text font-mono transition-colors">
-                        <td className="p-2.5 font-sans font-bold text-theme-text">{s.requestName}</td>
-                        <td className="p-2.5 text-slate-450">{s.scheduleType}</td>
-                        <td className="p-2.5 text-slate-450">{s.nextRun}</td>
-                        <td className="p-2.5">
-                          <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-bold ${isSchedActive ? 'bg-indigo-50/10 text-indigo-400 border border-indigo-900/15' : 'bg-theme-bg border border-theme-border text-slate-405'}`}>
+                      <tr key={s.id} className="hover:bg-theme-bg/40 text-[11px] select-none text-theme-text font-mono transition-colors">
+                        <td className="p-3 font-sans font-extrabold text-black dark:text-white">{s.requestName}</td>
+                        <td className="p-3 text-slate-700 dark:text-slate-300 font-semibold">{s.scheduleType}</td>
+                        <td className="p-3 text-slate-700 dark:text-slate-300 font-semibold">{s.nextRun}</td>
+                        <td className="p-3">
+                          <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-bold ${isSchedActive ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-300' : 'bg-theme-bg border border-theme-border text-slate-700 dark:text-slate-300'}`}>
                             {s.status}
                           </span>
                         </td>
@@ -300,18 +342,19 @@ export default function ActivitySchedulingPage({
                 Recent Activity
               </h3>
 
-              <div className="flex gap-1 bg-theme-bg border border-theme-border p-1 rounded">
-                {(['all', 'success', 'failed', 'uploads', 'downloads'] as const).map((lvl) => (
-                  <button
-                    key={lvl}
-                    onClick={() => setFilterType(lvl)}
-                    className={`px-2 py-0.5  rounded text-[10px] font-semibold uppercase cursor-pointer transition-all ${
-                      filterType === lvl ? 'bg-indigo-650 text-white shadow-xs' : 'text-slate-500 hover:text-theme-text'
-                    }`}
-                  >
-                    {lvl}
-                  </button>
-                ))}
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-slate-400 font-extrabold uppercase tracking-wider">Filter:</span>
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value as any)}
+                  className="h-8 rounded border border-theme-border bg-theme-bg px-2.5 text-xs text-theme-text font-semibold uppercase focus:border-indigo-600 focus:outline-none cursor-pointer"
+                >
+                  <option value="all">ALL</option>
+                  <option value="success">SUCCESS</option>
+                  <option value="failed">FAILED</option>
+                  <option value="uploads">UPLOADS</option>
+                  <option value="downloads">DOWNLOADS</option>
+                </select>
               </div>
             </div>
 

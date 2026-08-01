@@ -155,26 +155,18 @@ export default function DesktopBootLoader({ onComplete }: DesktopBootLoaderProps
   }, [currentStepIndex, onComplete, steps.length]);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-50 text-slate-800 font-sans select-none overflow-hidden">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-theme-bg text-theme-text font-sans select-none overflow-hidden">
       {/* Soft background ambient glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-100/40 blur-[130px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] bg-sky-100/30 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-500/10 blur-[130px] rounded-full pointer-events-none" />
 
       <div className="w-full max-w-md p-8 relative flex flex-col items-center z-10 animate-fade-in">
         {/* Minimalist Logo design */}
         <div className="relative mb-6 flex items-center justify-center">
-          <div className="h-24 w-24 rounded-2xl bg-white border border-slate-200/80 p-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center">
+          <div className="flex h-16 w-52 items-center justify-center rounded-2xl border border-[#b8d5cb] bg-[#D6E8E1] p-3 shadow-xl hover:shadow-2xl transition-all">
             <img src="/logo.png" alt="DevSync" className="w-full h-full object-contain" />
           </div>
-          <div className="absolute -inset-2 rounded-3xl bg-indigo-500/10 blur-xl -z-10 animate-pulse" />
         </div>
-        {/* Brand Information */}
-        <div className="text-center mb-8 space-y-2">
-          <h2 id="bootloader-title" className="text-2xl font-bold tracking-tight text-slate-900">
-            DevSync
-          </h2>
-        </div>
-        <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
+        <Loader2 className="h-6 w-6 animate-spin text-lime-500" />
       </div>
     </div>
   );

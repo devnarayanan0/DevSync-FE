@@ -60,6 +60,15 @@ export default function SyncRequestsPage({
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  // Top 3 draft sync requests loaded from local storage
+  const [draftRequests, setDraftRequests] = useState<Array<{ id: string; name: string; provider: string; updatedAt: string }>>(() => {
+    try {
+      const saved = localStorage.getItem('devsync_draft_sync_requests');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return [];
+  });
+
   // Filter requests
   const filteredRequests = syncRequests.filter((req) => {
     const matchesSearch =
@@ -201,17 +210,14 @@ export default function SyncRequestsPage({
       {/* Upper header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-theme-border">
         <div>
-          <h1 className="text-lg font-bold text-theme-text font-sans">
+          <h1 className="page-title-heading">
             Sync Requests
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Manage and monitor your cloud sync configurations.
-          </p>
         </div>
         <button
           onClick={onCreateClick}
           id="requests-btn-create"
-          className="inline-flex items-center gap-1.5 rounded bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2 rounded-xl bg-lime-500 hover:bg-lime-400 text-black px-4 py-2.5 text-xs font-extrabold shadow-md transition-all cursor-pointer"
         >
           <Plus className="h-4 w-4 stroke-[2.5]" />
           Create Sync Request
@@ -234,74 +240,52 @@ export default function SyncRequestsPage({
 
         {/* Filters Group */}
         <div className="flex flex-wrap items-center gap-5">
-          {/* Provider Filter segmented control */}
+          {/* Provider Filter Dropdown */}
           <div className="flex items-center gap-2">
             <span className="text-[11px] text-slate-400 font-extrabold uppercase tracking-wider">Provider:</span>
-            <div className="flex bg-theme-bg border border-theme-border p-0.5 rounded text-xs select-none">
-              {['all', 'aws-s3', 'google-drive'].map((name) => (
-                <button
-                  key={name}
-                  onClick={() => setProviderFilter(name)}
-                  className={`px-3 py-1 text-[11px] font-bold rounded transition-all cursor-pointer ${
-                    providerFilter === name
-                      ? 'bg-indigo-600 text-white shadow-sm'
-                      : 'text-slate-500 hover:text-theme-text'
-                  }`}
-                >
-                  {name === 'all' ? 'All' : name === 'aws-s3' ? 'AWS S3' : 'Google Drive'}
-                </button>
-              ))}
-            </div>
+            <select
+              value={providerFilter}
+              onChange={(e) => setProviderFilter(e.target.value)}
+              className="h-8 rounded border border-theme-border bg-theme-bg px-2.5 text-xs text-theme-text font-medium focus:border-indigo-600 focus:outline-none cursor-pointer"
+            >
+              <option value="all">All</option>
+              <option value="aws-s3">AWS S3</option>
+              <option value="google-drive">Google Drive</option>
+            </select>
           </div>
 
-          {/* Status Filter segmented control */}
+          {/* Status Filter Dropdown */}
           <div className="flex items-center gap-2">
             <span className="text-[11px] text-slate-400 font-extrabold uppercase tracking-wider">Status:</span>
-            <div className="flex bg-theme-bg border border-theme-border p-0.5 rounded text-xs select-none">
-              {['all', 'active', 'inactive', 'error'].map((filt) => (
-                <button
-                  key={filt}
-                  onClick={() => setStatusFilter(filt)}
-                  className={`px-3 py-1 text-[11px] font-bold rounded transition-all cursor-pointer ${
-                    statusFilter === filt
-                      ? 'bg-indigo-600 text-white shadow-sm'
-                      : 'text-slate-500 hover:text-theme-text'
-                  }`}
-                >
-                  {filt === 'all' ? 'All' : filt === 'active' ? 'Active' : filt === 'inactive' ? 'Inactive' : 'Error'}
-                </button>
-              ))}
-            </div>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="h-8 rounded border border-theme-border bg-theme-bg px-2.5 text-xs text-theme-text font-medium focus:border-indigo-600 focus:outline-none cursor-pointer"
+            >
+              <option value="all">All</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="error">Error</option>
+            </select>
           </div>
         </div>
       </div>
 
       {/* Main Request Table Card */}
       {filteredRequests.length === 0 ? (
-        <div className="p-10 text-center rounded border border-dashed border-theme-border bg-theme-card text-xs text-theme-text">
-          <FolderOpen className="mx-auto h-10 w-10 text-slate-400 mb-2" />
-          <h3 className="font-bold text-theme-text">No Sync Requests Found</h3>
-          <p className="text-slate-400 mt-1">
-            {syncRequests.length === 0
-              ? 'Get started by creating your first folders synchronization mapping.'
-              : 'Try running a different search query or matching rule.'}
+        <div className="p-10 text-center rounded-lg border border-theme-border bg-theme-card shadow-md text-xs text-theme-text space-y-2">
+          <FolderOpen className="mx-auto h-10 w-10 text-black dark:text-white" />
+          <h3 className="font-extrabold text-sm text-black dark:text-white">No Sync Requests</h3>
+          <p className="text-slate-800 dark:text-slate-200 font-semibold">
+            Create a sync request to see
           </p>
-          {syncRequests.length === 0 && (
-            <button
-              onClick={onCreateClick}
-              className="mt-3.5 inline-flex items-center gap-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 font-semibold text-xs cursor-pointer shadow-xs transition-colors"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Create your first Sync Request
-            </button>
-          )}
         </div>
       ) : (
-        <div className="rounded border border-theme-border bg-theme-card overflow-hidden shadow-xs text-theme-text">
+        <div className="rounded-lg border border-theme-border bg-theme-card overflow-hidden shadow-md text-theme-text">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left text-xs text-theme-text">
               <thead>
-                <tr className="bg-theme-bg border-b border-theme-border text-slate-450 uppercase text-[10px] tracking-wider font-extrabold">
+                <tr className="bg-theme-bg/50 border-b border-theme-border text-black dark:text-white uppercase text-[10px] tracking-wider font-extrabold">
                   <th className="p-4 font-bold">Request Name</th>
                   <th className="p-4 font-bold">Provider</th>
                   <th className="p-4 font-bold">Status</th>
@@ -317,19 +301,19 @@ export default function SyncRequestsPage({
                     <tr
                       key={req.id}
                       onClick={() => onOpenWorkspace(req.id)}
-                      className="hover:bg-theme-border/30 transition-colors cursor-pointer"
+                      className="hover:bg-theme-bg/40 transition-colors cursor-pointer"
                     >
                       {/* Name with navigation click */}
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 flex items-center justify-center rounded-lg bg-indigo-50/70 dark:bg-indigo-950/20 text-indigo-505 shrink-0 shadow-xs border border-indigo-100/30 dark:border-indigo-900/10">
+                          <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-lime-500/15 text-lime-600 dark:text-lime-400 shrink-0 shadow-xs border border-lime-500/30">
                             <FolderDot className="h-5 w-5" />
                           </div>
                           <div className="flex flex-col">
-                            <span className="font-bold text-sm text-theme-text font-sans tracking-tight hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline">
+                            <span className="font-extrabold text-sm text-black dark:text-white font-sans tracking-tight hover:text-lime-600 dark:hover:text-lime-400 hover:underline">
                               {req.name}
                             </span>
-                            <span className="text-xs text-slate-400 mt-0.5 max-w-sm sm:max-w-md truncate" title={req.description}>
+                            <span className="text-xs text-slate-700 dark:text-slate-300 mt-0.5 max-w-sm sm:max-w-md truncate" title={req.description}>
                               {req.description || 'Synchronized Cloud Bucket Mapping'}
                             </span>
                           </div>
@@ -357,7 +341,7 @@ export default function SyncRequestsPage({
                           {/* Open Button with text */}
                           <button
                             onClick={() => onOpenWorkspace(req.id)}
-                            className="px-3.5 py-1.5 rounded border border-theme-border bg-theme-bg hover:bg-theme-border text-theme-text text-xs font-semibold transition-all cursor-pointer shadow-xs"
+                            className="px-3.5 py-1.5 rounded-lg border border-theme-border bg-theme-bg hover:bg-theme-border text-black dark:text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
                           >
                             Open
                           </button>
@@ -366,29 +350,33 @@ export default function SyncRequestsPage({
                           <button
                             onClick={() => onTriggerSync && onTriggerSync(req.id)}
                             disabled={req.status === 'syncing'}
-                            className="p-1.5 h-8 w-8 flex items-center justify-center rounded border border-theme-border bg-theme-bg hover:bg-theme-border text-slate-500 dark:text-slate-400 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
-                            title="Sync Now"
+                            className={`p-1.5 rounded-lg border border-theme-border transition-all cursor-pointer shadow-xs ${
+                              req.status === 'syncing'
+                                ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 cursor-not-allowed'
+                                : 'bg-lime-500 text-black font-extrabold hover:bg-lime-400'
+                            }`}
+                            title="Trigger Sync Now"
                           >
-                            <RefreshCw className={`h-4 w-4 ${req.status === 'syncing' ? 'animate-spin text-indigo-500' : ''}`} />
+                            <Play className="h-4 w-4" />
                           </button>
 
                           {/* Pause / Resume button */}
                           <button
                             onClick={() => onToggleStatus(req.id)}
-                            className="p-1.5 h-8 w-8 flex items-center justify-center rounded border border-theme-border bg-theme-bg hover:bg-theme-border transition-all cursor-pointer shadow-xs"
+                            className="p-1.5 rounded-lg border border-theme-border bg-theme-bg hover:bg-theme-border text-slate-700 dark:text-slate-300 transition-all cursor-pointer shadow-xs"
                             title={isActive ? 'Pause' : 'Activate'}
                           >
                             {isActive ? (
-                              <Pause className="h-4 w-4 text-amber-500 fill-amber-500 stroke-[2.5]" />
+                              <Pause className="h-4 w-4" />
                             ) : (
-                              <Play className="h-4 w-4 text-emerald-500 fill-emerald-500 stroke-[2.5]" />
+                              <Play className="h-4 w-4" />
                             )}
                           </button>
 
                           {/* Delete button */}
                           <button
                             onClick={() => setDeletingId(req.id)}
-                            className="p-1.5 h-8 w-8 flex items-center justify-center rounded border border-theme-border bg-theme-bg hover:bg-red-50/10 hover:text-red-500 hover:border-red-500/20 text-slate-400 transition-all cursor-pointer shadow-xs"
+                            className="p-1.5 rounded-lg border border-theme-border bg-theme-bg hover:bg-red-50 dark:hover:bg-red-950/30 text-slate-700 dark:text-slate-300 hover:text-red-600 transition-all cursor-pointer shadow-xs"
                             title="Delete Configuration"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -403,23 +391,23 @@ export default function SyncRequestsPage({
           </div>
 
           {/* Desktop/Docker Desktop/GitHub Desktop inspired pagination footer */}
-          <div className="flex flex-col sm:flex-row items-center justify-between border-t border-theme-border bg-theme-bg px-4 py-3 gap-3">
-            <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider select-none">
+          <div className="flex flex-col sm:flex-row items-center justify-between border-t border-theme-border bg-theme-bg/50 px-4 py-3 gap-3">
+            <span className="text-[11px] text-slate-800 dark:text-slate-200 font-bold uppercase tracking-wider select-none">
               Showing 1 to {filteredRequests.length} of {filteredRequests.length} requests
             </span>
             
             <div className="flex items-center gap-1 select-none">
               <button 
-                className="p-1 h-7 w-7 flex items-center justify-center rounded border border-theme-border bg-theme-card text-slate-400 hover:text-theme-text cursor-pointer transition-colors disabled:opacity-30" 
+                className="p-1 h-7 w-7 flex items-center justify-center rounded-lg border border-theme-border bg-theme-card text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white cursor-pointer transition-colors disabled:opacity-30" 
                 disabled
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
-              <button className="h-7 w-7 flex items-center justify-center rounded text-xs font-bold leading-none bg-indigo-50/10 text-indigo-400 border border-indigo-500/20">
+              <button className="h-7 w-7 flex items-center justify-center rounded-lg text-xs font-bold leading-none bg-indigo-50/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
                 1
               </button>
               <button 
-                className="p-1 h-7 w-7 flex items-center justify-center rounded border border-theme-border bg-theme-card text-slate-400 hover:text-theme-text cursor-pointer transition-colors disabled:opacity-30" 
+                className="p-1 h-7 w-7 flex items-center justify-center rounded-lg border border-theme-border bg-theme-card text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white cursor-pointer transition-colors disabled:opacity-30" 
                 disabled
               >
                 <ChevronRight className="h-4 w-4" />
@@ -428,6 +416,40 @@ export default function SyncRequestsPage({
           </div>
         </div>
       )}
+
+      {/* Draft Sync Requests Section */}
+      <div className="rounded-2xl border border-theme-border bg-theme-card p-5 shadow-md space-y-3">
+        <div className="flex items-center justify-between border-b border-theme-border pb-3">
+          <h3 className="text-xs font-extrabold uppercase tracking-wider text-black dark:text-white font-sans">
+            Draft Sync Requests
+          </h3>
+          <span className="text-[10px] font-mono text-slate-700 dark:text-slate-300 font-bold">Local Top 3</span>
+        </div>
+
+        {draftRequests.length === 0 ? (
+          <div className="py-3 text-center text-xs font-extrabold text-black dark:text-white">
+            No Draft Sync Requests
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {draftRequests.slice(0, 3).map((draft) => (
+              <div key={draft.id} className="flex items-center justify-between p-3 rounded-lg border border-theme-border bg-theme-bg/50 text-xs font-mono">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <span className="h-2 w-2 rounded-full bg-amber-400 shrink-0" />
+                  <span className="font-bold text-black dark:text-white truncate">{draft.name}</span>
+                  <span className="text-[10px] text-slate-700 dark:text-slate-300 font-bold uppercase">({draft.provider})</span>
+                </div>
+                <button
+                  onClick={onCreateClick}
+                  className="px-3.5 py-1.5 rounded-lg bg-lime-500 hover:bg-lime-400 text-black font-extrabold text-xs cursor-pointer shadow-xs"
+                >
+                  Resume Draft
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Confirmation Modal overlay */}
       {deletingId && (

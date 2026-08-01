@@ -99,32 +99,29 @@ export default function LogsPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-theme-border pb-3">
         <div>
-          <h1 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+          <h1 className="page-title-heading">
             Application Logs
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Review detailed execution records, background transfers, and auth warnings.
-          </p>
         </div>
 
         <div className="flex flex-wrap gap-2 text-xs">
           <button
             onClick={handleExportJSON}
-            className="flex items-center gap-1.5 border border-slate-250 bg-white hover:bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-350 px-2.5 py-1.5 rounded font-semibold cursor-pointer select-none transition-colors"
+            className="flex items-center gap-1.5 border border-theme-border bg-theme-bg hover:bg-theme-border text-theme-text px-2.5 py-1.5 rounded font-semibold cursor-pointer select-none transition-colors"
           >
             <Download className="h-3.5 w-3.5" /> Export JSON
           </button>
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-1.5 border border-slate-250 bg-white hover:bg-slate-50 text-slate-705 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-350 px-2.5 py-1.5 rounded font-semibold cursor-pointer select-none transition-colors"
+            className="flex items-center gap-1.5 border border-theme-border bg-theme-bg hover:bg-theme-border text-theme-text px-2.5 py-1.5 rounded font-semibold cursor-pointer select-none transition-colors"
           >
             <FileCode className="h-3.5 w-3.5" /> Export CSV
           </button>
           <button
             onClick={handleClearTerminal}
-            className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-white dark:bg-slate-800 dark:hover:bg-slate-750 px-3 py-1.5 rounded font-semibold cursor-pointer select-none transition-colors"
+            className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded font-semibold cursor-pointer select-none transition-colors shadow-xs"
           >
             <Trash2 className="h-3.5 w-3.5" /> Clear Logs
           </button>
@@ -192,16 +189,16 @@ export default function LogsPage() {
         {/* Left Side: Table */}
         <div className="lg:col-span-3">
           {filteredLogs.length === 0 ? (
-            <div className="p-10 border border-dashed border-theme-border text-center rounded bg-theme-card space-y-2">
-              <Terminal className="mx-auto h-8 w-8 text-slate-300 dark:text-slate-700" />
-              <h4 className="font-bold text-theme-text">No Logs Matching Search</h4>
-              <p className="text-xs text-slate-400">Clear filters or try a different search phrase.</p>
+            <div className="p-10 border border-theme-border text-center rounded-lg bg-theme-card shadow-md space-y-2">
+              <Terminal className="mx-auto h-8 w-8 text-black dark:text-white" />
+              <h4 className="font-bold text-black dark:text-white text-sm">No Logs Matching Search</h4>
+              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Clear filters or try a different search phrase.</p>
             </div>
           ) : (
-            <div className="border border-theme-border rounded bg-theme-card overflow-hidden">
+            <div className="border border-theme-border rounded-lg bg-theme-card shadow-md overflow-hidden">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-theme-bg border-b border-theme-border text-slate-450 font-semibold uppercase text-[10px]">
+                  <tr className="bg-theme-bg/50 border-b border-theme-border text-black dark:text-white font-bold uppercase text-[10px]">
                     <th className="p-3">Time</th>
                     <th className="p-3">Level</th>
                     <th className="p-3">Source/Action</th>
@@ -219,27 +216,22 @@ export default function LogsPage() {
                         className={`cursor-pointer transition-colors ${
                           isSelected
                             ? 'bg-indigo-50/45 dark:bg-indigo-950/25 font-semibold border-l-4 border-indigo-550 text-indigo-700 dark:text-indigo-400'
-                            : 'hover:bg-theme-bg'
+                            : 'hover:bg-theme-bg/50'
                         }`}
                       >
-                        <td className="p-3 text-slate-400 dark:text-slate-500 whitespace-nowrap">{log.timestamp}</td>
+                        <td className="p-3 font-sans text-[11px] font-extrabold text-black dark:text-white whitespace-nowrap">{log.timestamp}</td>
+                        <td className="p-3">{getLogLevelBadge(log.level)}</td>
                         <td className="p-3">
-                          <span className={`inline-block px-1.5 py-0.2 rounded text-[9px] font-bold ${
-                            log.level === 'ERROR' ? 'bg-red-50 text-red-700 dark:bg-red-950/30' :
-                            log.level === 'WARNING' ? 'bg-amber-50 text-amber-700 dark:bg-amber-955/30' :
-                            log.level === 'DEBUG' ? 'bg-purple-50 text-purple-700 dark:bg-purple-950/30' :
-                            'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30'
-                          }`}>
-                            {log.level}
-                          </span>
+                          <div className="flex flex-col">
+                            <span className="font-bold text-black dark:text-white text-xs font-sans">{log.action}</span>
+                            <span className="text-[10px] text-slate-700 dark:text-slate-300 font-semibold">{log.source}</span>
+                          </div>
                         </td>
-                        <td className="p-3">
-                          <div className="font-semibold text-theme-text">[{log.source}]</div>
-                          <div className="text-slate-500 truncate max-w-[200px]">{log.action}</div>
-                        </td>
-                        <td className="p-3 text-slate-450">{log.provider}</td>
+                        <td className="p-3 uppercase text-slate-800 dark:text-slate-200 font-bold">{log.provider}</td>
                         <td className="p-3 text-right">
-                          <span className={`font-bold uppercase text-[9px] ${log.status === 'FAILED' ? 'text-red-500' : log.status === 'WARNING' ? 'text-amber-500' : 'text-emerald-500'}`}>
+                          <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                            log.status === 'OK' || log.status === 'SUCCESS' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-red-100 text-red-800 dark:bg-red-950/40 dark:text-red-300'
+                          }`}>
                             {log.status}
                           </span>
                         </td>
@@ -255,12 +247,12 @@ export default function LogsPage() {
         {/* Right Side: Log Inspector Details Panel */}
         <div className="lg:col-span-2">
           {!selectedLog ? (
-            <div className="p-6 border border-dashed border-theme-border rounded bg-theme-bg text-center text-slate-400 text-xs">
-              <SlidersHorizontal className="mx-auto h-8 w-8 text-slate-300 dark:text-slate-700 mb-2" />
+            <div className="p-8 border border-theme-border rounded-lg bg-theme-card shadow-md text-center text-black dark:text-white text-xs font-bold space-y-2">
+              <SlidersHorizontal className="mx-auto h-8 w-8 text-black dark:text-white mb-2" />
               <span>Select a log row on the left to view detailed metrics and payload variables.</span>
             </div>
           ) : (
-            <div className="rounded border border-theme-border bg-theme-card p-5 shadow-xs space-y-4 text-xs font-sans text-theme-text">
+            <div className="rounded-lg border border-theme-border bg-theme-card p-5 shadow-md space-y-4 text-xs font-sans text-theme-text">
               <div className="flex justify-between items-center border-b border-theme-border pb-2.5 text-theme-text">
                 <span className="font-bold uppercase text-xs">Log Inspector</span>
                 <span className="font-mono text-slate-400 text-[10px]">ID: {selectedLog.id}</span>

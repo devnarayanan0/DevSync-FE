@@ -206,33 +206,30 @@ export default function FirstSyncWizard({
       
       {/* Top Wizard Branding Header bar */}
       <header className="flex h-16 w-full items-center justify-between border-b border-theme-border bg-theme-card px-6">
-        <div className="flex items-center space-x-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-xs">
-            <FolderSync className="h-4.5 w-4.5" />
+        <div className="flex items-center space-x-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-lime-500 text-black shadow-sm">
+            <FolderSync className="h-5 w-5 stroke-[2.5]" />
           </div>
-          <span className="text-sm font-bold tracking-wider text-theme-text uppercase">
-            DevSync Initializer
+          <span className="text-lg font-extrabold tracking-tight text-black dark:text-white uppercase font-heading">
+            DevSync
           </span>
         </div>
 
         <div className="flex items-center space-x-4">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 bg-theme-bg px-2.5 py-1 rounded-md border border-theme-border">
-            Config Mode: Default Initial Setup
-          </span>
           <button
             onClick={onThemeToggle}
-            className="rounded-lg p-2 text-slate-500 hover:bg-theme-bg hover:text-theme-text transition-colors cursor-pointer"
+            className="rounded-full h-9 w-9 border border-theme-border bg-theme-bg/60 hover:bg-theme-card flex items-center justify-center text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
           >
             {theme === 'dark' ? (
-              <Sun className="h-4 w-4 text-amber-500" />
+              <Sun className="h-4 w-4 text-amber-400" />
             ) : (
-              <Moon className="h-4 w-4 text-slate-600" />
+              <Moon className="h-4 w-4 text-slate-700" />
             )}
           </button>
           {onLogout && (
             <button
               onClick={onLogout}
-              className="inline-flex items-center space-x-1 rounded-lg border border-theme-border bg-theme-bg px-3 py-1.5 text-xs font-semibold text-slate-500 hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer font-mono"
+              className="inline-flex items-center space-x-1 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-xs font-extrabold text-red-600 dark:text-red-400 hover:bg-red-500/20 transition-all cursor-pointer"
             >
               Sign Out
             </button>
@@ -242,31 +239,31 @@ export default function FirstSyncWizard({
 
       {/* Main setup screen viewport */}
       <main className="flex-1 flex flex-col items-center justify-center py-12 px-6">
-        <div className="w-full max-w-2xl bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-xl overflow-hidden">
+        <div className="w-full max-w-2xl bg-theme-card rounded-lg border border-theme-border shadow-xl overflow-hidden">
           
           {/* Top Wizard Track progress indicator bar */}
-          <div className="bg-slate-50/50 dark:bg-neutral-900 px-7 py-5.5 border-b border-slate-100 dark:border-neutral-800">
+          <div className="bg-theme-bg/50 px-7 py-5.5 border-b border-theme-border">
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2.5">
-                <span className="p-1 rounded-xl bg-indigo-50 dark:bg-indigo-950/45 text-indigo-650 dark:text-indigo-400 font-bold">
+              <div className="flex items-center gap-2.5 cursor-help" title="Set up a new synchronization between your local folder and cloud storage.">
+                <span className="p-1 rounded-xl bg-lime-500/20 text-lime-600 dark:text-lime-400 font-bold">
                   ⚡
                 </span>
-                <span className="text-[11px] font-extrabold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">
-                  CREATE YOUR FIRST SYNC REQUEST
+                <span className="text-xs font-extrabold uppercase tracking-widest text-black dark:text-white font-sans">
+                  SYNC REQUEST
                 </span>
               </div>
-              <div className="text-right font-mono text-[10px] uppercase font-bold text-slate-450 dark:text-slate-400">
+              <div className="text-right font-mono text-[10px] uppercase font-extrabold text-slate-700 dark:text-slate-300">
                 <span>{stepInfo.percent} Complete</span>
               </div>
             </div>
 
             {/* Segmented Progress Tracker */}
-            <div className="h-1.5 w-full flex gap-1">
+            <div className="h-2 w-full flex gap-1.5">
               {[1, 2, 3, 4, 5, 6, 7].map((s) => (
                 <div 
                   key={s} 
                   className={`h-full flex-1 transition-all duration-300 rounded-full ${
-                    s <= step ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-slate-100 dark:bg-neutral-800'
+                    s <= step ? 'bg-lime-500' : 'bg-theme-border/50'
                   }`} 
                 />
               ))}
@@ -283,18 +280,9 @@ export default function FirstSyncWizard({
 
             {/* STEP 1: Sync Request Name */}
             {step === 1 && (
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-base font-extrabold tracking-tight text-slate-900 dark:text-slate-100 uppercase">
-                    Step 1: Assign Request Identity
-                  </h3>
-                  <p className="text-xs text-slate-405 dark:text-slate-400 mt-1 leading-normal">
-                    {stepInfo.desc}
-                  </p>
-                </div>
-
-                <div className="space-y-2 pt-2">
-                  <label className="block text-[10px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+              <div className="space-y-4 font-sans">
+                <div className="space-y-2 pt-1">
+                  <label className="block text-[11px] font-extrabold uppercase tracking-widest text-black dark:text-white">
                     Sync Request Name
                   </label>
                   <input
@@ -303,26 +291,26 @@ export default function FirstSyncWizard({
                     placeholder="E.G. AWS PRODUCTION DEPLOY REPLICA"
                     value={requestName}
                     onChange={(e) => setRequestName(e.target.value)}
-                    className="h-11 w-full rounded-xl border border-slate-200 bg-slate-55/10 px-4 text-xs font-semibold tracking-wider transition-colors placeholder:text-slate-350 focus:border-indigo-650 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 text-slate-800 dark:text-slate-205"
+                    className="h-11 w-full rounded-xl border border-theme-border bg-theme-bg/60 px-4 text-xs font-semibold tracking-wider transition-colors placeholder:text-slate-400 focus:border-lime-500 focus:bg-theme-card focus:outline-none text-black dark:text-white shadow-xs"
                   />
-                  <div className="mt-3.5 text-[10px] font-mono text-slate-405 uppercase tracking-wide space-y-1 select-none">
+                  <div className="mt-4 text-[11px] font-sans text-slate-700 dark:text-slate-300 font-semibold space-y-1.5 select-none">
                     <span>Try starting with a template namespace name:</span>
-                    <div className="flex gap-2.5 pt-1.5 flex-wrap">
+                    <div className="flex gap-2 pt-1.5 flex-wrap">
                       <button
                         onClick={() => setRequestName('Marketing Resource Vault')}
-                        className="rounded-lg bg-slate-100 dark:bg-slate-800 px-3 py-1.5 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 cursor-pointer"
+                        className="rounded-lg bg-theme-bg/70 border border-theme-border px-3 py-1.5 hover:text-black dark:hover:text-white text-slate-800 dark:text-slate-200 cursor-pointer font-bold transition-all"
                       >
                         Marketing Files
                       </button>
                       <button
                         onClick={() => setRequestName('Production S3 Archive')}
-                        className="rounded-lg bg-slate-100 dark:bg-slate-800 px-3 py-1.5 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 cursor-pointer"
+                        className="rounded-lg bg-theme-bg/70 border border-theme-border px-3 py-1.5 hover:text-black dark:hover:text-white text-slate-800 dark:text-slate-200 cursor-pointer font-bold transition-all"
                       >
                         AWS Prod Backup
                       </button>
                       <button
-                        onClick={() => setRequestName('Design System System Assets')}
-                        className="rounded-lg bg-slate-100 dark:bg-slate-800 px-3 py-1.5 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 cursor-pointer"
+                        onClick={() => setRequestName('Design System Assets')}
+                        className="rounded-lg bg-theme-bg/70 border border-theme-border px-3 py-1.5 hover:text-black dark:hover:text-white text-slate-800 dark:text-slate-200 cursor-pointer font-bold transition-all"
                       >
                         Design Assets
                       </button>
@@ -334,27 +322,24 @@ export default function FirstSyncWizard({
 
             {/* STEP 2: Select Provider */}
             {step === 2 && (
-              <div className="space-y-5.5">
+              <div className="space-y-5">
                 <div>
-                  <h3 className="text-sm font-extrabold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
-                    SELECT STORAGE TARGET PROVIDER
+                  <h3 className="text-xs font-extrabold text-black dark:text-white uppercase tracking-widest font-sans">
+                    SELECT TENANT PROVIDER
                   </h3>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 leading-normal">
-                    {stepInfo.desc}
-                  </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-5 pt-1">
                   {/* AWS S3 wrapper card */}
                   <div
                     onClick={() => setProvider('aws-s3')}
-                    className={`p-6 rounded-xl border transition-all cursor-pointer flex flex-col items-center text-center justify-center space-y-3.5 relative min-h-48 ${
+                    className={`p-6 rounded-2xl border transition-all cursor-pointer flex flex-col items-center text-center justify-center space-y-3 relative min-h-44 ${
                       provider === 'aws-s3'
-                        ? 'border-2 border-indigo-600 dark:border-indigo-500 bg-white dark:bg-neutral-900/40 shadow-xs'
-                        : 'border-slate-205 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-slate-350 dark:hover:border-neutral-700'
+                        ? 'border-2 border-lime-500 bg-lime-500/10 shadow-sm'
+                        : 'border-theme-border bg-theme-card hover:border-lime-500/50'
                     }`}
                   >
-                    <div className="h-14 w-20 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-neutral-800/50 shadow-sm p-2">
+                    <div className="h-14 w-20 flex items-center justify-center rounded-xl bg-white dark:bg-neutral-800 shadow-sm p-2">
                       <div className="flex flex-col items-center justify-center">
                         <div className="flex items-end gap-1 select-none">
                           <span className="text-2xl font-black tracking-tighter text-slate-800 dark:text-white font-sans lowercase">aws</span>
@@ -366,61 +351,42 @@ export default function FirstSyncWizard({
                       </div>
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-neutral-900 dark:text-neutral-100">Amazon S3</h4>
-                      <p className="text-[10px] text-zinc-450 dark:text-slate-400 mt-1 leading-normal">
-                        Secure and scalable object storage in the AWS cloud.
-                      </p>
+                      <h4 className="text-xs font-bold text-black dark:text-white">Amazon S3</h4>
                     </div>
                     {provider === 'aws-s3' && (
-                      <div className="absolute top-3 right-3 h-5 w-5 bg-indigo-600 dark:bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-xs">
-                        <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                      <div className="absolute top-3 right-3 h-5 w-5 bg-lime-500 rounded-full flex items-center justify-center text-black shadow-xs">
+                        <Check className="h-3.5 w-3.5 stroke-[3]" />
                       </div>
                     )}
                   </div>
 
                   {/* Google Drive card */}
                   <div
-                    onClick={() => setProvider('google-drive')}
-                    className={`p-6 rounded-xl border transition-all cursor-pointer flex flex-col items-center text-center justify-center space-y-3.5 relative min-h-48 ${
-                      provider === 'google-drive'
-                        ? 'border-2 border-indigo-600 dark:border-indigo-500 bg-white dark:bg-neutral-900/40 shadow-xs'
-                        : 'border-slate-205 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-slate-350 dark:hover:border-neutral-700'
+                    onClick={() => setProvider('gdrive')}
+                    className={`p-6 rounded-2xl border transition-all cursor-pointer flex flex-col items-center text-center justify-center space-y-3 relative min-h-44 ${
+                      provider === 'gdrive'
+                        ? 'border-2 border-lime-500 bg-lime-500/10 shadow-sm'
+                        : 'border-theme-border bg-theme-card hover:border-lime-500/50'
                     }`}
                   >
-                    <div className="h-14 w-20 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-neutral-800/50 shadow-sm p-1">
-                      <svg className="w-10 h-9" viewBox="0 0 144 144" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M47.2 24h49.6l23.2 40H70.4L47.2 24z" fill="#FFC107"/>
-                        <path d="M18 76l23.2-40 47.2 82-23.2 40L18 76z" fill="#2196F3"/>
-                        <path d="M70.4 64h63l-23.2 40H47.2l23.2-40z" fill="#4CAF50"/>
+                    <div className="h-14 w-20 flex items-center justify-center rounded-xl bg-white dark:bg-neutral-800 shadow-sm p-2">
+                      <svg className="w-8 h-8" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
+                        <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5" fill="#0066da" />
+                        <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47" />
+                        <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 10.15z" fill="#ea4335" />
+                        <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.4-4.5 1.2z" fill="#00832d" />
+                        <path d="m59.8 50h27.5c0-1.55-.4-3.1-1.2-4.5l-12.85-22.25c-.8-1.4-1.95-2.5-3.3-3.35l-13.75 23.8z" fill="#ffba00" />
+                        <path d="m27.5 50 13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h21.9c1.6 0 3.15-.4 4.5-1.2l-13.75-23.8z" fill="#2684fc" />
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-neutral-900 dark:text-neutral-100">Google Drive</h4>
-                      <p className="text-[10px] text-zinc-455 dark:text-slate-400 mt-1 leading-normal">
-                        Sync files with Google Drive or Shared Drives.
-                      </p>
+                      <h4 className="text-xs font-bold text-black dark:text-white">Google Drive</h4>
                     </div>
-                    {provider === 'google-drive' && (
-                      <div className="absolute top-3 right-3 h-5 w-5 bg-indigo-600 dark:bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-xs">
-                        <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                    {provider === 'gdrive' && (
+                      <div className="absolute top-3 right-3 h-5 w-5 bg-lime-500 rounded-full flex items-center justify-center text-black shadow-xs">
+                        <Check className="h-3.5 w-3.5 stroke-[3]" />
                       </div>
                     )}
-                  </div>
-
-                  {/* Azure Client - Disabled */}
-                  <div className="p-6 rounded-xl border border-dashed border-slate-205 dark:border-neutral-800/80 bg-slate-50/40 dark:bg-neutral-950/10 opacity-55 flex flex-col items-center text-center justify-center space-y-3.5 cursor-not-allowed select-none min-h-48">
-                    <div className="h-14 w-20 flex items-center justify-center rounded-lg bg-slate-50/50 dark:bg-neutral-800/20 p-2">
-                      <svg className="w-9 h-9" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M21 95l43-80h24L45 95H21z" fill="#0078D4"/>
-                        <path d="M88 15h24L72 95H48l40-80z" fill="#50E6FF" fillOpacity="0.8"/>
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500">Microsoft Azure Blob</h4>
-                      <p className="text-[10px] text-zinc-450 dark:text-slate-500 leading-normal mt-1">
-                        Enterprise-ready cloud storage with Azure Blob.
-                      </p>
-                    </div>
                   </div>
 
                   {/* Dropbox - Disabled */}
@@ -443,29 +409,26 @@ export default function FirstSyncWizard({
 
             {/* STEP 3: Local Folder Selection */}
             {step === 3 && (
-              <div className="space-y-4">
+              <div className="space-y-4 font-sans">
                 <div>
-                  <h3 className="text-base font-extrabold tracking-tight text-slate-900 dark:text-slate-100 uppercase">
-                    Step 3: Pick local scanning folder
+                  <h3 className="text-xs font-extrabold text-black dark:text-white uppercase tracking-widest">
+                    SELECT DIRECTORY PATH
                   </h3>
-                  <p className="text-xs text-slate-405 dark:text-slate-400 mt-1 leading-normal">
-                    {stepInfo.desc}
-                  </p>
                 </div>
 
-                <div className="bg-slate-50/50 dark:bg-neutral-900/50 border border-neutral-100 dark:border-neutral-800 rounded-2xl p-7 flex flex-col items-center justify-center space-y-4 text-center">
-                  <div className="h-14 w-14 rounded-full flex items-center justify-center bg-indigo-50 dark:bg-indigo-950/25 text-indigo-600 dark:text-indigo-400 border border-slate-100 dark:border-neutral-800 shadow-xs animate-bounce">
+                <div className="bg-theme-bg/50 border border-theme-border rounded-2xl p-7 flex flex-col items-center justify-center space-y-4 text-center">
+                  <div className="h-14 w-14 rounded-full flex items-center justify-center bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30 shadow-xs animate-bounce">
                     <FolderOpen className="h-6.5 w-6.5" />
                   </div>
 
                   <div className="w-full max-w-md space-y-2">
-                    <label className="text-[10px] font-extrabold text-slate-450 uppercase block tracking-wide dark:text-slate-400">Watch local filesystem path</label>
+                    <label className="text-[10px] font-extrabold text-slate-700 dark:text-slate-300 uppercase block tracking-wide">Watch local filesystem path</label>
                     <input
                       type="text"
                       readOnly
                       placeholder="e.g. D:\Projects\EnterpriseResourceVault"
                       value={localPath}
-                      className="w-full text-center text-xs font-mono font-bold py-3 bg-white dark:bg-neutral-955 border border-neutral-200 dark:border-neutral-800 text-indigo-600 dark:text-indigo-400 rounded-xl cursor-not-allowed select-text outline-none"
+                      className="w-full text-center text-xs font-mono font-bold py-3 bg-theme-card border border-theme-border text-black dark:text-white rounded-xl cursor-not-allowed select-text outline-none shadow-xs"
                     />
                   </div>
 
@@ -479,44 +442,27 @@ export default function FirstSyncWizard({
                             setLocalPath(path);
                           }
                         }}
-                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer transition-colors shadow-md animate-pulse"
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-lime-500 hover:bg-lime-400 text-black text-xs font-extrabold cursor-pointer transition-colors shadow-md animate-pulse"
                       >
                         <FolderOpen className="h-4 w-4" />
-                        Select Folder Directory (Native OS Dialog)
+                        Select Folder Directory
                       </button>
                     ) : (
                       <>
                         <button
                           type="button"
                           onClick={() => {
-                            setOsPickerOpen('windows');
-                            setCurrentDir(windowsDirectories[0].name);
-                          }}
-                          className="inline-flex items-center gap-2 px-4.5 py-3 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-xs font-bold text-slate-800 dark:text-slate-200 cursor-pointer transition-colors shadow-xs"
-                        >
-                          <Monitor className="h-4 w-4 text-blue-500" />
-                          Browse Windows Folder
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setOsPickerOpen('macos');
+                            setOsPickerOpen(navigator.userAgent.includes('Mac') ? 'macos' : 'windows');
                             setCurrentDir(macDirectories[0].name);
                           }}
-                          className="inline-flex items-center gap-2 px-4.5 py-3 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-xs font-bold text-slate-800 dark:text-slate-200 cursor-pointer transition-colors shadow-xs"
+                          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-lime-500 hover:bg-lime-400 text-black text-xs font-extrabold cursor-pointer transition-colors shadow-md"
                         >
-                          <Tv className="h-4 w-4 text-slate-500" />
-                          Browse macOS Folder
+                          <Tv className="h-4 w-4" />
+                          Browse Folder
                         </button>
                       </>
                     )}
                   </div>
-                </div>
-
-                <div className="flex items-center space-x-2.5 rounded-xl bg-slate-50 p-4 text-[11px] text-slate-550 border border-slate-100 dark:bg-neutral-950/20 dark:border-neutral-800">
-                  <span className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950 select-none text-indigo-600 dark:text-indigo-400 font-bold">ℹ️</span>
-                  <span>Selecting folders registers native operating system directory listeners for real-time state index scanning.</span>
                 </div>
               </div>
             )}
@@ -862,20 +808,20 @@ export default function FirstSyncWizard({
                 type="button"
                 disabled={!canGoNext()}
                 onClick={handleNext}
-                className="inline-flex items-center gap-1.5 bg-indigo-600 disabled:opacity-40 px-5.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider text-white hover:bg-indigo-500 shadow-sm cursor-pointer transition-colors"
+                className="inline-flex items-center gap-1.5 bg-lime-500 hover:bg-lime-400 disabled:opacity-40 px-6 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider text-black shadow-md cursor-pointer transition-all"
               >
                 <span>CONTINUE</span>
-                <ChevronRight className="h-3.5 w-3.5" />
+                <ChevronRight className="h-4 w-4 stroke-[2.5]" />
               </button>
             ) : (
               <button
                 type="button"
                 onClick={handleFinalCreate}
-                className="inline-flex items-center gap-1.5 bg-indigo-600 px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider text-white hover:bg-indigo-500 shadow-md cursor-pointer transition-colors animate-pulse"
+                className="inline-flex items-center gap-2 bg-lime-500 hover:bg-lime-400 px-7 py-3 rounded-xl text-xs font-extrabold uppercase tracking-wider text-black shadow-md cursor-pointer transition-all animate-pulse"
                 id="create-first-sync-request-btn"
               >
-                <span>Finalize & Create Sync Request</span>
-                <Check className="h-4 w-4" />
+                <span>Sync Request</span>
+                <Check className="h-4 w-4 stroke-[2.5]" />
               </button>
             )}
           </div>

@@ -48,7 +48,7 @@ export default function CreateSyncRequestWizard({
   const [localFolder, setLocalFolder] = useState<string>('');
   const [osPickerOpen, setOsPickerOpen] = useState<'windows' | 'macos' | null>(null);
 
-  
+
   const [currentDir, setCurrentDir] = useState<string>('');
   const [osSearchQuery, setOsSearchQuery] = useState('');
 
@@ -202,14 +202,14 @@ export default function CreateSyncRequestWizard({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Blurred Backdrop */}
-      <div 
-        className="absolute inset-0 bg-neutral-900/40 backdrop-blur-md" 
-        onClick={onClose} 
+      <div
+        className="absolute inset-0 bg-neutral-900/40 backdrop-blur-md"
+        onClick={onClose}
       />
 
       {/* Main Large Wizard Window */}
-      <div className="relative w-full max-w-2xl bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-2xl overflow-hidden flex flex-col z-50 max-h-[90vh]">
-        
+      <div className="relative w-full max-w-2xl bg-white dark:bg-neutral-900 rounded-lg border border-neutral-100 dark:border-neutral-800 shadow-2xl overflow-hidden flex flex-col z-50 max-h-[90vh]">
+
         {/* Top Header & Navigation progress */}
         <div className="border-b border-slate-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-6.5 py-5.5">
           <div className="flex items-center justify-between mb-4">
@@ -217,16 +217,13 @@ export default function CreateSyncRequestWizard({
               <span className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/45 text-indigo-650 dark:text-indigo-400 font-semibold shadow-sm">
                 <FolderDot className="h-5 w-5" />
               </span>
-              <div>
-                <h3 className="font-extrabold text-sm tracking-tight text-neutral-900 dark:text-neutral-100 font-sans uppercase">
-                  Create Sync Request
+              <div title="Set up a new synchronization between your local folder and cloud storage." className="cursor-help group relative">
+                <h3 className="font-extrabold text-sm tracking-tight text-neutral-900 dark:text-neutral-100 font-sans uppercase hover:text-indigo-600 transition-colors">
+                  SYNC REQUEST
                 </h3>
-                <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 font-sans">
-                  Set up a new synchronization between your local folder and cloud storage.
-                </p>
               </div>
             </div>
-            <button 
+            <button
               onClick={onClose}
               className="p-1.5 rounded-lg text-slate-400 hover:text-neutral-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors"
             >
@@ -243,11 +240,10 @@ export default function CreateSyncRequestWizard({
             {/* Segmented layout with 7 pills */}
             <div className="h-1.5 w-full flex gap-1">
               {[1, 2, 3, 4, 5, 6, 7].map((s) => (
-                <div 
-                  key={s} 
-                  className={`h-full flex-1 transition-all duration-300 rounded-full ${
-                    s <= step ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-slate-100 dark:bg-neutral-800'
-                  }`} 
+                <div
+                  key={s}
+                  className={`h-full flex-1 transition-all duration-300 rounded-full ${s <= step ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-slate-100 dark:bg-neutral-800'
+                    }`}
                 />
               ))}
             </div>
@@ -256,17 +252,12 @@ export default function CreateSyncRequestWizard({
 
         {/* Wizard Main Content - Scrollable Form view */}
         <div className="flex-1 p-6.5 overflow-y-auto max-h-[50vh] space-y-4">
-          
+
           {/* STEP 1: Basic Information */}
           {step === 1 && (
             <div className="space-y-4">
-              <div className="space-y-1">
-                <h4 className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">Assign Request Identity</h4>
-                <p className="text-xs text-gray-400 leading-normal mb-2">Each sync request defines a mapping node between a watch directory on disk and a remote storage namespace.</p>
-              </div>
-
               <div className="space-y-2">
-                <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-450 block dark:text-slate-400">Sync Request Name</label>
+                <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-450 block dark:text-slate-400">SYNC REQUEST NAME</label>
                 <input
                   type="text"
                   placeholder="e.g. Daily Marketing Backups"
@@ -275,11 +266,6 @@ export default function CreateSyncRequestWizard({
                   className="w-full text-xs font-semibold p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-slate-55/10 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 placeholder-slate-400 focus:outline-none focus:border-indigo-600 transition-colors"
                   autoFocus
                 />
-                <p className="text-[11px] text-gray-400 italic">Use a clear human-readable name for monitoring notifications on files transfer.</p>
-              </div>
-
-              <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4.5 text-xs leading-relaxed text-amber-600 dark:text-amber-400 font-sans">
-                💡 <strong>Desktop Client Note:</strong> This defines the logical namespace that organizes file filters, tracking indexes, and network queue configurations.
               </div>
             </div>
           )}
@@ -288,23 +274,20 @@ export default function CreateSyncRequestWizard({
           {step === 2 && (
             <div className="space-y-5.5 font-sans">
               <div>
-                <h4 className="text-sm font-extrabold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">SELECT STORAGE TARGET PROVIDER</h4>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Choose the cloud storage service you want to sync with.</p>
+                <h4 className="text-sm font-extrabold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">SELECT TENANT PROVIDER</h4>
               </div>
 
               <div className="grid grid-cols-2 gap-5 pt-1">
-                
+
                 {/* AWS S3 Integration Card */}
                 <div
                   onClick={() => setProvider('aws-s3')}
-                  className={`p-6.5 rounded-xl border transition-all cursor-pointer flex flex-col items-center text-center justify-center space-y-4 relative min-h-48 ${
-                    provider === 'aws-s3'
+                  className={`p-6.5 rounded-xl border transition-all cursor-pointer flex flex-col items-center text-center justify-center space-y-3 relative ${provider === 'aws-s3'
                       ? 'border-2 border-indigo-600 dark:border-indigo-500 bg-white dark:bg-neutral-900/40 shadow-xs'
                       : 'border-slate-205 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-slate-350 dark:hover:border-neutral-700'
-                  }`}
+                    }`}
                 >
                   <div className="h-14 w-20 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-neutral-800/50 shadow-sm p-2">
-                    {/* High Fidelity AWS Logo representation */}
                     <div className="flex flex-col items-center justify-center">
                       <div className="flex items-end gap-1 select-none">
                         <span className="text-2xl font-black tracking-tighter text-slate-800 dark:text-white font-sans lowercase">aws</span>
@@ -315,12 +298,7 @@ export default function CreateSyncRequestWizard({
                       </svg>
                     </div>
                   </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-neutral-900 dark:text-neutral-100">Amazon S3</h4>
-                    <span className="text-[10px] text-zinc-450 dark:text-slate-400 leading-normal block mt-1.5">
-                      Secure and scalable object storage in the AWS cloud.
-                    </span>
-                  </div>
+                  <h4 className="text-xs font-bold text-neutral-900 dark:text-neutral-100">AWS S3</h4>
                   {provider === 'aws-s3' && (
                     <div className="absolute top-3 right-3 h-5 w-5 bg-indigo-600 dark:bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-xs">
                       <Check className="h-3.5 w-3.5 stroke-[2.5]" />
@@ -331,26 +309,19 @@ export default function CreateSyncRequestWizard({
                 {/* Google Drive Workspace Card */}
                 <div
                   onClick={() => setProvider('google-drive')}
-                  className={`p-6.5 rounded-xl border transition-all cursor-pointer flex flex-col items-center text-center justify-center space-y-4 relative min-h-48 ${
-                    provider === 'google-drive'
+                  className={`p-6.5 rounded-xl border transition-all cursor-pointer flex flex-col items-center text-center justify-center space-y-3 relative ${provider === 'google-drive'
                       ? 'border-2 border-indigo-600 dark:border-indigo-500 bg-white dark:bg-neutral-900/40 shadow-xs'
                       : 'border-slate-205 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-slate-350 dark:hover:border-neutral-700'
-                  }`}
+                    }`}
                 >
                   <div className="h-14 w-20 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-neutral-800/50 shadow-sm p-1">
-                    {/* High Fidelity Google Drive Logo */}
                     <svg className="w-10 h-9" viewBox="0 0 144 144" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M47.2 24h49.6l23.2 40H70.4L47.2 24z" fill="#FFC107"/>
-                      <path d="M18 76l23.2-40 47.2 82-23.2 40L18 76z" fill="#2196F3"/>
-                      <path d="M70.4 64h63l-23.2 40H47.2l23.2-40z" fill="#4CAF50"/>
+                      <path d="M47.2 24h49.6l23.2 40H70.4L47.2 24z" fill="#FFC107" />
+                      <path d="M18 76l23.2-40 47.2 82-23.2 40L18 76z" fill="#2196F3" />
+                      <path d="M70.4 64h63l-23.2 40H47.2l23.2-40z" fill="#4CAF50" />
                     </svg>
                   </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-neutral-900 dark:text-neutral-100">Google Drive</h4>
-                    <span className="text-[10px] text-zinc-455 dark:text-slate-400 leading-normal block mt-1.5">
-                      Sync files with Google Drive or Shared Drives.
-                    </span>
-                  </div>
+                  <h4 className="text-xs font-bold text-neutral-900 dark:text-neutral-100">Google Drive</h4>
                   {provider === 'google-drive' && (
                     <div className="absolute top-3 right-3 h-5 w-5 bg-indigo-600 dark:bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-xs">
                       <Check className="h-3.5 w-3.5 stroke-[2.5]" />
@@ -359,36 +330,24 @@ export default function CreateSyncRequestWizard({
                 </div>
 
                 {/* Microsoft Azure Blob - Disabled */}
-                <div className="p-6.5 rounded-xl border border-dashed border-slate-205 dark:border-neutral-800/80 bg-slate-50/40 dark:bg-neutral-950/10 opacity-55 flex flex-col items-center text-center justify-center space-y-4 cursor-not-allowed select-none min-h-48">
+                <div className="p-6.5 rounded-xl border border-dashed border-slate-205 dark:border-neutral-800/80 bg-slate-50/40 dark:bg-neutral-950/10 opacity-55 flex flex-col items-center text-center justify-center space-y-3 cursor-not-allowed select-none">
                   <div className="h-14 w-20 flex items-center justify-center rounded-lg bg-slate-50/50 dark:bg-neutral-800/20 p-2">
-                    {/* High Fidelity Azure Symbol */}
                     <svg className="w-9 h-9" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M21 95l43-80h24L45 95H21z" fill="#0078D4"/>
-                      <path d="M88 15h24L72 95H48l40-80z" fill="#50E6FF" fillOpacity="0.8"/>
+                      <path d="M21 95l43-80h24L45 95H21z" fill="#0078D4" />
+                      <path d="M88 15h24L72 95H48l40-80z" fill="#50E6FF" fillOpacity="0.8" />
                     </svg>
                   </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500">Microsoft Azure Blob</h4>
-                    <span className="text-[10px] text-zinc-450 dark:text-slate-500 leading-normal block mt-1.5">
-                      Enterprise-ready cloud storage with Azure Blob.
-                    </span>
-                  </div>
+                  <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500">Microsoft Azure Blob</h4>
                 </div>
 
                 {/* Dropbox Client - Disabled */}
-                <div className="p-6.5 rounded-xl border border-dashed border-slate-205 dark:border-neutral-800/80 bg-slate-50/40 dark:bg-neutral-950/10 opacity-55 flex flex-col items-center text-center justify-center space-y-4 cursor-not-allowed select-none min-h-48">
+                <div className="p-6.5 rounded-xl border border-dashed border-slate-205 dark:border-neutral-800/80 bg-slate-50/40 dark:bg-neutral-950/10 opacity-55 flex flex-col items-center text-center justify-center space-y-3 cursor-not-allowed select-none">
                   <div className="h-14 w-20 flex items-center justify-center rounded-lg bg-slate-50/50 dark:bg-neutral-800/20 p-2">
-                    {/* High Fidelity Dropbox Vector */}
                     <svg className="w-10 h-10 text-slate-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path d="M6 2L1 5.5l5 3.5 5-3.5L6 2zM18 2l-5 3.5 5 3.5 5-3.5L18 2zM1 12.5l5 3.5 5-3.5-5-3.5-5 3.5zM13 12.5l5 3.5 5-3.5-5-3.5-5 3.5zM6 19.5l6 4 6-4v-2L12 21l-6-3.5v2z" />
                     </svg>
                   </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500">Dropbox</h4>
-                    <span className="text-[10px] text-zinc-450 dark:text-slate-500 leading-normal block mt-1.5">
-                      Sync files and folders with your Dropbox account.
-                    </span>
-                  </div>
+                  <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500">Dropbox</h4>
                 </div>
 
               </div>
@@ -398,10 +357,7 @@ export default function CreateSyncRequestWizard({
           {/* STEP 3: Local Folder Selection */}
           {step === 3 && (
             <div className="space-y-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-455 block dark:text-slate-400">Select Local Storage Scan Source Directory</span>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-sans">
-                DevSync watches localized folders on the desktop workspace directory to trigger automatic cloud synchronization. Choose your local source below:
-              </p>
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-455 block dark:text-slate-400">SELECT DIRECTORY PATH</span>
 
               <div className="bg-slate-50/50 dark:bg-neutral-900/50 border border-neutral-100 dark:border-neutral-800 rounded-2xl p-7 flex flex-col items-center justify-center space-y-4 text-center">
                 <div className="h-14 w-14 rounded-full flex items-center justify-center bg-indigo-50 dark:bg-indigo-950/25 text-indigo-600 dark:text-indigo-400 border border-slate-100 dark:border-neutral-800 shadow-xs">
@@ -409,7 +365,6 @@ export default function CreateSyncRequestWizard({
                 </div>
 
                 <div className="w-full max-w-md space-y-2">
-                  <label className="text-[11px] font-extrabold text-slate-450 uppercase block tracking-wide dark:text-slate-400">Selected Directory Path</label>
                   <input
                     type="text"
                     readOnly
@@ -419,47 +374,24 @@ export default function CreateSyncRequestWizard({
                   />
                 </div>
 
-                {/* Simulated folder selection launcher triggers */}
+                {/* Folder selection launcher button */}
                 <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
-                  {isElectron() && (
-                    <button
-                      type="button"
-                      onClick={async () => {
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (isElectron()) {
                         const path = await selectDirectory();
-                        if (path) {
-                          setLocalFolder(path);
-                        }
-                      }}
-                      className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold cursor-pointer transition-colors shadow-md mb-2 animate-bounce"
-                    >
-                      <FolderOpen className="h-4 w-4" />
-                      Select Folder Directory via Native OS Dialog
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setOsPickerOpen('windows');
-                      setCurrentDir(windowsDirectories[0].name);
+                        if (path) setLocalFolder(path);
+                      } else {
+                        setOsPickerOpen(navigator.userAgent.includes('Mac') ? 'macos' : 'windows');
+                        setCurrentDir(macDirectories[0].name);
+                      }
                     }}
-                    className="inline-flex items-center gap-2 px-4.5 py-3 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-xs font-bold text-neutral-800 dark:text-neutral-200 cursor-pointer transition-colors shadow-xs"
-                    id="browse-windows"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-lime-500 hover:bg-lime-400 text-black text-xs font-extrabold cursor-pointer transition-colors shadow-md"
+                    id="browse-folder-btn"
                   >
-                    <Monitor className="h-4 w-4 text-blue-500" />
-                    Browse Windows Folder
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setOsPickerOpen('macos');
-                      setCurrentDir(macDirectories[0].name);
-                    }}
-                    className="inline-flex items-center gap-2 px-4.5 py-3 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-slate-50 dark:hover:bg-neutral-800 text-xs font-bold text-neutral-800 dark:text-neutral-200 cursor-pointer transition-colors shadow-xs"
-                    id="browse-macos"
-                  >
-                    <Tv className="h-4 w-4 text-slate-500" />
-                    Browse macOS Folder
+                    <FolderOpen className="h-4 w-4" />
+                    Browse Folder
                   </button>
                 </div>
               </div>
@@ -469,7 +401,7 @@ export default function CreateSyncRequestWizard({
           {/* STEP 4: Provider Authentication Setup */}
           {step === 4 && (
             <div className="space-y-4 font-sans">
-              
+
               {provider === 'aws-s3' ? (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2.5 border-b border-slate-100 dark:border-neutral-800 pb-3">
@@ -548,9 +480,9 @@ export default function CreateSyncRequestWizard({
                 <div className="space-y-4">
                   <div className="flex items-center gap-2.5 border-b border-slate-100 dark:border-neutral-800 pb-3">
                     <svg className="w-5.5 h-5.5" viewBox="0 0 144 144" fill="none">
-                      <path d="M47.2 24h49.6l23.2 40H70.4L47.2 24z" fill="#FFC107"/>
-                      <path d="M18 76l23.2-40 47.2 82-23.2 40L18 76z" fill="#2196F3"/>
-                      <path d="M70.4 64h63l-23.2 40H47.2l23.2-40z" fill="#4CAF50"/>
+                      <path d="M47.2 24h49.6l23.2 40H70.4L47.2 24z" fill="#FFC107" />
+                      <path d="M18 76l23.2-40 47.2 82-23.2 40L18 76z" fill="#2196F3" />
+                      <path d="M70.4 64h63l-23.2 40H47.2l23.2-40z" fill="#4CAF50" />
                     </svg>
                     <span className="text-xs font-extrabold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">Google Workspace Secure OAuth Link</span>
                   </div>
@@ -680,7 +612,7 @@ export default function CreateSyncRequestWizard({
           {step === 6 && (
             <div className="space-y-4">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-450 dark:text-slate-400 block">Select Synchronization Frequency Schedule</span>
-              
+
               <div className="grid grid-cols-2 gap-3.5 font-sans">
                 {[
                   { id: 'Manual Trigger Only', title: 'Manual Only', desc: 'No background automation. Trigger sync via dashboard buttons manually.' },
@@ -695,16 +627,14 @@ export default function CreateSyncRequestWizard({
                     <div
                       key={opt.id}
                       onClick={() => setSchedule(opt.id)}
-                      className={`p-4 rounded-xl border transition-all cursor-pointer flex gap-3 text-left items-start ${
-                        isSel
+                      className={`p-4 rounded-xl border transition-all cursor-pointer flex gap-3 text-left items-start ${isSel
                           ? 'border-2 border-indigo-600 dark:border-indigo-500 bg-indigo-50/5 dark:bg-indigo-950/15'
                           : 'border-slate-205 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-slate-350 dark:hover:border-neutral-700'
-                      }`}
+                        }`}
                     >
                       <div className="mt-0.5 flex justify-center items-center shrink-0">
-                        <div className={`h-4.5 w-4.5 rounded-full border flex items-center justify-center ${
-                          isSel ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-200 dark:border-neutral-850'
-                        }`}>
+                        <div className={`h-4.5 w-4.5 rounded-full border flex items-center justify-center ${isSel ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-200 dark:border-neutral-850'
+                          }`}>
                           {isSel && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
                         </div>
                       </div>
@@ -732,7 +662,7 @@ export default function CreateSyncRequestWizard({
           {step === 7 && (
             <div className="space-y-4">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-450 dark:text-slate-400 block">Review Sync Request Registrations</span>
-              
+
               <div className="rounded-2xl border border-slate-100 dark:border-neutral-800 bg-white dark:bg-neutral-950 overflow-hidden font-sans">
                 <div className="p-5 border-b border-slate-100 dark:border-neutral-800 flex items-center justify-between">
                   <div>
@@ -801,7 +731,7 @@ export default function CreateSyncRequestWizard({
 
         {/* Bottom Wizard Actions */}
         <div className="p-5.5 border-t border-slate-100 dark:border-neutral-800 bg-slate-50/50 dark:bg-neutral-900 flex items-center justify-between font-sans shrink-0">
-          
+
           {/* Back button */}
           <button
             type="button"
@@ -819,16 +749,16 @@ export default function CreateSyncRequestWizard({
               type="button"
               onClick={handleNext}
               disabled={!canGoNext()}
-              className="inline-flex items-center gap-1.5 px-6 py-2.5 text-xs font-extrabold uppercase rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-40 select-none transition-all cursor-pointer shadow-sm"
+              className="inline-flex items-center gap-1.5 px-6 py-2.5 text-xs font-extrabold uppercase rounded-xl bg-lime-500 hover:bg-lime-400 text-black disabled:opacity-40 select-none transition-all cursor-pointer shadow-md"
             >
               CONTINUE
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4 stroke-[2.5]" />
             </button>
           ) : (
             <button
               type="button"
               onClick={handleFinish}
-              className="inline-flex items-center gap-2 px-7 py-3 text-xs font-extrabold uppercase rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-all cursor-pointer shadow-md animate-pulse"
+              className="inline-flex items-center gap-2 px-7 py-3 text-xs font-extrabold uppercase rounded-xl bg-lime-500 hover:bg-lime-400 text-black transition-all cursor-pointer shadow-md animate-pulse"
               id="wizard-btn-finish"
             >
               Create Sync Request
@@ -843,7 +773,7 @@ export default function CreateSyncRequestWizard({
       {osPickerOpen && (
         <div className="fixed inset-0 z-55 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60" onClick={() => setOsPickerOpen(null)} />
-          
+
           {/* Windows styled selection UI */}
           {osPickerOpen === 'windows' && (
             <div className="relative w-full max-w-xl bg-theme-card rounded border border-zinc-300 dark:border-zinc-805 shadow-2xl overflow-hidden font-sans text-xs flex flex-col h-[70vh]">
@@ -853,7 +783,7 @@ export default function CreateSyncRequestWizard({
                   <span className="h-3 w-3 text-blue-500 font-bold font-sans">⊞</span>
                   Select local folder to synchronize
                 </span>
-                <button 
+                <button
                   onClick={() => setOsPickerOpen(null)}
                   className="p-1 text-zinc-500 hover:bg-red-650 hover:text-white transition-colors"
                 >
@@ -867,7 +797,7 @@ export default function CreateSyncRequestWizard({
                   <ChevronLeft className="h-4 w-4" />
                   <ChevronRight className="h-4 w-4" />
                 </div>
-                
+
                 {/* Path input bar */}
                 <div className="flex-1 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-2.5 py-1 text-xs text-zinc-750 dark:text-zinc-200 flex items-center gap-1">
                   <span className="text-zinc-455">📁</span>
@@ -910,7 +840,7 @@ export default function CreateSyncRequestWizard({
                 {/* Directory selection grid */}
                 <div className="flex-1 p-3 bg-white dark:bg-zinc-950 overflow-y-auto grid grid-cols-1 content-start gap-1">
                   <span className="text-[10px] text-zinc-400 uppercase font-extrabold mb-1 block select-none">Available Paths in D:\ Drive</span>
-                  
+
                   {windowsDirectories
                     .filter(dir => dir.label.toLowerCase().includes(osSearchQuery.toLowerCase()))
                     .map((dir) => {
@@ -919,11 +849,10 @@ export default function CreateSyncRequestWizard({
                         <div
                           key={dir.name}
                           onClick={() => setCurrentDir(dir.name)}
-                          className={`p-2 rounded flex items-center gap-2.5 cursor-pointer border transition-all ${
-                            isSel
+                          className={`p-2 rounded flex items-center gap-2.5 cursor-pointer border transition-all ${isSel
                               ? 'bg-blue-50/10 border-blue-500 text-blue-600 dark:text-blue-400 font-bold'
                               : 'border-transparent hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
-                          }`}
+                            }`}
                         >
                           <span className="text-base">📁</span>
                           <div className="flex flex-col">
@@ -942,7 +871,7 @@ export default function CreateSyncRequestWizard({
                   <span className="text-zinc-450 block font-bold text-[10px] uppercase font-mono">Folders Selection:</span>
                   <span className="font-mono text-zinc-850 dark:text-zinc-150 font-bold bg-[#dedede] dark:bg-zinc-800 px-2 py-0.5 rounded border border-zinc-300 dark:border-zinc-700">{currentDir}</span>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -1005,7 +934,7 @@ export default function CreateSyncRequestWizard({
                 {/* Directory selection grid */}
                 <div className="flex-1 p-3 bg-white dark:bg-neutral-950 overflow-y-auto grid grid-cols-1 content-start gap-1">
                   <span className="text-[9px] text-neutral-400 font-bold uppercase tracking-widest mb-1.5 block select-none">Available subdirectories</span>
-                  
+
                   {macDirectories
                     .filter(dir => dir.label.toLowerCase().includes(osSearchQuery.toLowerCase()))
                     .map((dir) => {
@@ -1014,11 +943,10 @@ export default function CreateSyncRequestWizard({
                         <div
                           key={dir.name}
                           onClick={() => setCurrentDir(dir.name)}
-                          className={`p-2 rounded flex items-center gap-2.5 cursor-pointer border transition-all ${
-                            isSel
+                          className={`p-2 rounded flex items-center gap-2.5 cursor-pointer border transition-all ${isSel
                               ? 'bg-blue-50/10 border-blue-500 text-blue-600 dark:text-blue-400 font-bold'
                               : 'border-transparent hover:bg-neutral-50 dark:hover:bg-neutral-905 text-neutral-700 dark:text-neutral-300'
-                          }`}
+                            }`}
                         >
                           <span className="text-sm">📁</span>
                           <div className="flex flex-col">
