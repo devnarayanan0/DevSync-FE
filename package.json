@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist dist-electron dist-packaged",
     "lint": "tsc --noEmit",
-    "electron:build:main": "esbuild electron/main.ts electron/preload.ts --bundle --platform=node --format=cjs --outdir=dist-electron --external:electron --external:better-sqlite3 && node -e \"const fs = require('fs'); if (!fs.existsSync('dist-electron')) fs.mkdirSync('dist-electron'); fs.writeFileSync('dist-electron/package.json', JSON.stringify({type: 'commonjs'}));\"",
+    "electron:build:main": "esbuild electron/main.ts electron/preload.ts --bundle --platform=node --format=cjs --outdir=dist-electron --external:electron --external:better-sqlite3 --external:node-cron --external:axios --external:chokidar --external:dotenv && node -e \"const fs = require('fs'); if (!fs.existsSync('dist-electron')) fs.mkdirSync('dist-electron'); fs.writeFileSync('dist-electron/package.json', JSON.stringify({type: 'commonjs'}));\"",
     "electron:start": "npm run electron:build:main && electron .",
     "electron:pack": "npm run build && electron-builder"
   },
