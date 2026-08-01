@@ -123,8 +123,8 @@ export default function LoginPage({
           <div className="mb-6 flex flex-col items-center">
             <div className="relative flex h-16 w-52 items-center justify-center rounded-2xl p-[2px] overflow-hidden bg-slate-200/50 dark:bg-neutral-800/50 shadow-xl">
               {/* Rotating gradient background */}
-              <div 
-                className="absolute inset-[-100%] animate-spin bg-[conic-gradient(from_0deg,transparent_40%,#84cc16_100%)]" 
+              <div
+                className="absolute inset-[-100%] animate-spin bg-[conic-gradient(from_0deg,transparent_40%,#84cc16_100%)]"
                 style={{ animationDuration: '2.5s' }}
               />
               {/* Inner card content */}
@@ -134,174 +134,174 @@ export default function LoginPage({
             </div>
           </div>
 
-        {/* Auth form card */}
-        <div className="rounded-xl border border-theme-border bg-theme-card p-7 shadow-xl">
-          <h2 className="mb-5 text-xs font-extrabold font-mono tracking-wider uppercase text-black dark:text-white">
-            {isRegistering ? 'REGISTER' : 'LOGIN'}
-          </h2>
+          {/* Auth form card */}
+          <div className="rounded-xl border border-theme-border bg-theme-card p-7 shadow-xl">
+            <h2 className="mb-5 text-xs font-extrabold font-mono tracking-wider uppercase text-black dark:text-white">
+              {isRegistering ? 'REGISTER' : 'LOGIN'}
+            </h2>
 
-          {errorMsg && (
-            <div className="mb-4 rounded-sm bg-red-50 p-3 text-xs font-mono uppercase tracking-wide text-red-650 border border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/40">
-              {errorMsg}
-            </div>
-          )}
-
-          <form onSubmit={handleFormSubmit} className="space-y-4">
-            {isRegistering && (
-              <>
-                <div>
-                  <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Dev"
-                    value={regName}
-                    onChange={(e) => setRegName(e.target.value)}
-                    className="h-10 w-full rounded-sm border border-slate-200 bg-slate-50 px-3 text-xs font-mono uppercase tracking-wide transition-colors focus:border-indigo-600 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:focus:border-indigo-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
-                    UCN
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="UNIQUE CLIENT NO"
-                    value={regTenant}
-                    onChange={(e) => setRegTenant(e.target.value)}
-                    className="h-10 w-full rounded-sm border border-slate-200 bg-slate-50 px-3 text-xs font-mono uppercase tracking-wide transition-colors focus:border-indigo-600 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:focus:border-indigo-500"
-                  />
-                </div>
-              </>
+            {errorMsg && (
+              <div className="mb-4 rounded-sm bg-red-50 p-3 text-xs font-mono uppercase tracking-wide text-red-650 border border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/40">
+                {errorMsg}
+              </div>
             )}
 
-            <div>
-              <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
-                EMAIL
-              </label>
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Mail className="h-3.5 w-3.5 text-slate-500" />
-                </div>
-                <input
-                  type="email"
-                  required
-                  placeholder={isRegistering ? "DEV@DEVSYNC.IO" : "EMAIL"}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-10 w-full rounded-lg border border-theme-border bg-theme-bg/60 px-3 pl-9 text-xs font-sans font-semibold transition-colors placeholder:text-slate-400 focus:border-indigo-600 focus:bg-theme-card focus:outline-none text-black dark:text-white"
-                  id="email-input"
-                />
-              </div>
-            </div>
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              {isRegistering && (
+                <>
+                  <div>
+                    <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Dev"
+                      value={regName}
+                      onChange={(e) => setRegName(e.target.value)}
+                      className="h-10 w-full rounded-sm border border-slate-200 bg-slate-50 px-3 text-xs font-mono uppercase tracking-wide transition-colors focus:border-indigo-600 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:focus:border-indigo-500"
+                    />
+                  </div>
 
-            <div>
-              <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
-                PASSWORD
-              </label>
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Lock className="h-3.5 w-3.5 text-slate-500" />
-                </div>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  placeholder="******"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-10 w-full rounded-lg border border-theme-border bg-theme-bg/60 px-3 pl-9 pr-10 text-xs font-sans font-semibold transition-colors placeholder:text-slate-400 focus:border-indigo-600 focus:bg-theme-card focus:outline-none text-black dark:text-white"
-                  id="password-input"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 hover:text-black dark:hover:text-white focus:outline-none"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  id="password-toggle"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-            </div>
+                  <div>
+                    <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                      UCN
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="UNIQUE CLIENT NO"
+                      value={regTenant}
+                      onChange={(e) => setRegTenant(e.target.value)}
+                      className="h-10 w-full rounded-sm border border-slate-200 bg-slate-50 px-3 text-xs font-mono uppercase tracking-wide transition-colors focus:border-indigo-600 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:focus:border-indigo-500"
+                    />
+                  </div>
+                </>
+              )}
 
-            {isRegistering && (
               <div>
                 <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
-                  CONFIRM PASSWORD
+                  EMAIL
                 </label>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  placeholder="******"
-                  value={regPasswordConfirm}
-                  onChange={(e) => setRegPasswordConfirm(e.target.value)}
-                  className="h-10 w-full rounded-sm border border-slate-200 bg-slate-50 px-3 text-xs font-mono uppercase tracking-wide transition-colors focus:border-indigo-600 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:focus:border-indigo-500"
-                />
+                <div className="relative">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <Mail className="h-3.5 w-3.5 text-slate-500" />
+                  </div>
+                  <input
+                    type="email"
+                    required
+                    placeholder={isRegistering ? "DEV@DEVSYNC.IO" : "EMAIL"}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-10 w-full rounded-lg border border-theme-border bg-theme-bg/60 px-3 pl-9 text-xs font-sans font-semibold transition-colors placeholder:text-slate-400 focus:border-indigo-600 focus:bg-theme-card focus:outline-none text-black dark:text-white"
+                    id="email-input"
+                  />
+                </div>
               </div>
-            )}
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className={`flex h-11 w-full items-center justify-center rounded-xl bg-lime-500 text-xs font-sans font-extrabold uppercase tracking-wider text-black shadow-md transition-all hover:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-lime-400 ${isSubmitting ? 'opacity-80 cursor-not-allowed' : 'cursor-pointer'
-                }`}
-              id="login-submit-button"
-            >
-              {isSubmitting ? (
-                <span className="flex items-center gap-1.5">
-                  <RefreshCw className="h-3 w-3 animate-spin" />
-                  Processing...
+              <div>
+                <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                  PASSWORD
+                </label>
+                <div className="relative">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <Lock className="h-3.5 w-3.5 text-slate-500" />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    placeholder="******"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="h-10 w-full rounded-lg border border-theme-border bg-theme-bg/60 px-3 pl-9 pr-10 text-xs font-sans font-semibold transition-colors placeholder:text-slate-400 focus:border-indigo-600 focus:bg-theme-card focus:outline-none text-black dark:text-white"
+                    id="password-input"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 hover:text-black dark:hover:text-white focus:outline-none"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    id="password-toggle"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {isRegistering && (
+                <div>
+                  <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                    CONFIRM PASSWORD
+                  </label>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    placeholder="******"
+                    value={regPasswordConfirm}
+                    onChange={(e) => setRegPasswordConfirm(e.target.value)}
+                    className="h-10 w-full rounded-sm border border-slate-200 bg-slate-50 px-3 text-xs font-mono uppercase tracking-wide transition-colors focus:border-indigo-600 focus:bg-white focus:outline-none dark:border-slate-800 dark:bg-slate-950 dark:focus:border-indigo-500"
+                  />
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`flex h-11 w-full items-center justify-center rounded-xl bg-lime-500 text-xs font-sans font-extrabold uppercase tracking-wider text-black shadow-md transition-all hover:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-lime-400 ${isSubmitting ? 'opacity-80 cursor-not-allowed' : 'cursor-pointer'
+                  }`}
+                id="login-submit-button"
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center gap-1.5">
+                    <RefreshCw className="h-3 w-3 animate-spin" />
+                    Processing...
+                  </span>
+                ) : (
+                  <span>{isRegistering ? 'Register' : 'Login'}</span>
+                )}
+              </button>
+            </form>
+
+            {/* Quick toggle register / login */}
+            <div className="mt-5 text-center text-[11px] font-mono uppercase tracking-wider">
+              {isRegistering ? (
+                <span className="text-slate-400">
+                  Already have an account?{' '}
+                  <button
+                    onClick={() => {
+                      setIsRegistering(false);
+                      setErrorMsg('');
+                    }}
+                    className="font-bold text-indigo-600 hover:underline dark:text-indigo-400"
+                    id="login-view-toggle"
+                  >
+                    Login
+                  </button>
                 </span>
               ) : (
-                <span>{isRegistering ? 'Register account' : 'Verify & Launch'}</span>
+                <span className="text-slate-400">
+                  Don't have an account?{' '}
+                  <button
+                    onClick={() => {
+                      setIsRegistering(true);
+                      setErrorMsg('');
+                    }}
+                    className="font-bold text-indigo-600 hover:underline dark:text-indigo-400"
+                    id="register-view-toggle"
+                  >
+                    Register
+                  </button>
+                </span>
               )}
-            </button>
-          </form>
-
-          {/* Quick toggle register / login */}
-          <div className="mt-5 text-center text-[11px] font-mono uppercase tracking-wider">
-            {isRegistering ? (
-              <span className="text-slate-400">
-                Already have an account?{' '}
-                <button
-                  onClick={() => {
-                    setIsRegistering(false);
-                    setErrorMsg('');
-                  }}
-                  className="font-bold text-indigo-600 hover:underline dark:text-indigo-400"
-                  id="login-view-toggle"
-                >
-                  Login
-                </button>
-              </span>
-            ) : (
-              <span className="text-slate-400">
-                Don't have an account?{' '}
-                <button
-                  onClick={() => {
-                    setIsRegistering(true);
-                    setErrorMsg('');
-                  }}
-                  className="font-bold text-indigo-600 hover:underline dark:text-indigo-400"
-                  id="register-view-toggle"
-                >
-                  Register
-                </button>
-              </span>
-            )}
+            </div>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
-  </div>
   );
 }

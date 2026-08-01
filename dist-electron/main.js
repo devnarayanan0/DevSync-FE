@@ -999,13 +999,11 @@ var mainWindow = null;
 var tray = null;
 function createWindow() {
   const isDev = process.env.NODE_ENV !== "production";
-  const iconPath = isDev ? path6.join(process.cwd(), "public/logo.png") : path6.join(process.cwd(), "dist/logo.png");
   mainWindow = new import_electron2.BrowserWindow({
     width: 1200,
     height: 800,
     show: false,
     title: "DevSync",
-    icon: iconPath,
     titleBarStyle: "hidden",
     titleBarOverlay: process.platform === "win32" ? {
       color: "#06070A",
