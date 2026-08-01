@@ -12,7 +12,7 @@ import {
   Sparkles,
   X,
 } from 'lucide-react';
-import { SyncRequest, Theme } from '../types';
+import { SyncRequest, Theme, AccentColor } from '../types';
 import { isElectron, getAutoStart, setAutoStart } from '../lib/electron';
 
 interface SettingsPageProps {
@@ -20,6 +20,8 @@ interface SettingsPageProps {
   onThemeToggle: () => void;
   syncRequests: SyncRequest[];
   onResetApp: () => void;
+  accentColor: AccentColor;
+  onAccentColorChange: (color: AccentColor) => void;
 }
 
 export default function SettingsPage({
@@ -27,9 +29,10 @@ export default function SettingsPage({
   onThemeToggle,
   syncRequests,
   onResetApp,
+  accentColor,
+  onAccentColorChange,
 }: SettingsPageProps) {
   // Theme & Appearance
-  const [accentColor, setAccentColor] = useState<string>('indigo');
   const [fontSize, setFontSize] = useState<string>('medium');
 
   // Startup & Notifications Settings
@@ -146,7 +149,7 @@ export default function SettingsPage({
                 ].map((color) => (
                   <button
                     key={color.id}
-                    onClick={() => setAccentColor(color.id)}
+                    onClick={() => onAccentColorChange(color.id as AccentColor)}
                     className={`h-6 w-6 rounded-full ${color.bg} cursor-pointer transition-all ${
                       accentColor === color.id ? 'ring-2 ring-slate-400 scale-110 ring-offset-2' : 'opacity-70 hover:opacity-100'
                     }`}

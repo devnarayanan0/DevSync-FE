@@ -30,7 +30,7 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import TabBar from './components/TabBar';
 import AboutModal from './components/AboutModal';
-import { Tab, Theme, SyncRequest, UserProfile } from './types';
+import { Tab, Theme, AccentColor, SyncRequest, UserProfile } from './types';
 import LoginPage from './components/LoginPage';
 import FirstSyncWizard from './components/FirstSyncWizard';
 import ProfilePage from './components/ProfilePage';
@@ -57,6 +57,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   // Theme state system
   const [theme, setTheme] = useState<Theme>('light');
+  const [accentColor, setAccentColor] = useState<AccentColor>('lime');
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(true);
   const [aboutOpen, setAboutOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -438,6 +439,7 @@ export default function App() {
           user={userProfile!}
           theme={theme}
           onThemeToggle={handleToggleTheme}
+          accentColor={accentColor}
         />
 
         {/* Workspace Display Area */}
@@ -710,6 +712,8 @@ export default function App() {
                 onThemeToggle={handleToggleTheme}
                 syncRequests={syncRequests}
                 onResetApp={handleResetApp}
+                accentColor={accentColor}
+                onAccentColorChange={setAccentColor}
               />
             )}
 

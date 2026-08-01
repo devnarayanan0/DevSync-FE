@@ -11,7 +11,76 @@ import {
   Moon,
   User,
 } from 'lucide-react';
-import { Theme, UserProfile } from '../types';
+import { Theme, AccentColor, UserProfile } from '../types';
+
+// Accent color class map — Tailwind purges dynamic classes, so we use a static lookup
+const accentStyles: Record<AccentColor, {
+  activeBg: string;
+  activeBorder: string;
+  hoverText: string;
+  badgeBg: string;
+  badgeText: string;
+  badgeBorder: string;
+  avatarBg: string;
+  tooltipBadge: string;
+  logoHover: string;
+}> = {
+  lime: {
+    activeBg: 'bg-lime-500',
+    activeBorder: 'border-lime-600',
+    hoverText: 'hover:text-lime-300',
+    badgeBg: 'bg-lime-500/20',
+    badgeText: 'text-lime-400',
+    badgeBorder: 'border-lime-500/30',
+    avatarBg: 'bg-lime-500',
+    tooltipBadge: 'text-lime-400',
+    logoHover: 'group-hover:text-lime-400',
+  },
+  emerald: {
+    activeBg: 'bg-emerald-500',
+    activeBorder: 'border-emerald-600',
+    hoverText: 'hover:text-emerald-300',
+    badgeBg: 'bg-emerald-500/20',
+    badgeText: 'text-emerald-400',
+    badgeBorder: 'border-emerald-500/30',
+    avatarBg: 'bg-emerald-500',
+    tooltipBadge: 'text-emerald-400',
+    logoHover: 'group-hover:text-emerald-400',
+  },
+  amber: {
+    activeBg: 'bg-amber-500',
+    activeBorder: 'border-amber-600',
+    hoverText: 'hover:text-amber-300',
+    badgeBg: 'bg-amber-500/20',
+    badgeText: 'text-amber-400',
+    badgeBorder: 'border-amber-500/30',
+    avatarBg: 'bg-amber-500',
+    tooltipBadge: 'text-amber-400',
+    logoHover: 'group-hover:text-amber-400',
+  },
+  sky: {
+    activeBg: 'bg-sky-500',
+    activeBorder: 'border-sky-600',
+    hoverText: 'hover:text-sky-300',
+    badgeBg: 'bg-sky-500/20',
+    badgeText: 'text-sky-400',
+    badgeBorder: 'border-sky-500/30',
+    avatarBg: 'bg-sky-500',
+    tooltipBadge: 'text-sky-400',
+    logoHover: 'group-hover:text-sky-400',
+  },
+  rose: {
+    activeBg: 'bg-rose-500',
+    activeBorder: 'border-rose-600',
+    hoverText: 'hover:text-rose-300',
+    badgeBg: 'bg-rose-500/20',
+    badgeText: 'text-rose-400',
+    badgeBorder: 'border-rose-500/30',
+    avatarBg: 'bg-rose-500',
+    tooltipBadge: 'text-rose-400',
+    logoHover: 'group-hover:text-rose-400',
+  },
+};
 
 interface SidebarProps {
   isExpanded: boolean;
@@ -22,6 +91,7 @@ interface SidebarProps {
   user: UserProfile;
   theme: Theme;
   onThemeToggle: () => void;
+  accentColor: AccentColor;
 }
 
 export default function Sidebar({
@@ -33,7 +103,10 @@ export default function Sidebar({
   user,
   theme,
   onThemeToggle,
+  accentColor,
 }: SidebarProps) {
+  const accent = accentStyles[accentColor];
+
   // Navigation layout configurations
   const navigationItems = [
     {
@@ -88,7 +161,7 @@ export default function Sidebar({
               className="flex items-center focus:outline-none cursor-pointer group"
               title="Go to Dashboard"
             >
-              <span className="text-lg font-extrabold tracking-tight text-white font-heading uppercase group-hover:text-lime-400 transition-colors">
+              <span className={`text-lg font-extrabold tracking-tight text-white font-heading uppercase ${accent.logoHover} transition-colors`}>
                 DevSync
               </span>
             </button>
@@ -169,15 +242,15 @@ export default function Sidebar({
               key={item.id}
               onClick={() => onSelectTab(item.id)}
               className={`relative flex w-full items-center rounded-lg px-3 py-2.5 text-xs font-sans tracking-wide transition-all group cursor-pointer ${isActive
-                ? 'bg-lime-500 text-black font-extrabold shadow-sm border border-lime-600'
-                : 'text-white font-bold hover:bg-slate-900/80 hover:text-lime-300'
+                ? `${accent.activeBg} text-black font-extrabold shadow-sm border ${accent.activeBorder}`
+                : `text-white font-bold hover:bg-slate-900/80 ${accent.hoverText}`
                 }`}
               id={`nav-item-${item.id}`}
             >
               <div className="flex items-center w-full justify-between">
                 <div className="flex items-center space-x-2.5">
                   <IconComponent
-                    className={`h-4 w-4 ${isActive ? 'text-black' : 'text-white group-hover:text-lime-300'
+                    className={`h-4 w-4 ${isActive ? 'text-black' : `text-white group-${accent.hoverText.replace('hover:', '')}`
                       }`}
                   />
                   {isExpanded && <span className="truncate">{item.label}</span>}
@@ -187,7 +260,7 @@ export default function Sidebar({
                 {isExpanded && item.badge && (
                   <span
                     className={`rounded-full px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider ${item.id === 'activity'
-                      ? 'bg-lime-500/20 text-lime-400 border border-lime-500/30'
+                      ? `${accent.badgeBg} ${accent.badgeText} border ${accent.badgeBorder}`
                       : 'bg-slate-800 text-white border border-slate-700'
                       }`}
                   >
@@ -200,7 +273,7 @@ export default function Sidebar({
               {!isExpanded && (
                 <div className="absolute left-14 z-50 hidden rounded-md bg-slate-900 px-2.5 py-1.5 text-xs font-bold text-white shadow-md group-hover:block whitespace-nowrap border border-slate-800">
                   {item.label}
-                  {item.badge && <span className="ml-1.5 text-[10px] text-lime-400">({item.badge})</span>}
+                  {item.badge && <span className={`ml-1.5 text-[10px] ${accent.tooltipBadge}`}>({item.badge})</span>}
                 </div>
               )}
             </button>
@@ -213,7 +286,7 @@ export default function Sidebar({
         {/* Theme Toggle Button */}
         <button
           onClick={onThemeToggle}
-          className="relative flex w-full items-center rounded-lg px-3 py-2.5 text-xs font-sans font-bold tracking-wide text-white hover:bg-slate-900/80 hover:text-lime-300 transition-all group cursor-pointer"
+          className={`relative flex w-full items-center rounded-lg px-3 py-2.5 text-xs font-sans font-bold tracking-wide text-white hover:bg-slate-900/80 ${accent.hoverText} transition-all group cursor-pointer`}
           title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
           aria-label="Toggle theme"
           id="sidebar-theme-toggle"
@@ -237,14 +310,14 @@ export default function Sidebar({
         <button
           onClick={() => onSelectTab('settings')}
           className={`relative flex w-full items-center rounded-lg px-3 py-2.5 text-xs font-sans tracking-wide transition-all group cursor-pointer ${activeTabId === 'settings'
-            ? 'bg-lime-500 text-black font-extrabold shadow-sm border border-lime-600'
-            : 'text-white font-bold hover:bg-slate-900/80 hover:text-lime-300'
+            ? `${accent.activeBg} text-black font-extrabold shadow-sm border ${accent.activeBorder}`
+            : `text-white font-bold hover:bg-slate-900/80 ${accent.hoverText}`
             }`}
           id="nav-item-settings"
         >
           <div className="flex items-center space-x-2.5">
             <Settings
-              className={`h-4 w-4 ${activeTabId === 'settings' ? 'text-black' : 'text-white group-hover:text-lime-300'
+              className={`h-4 w-4 ${activeTabId === 'settings' ? 'text-black' : `text-white group-${accent.hoverText.replace('hover:', '')}`
                 }`}
             />
             {isExpanded && <span className="truncate">Settings</span>}
@@ -260,14 +333,14 @@ export default function Sidebar({
         <button
           onClick={() => onSelectTab('profile')}
           className={`relative flex w-full items-center rounded-lg px-3 py-2.5 text-xs font-sans tracking-wide transition-all group cursor-pointer ${activeTabId === 'profile'
-            ? 'bg-lime-500 text-black font-extrabold shadow-sm border border-lime-600'
-            : 'text-white font-bold hover:bg-slate-900/80 hover:text-lime-300'
+            ? `${accent.activeBg} text-black font-extrabold shadow-sm border ${accent.activeBorder}`
+            : `text-white font-bold hover:bg-slate-900/80 ${accent.hoverText}`
             }`}
           title="User Profile"
           id="nav-item-profile"
         >
           <div className="flex items-center space-x-2.5">
-            <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-lime-500 text-black font-extrabold text-[9px]">
+            <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${accent.avatarBg} text-black font-extrabold text-[9px]`}>
               {user?.name ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'U'}
             </div>
             {isExpanded && <span className="truncate">Profile</span>}

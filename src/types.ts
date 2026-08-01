@@ -1,4 +1,5 @@
 export type Theme = 'light' | 'dark';
+export type AccentColor = 'lime' | 'emerald' | 'amber' | 'sky' | 'rose';
 
 export interface Tab {
   id: string; // 'dashboard', 'requests', 'activity', 'logs', 'settings', or request-specific ids like 'req-aws'
