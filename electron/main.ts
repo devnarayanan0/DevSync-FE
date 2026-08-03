@@ -156,8 +156,8 @@ function setupIpcHandlers() {
   });
 
   // Authentication IPCs
-  ipcMain.handle('auth:register', async (_event, { email, password }) => {
-    return await AuthService.register(email, password);
+  ipcMain.handle('auth:register', async (_event, { name, email, password }) => {
+    return await AuthService.register(name, email, password);
   });
 
   ipcMain.handle('auth:login', async (_event, { email, password }) => {
@@ -196,6 +196,21 @@ function setupIpcHandlers() {
     return true;
   });
 
+  ipcMain.handle('operations:aws:uploadFile', async (_event, { tenantId, bucketName, folderName, filePath, relativeTargetName }) => {
+    return await AwsService.uploadFile(tenantId, bucketName, folderName, filePath, relativeTargetName);
+  });
+  ipcMain.handle('operations:aws:downloadFile', async (_event, { tenantId, bucketName, folderName, fileName, localSavePath }) => {
+    await AwsService.downloadFile(tenantId, bucketName, folderName, fileName, localSavePath);
+    return true;
+  });
+  ipcMain.handle('operations:aws:deleteFile', async (_event, { tenantId, bucketName, folderName, fileName }) => {
+    await AwsService.deleteFile(tenantId, bucketName, folderName, fileName);
+    return true;
+  });
+  ipcMain.handle('operations:aws:scanFolderMetadata', async (_event, { tenantId, bucketName, folderName }) => {
+    return await AwsService.scanFolderMetadata(tenantId, bucketName, folderName);
+  });
+
   // Google Drive operations
   ipcMain.handle('connection:getGdriveAuthUrl', async (_event, tenantId) => {
     return await GoogleDriveService.getAuthUrl(tenantId);
@@ -207,6 +222,21 @@ function setupIpcHandlers() {
 
   ipcMain.handle('operations:gdrive:createFolder', async (_event, { tenantId, folderName, parentFolderId }) => {
     return await GoogleDriveService.createFolder(tenantId, folderName, parentFolderId);
+  });
+
+  ipcMain.handle('operations:gdrive:uploadFile', async (_event, { tenantId, folderId, filePath }) => {
+    return await GoogleDriveService.uploadFile(tenantId, folderId, filePath);
+  });
+  ipcMain.handle('operations:gdrive:downloadFile', async (_event, { tenantId, fileId, localSavePath }) => {
+    await GoogleDriveService.downloadFile(tenantId, fileId, localSavePath);
+    return true;
+  });
+  ipcMain.handle('operations:gdrive:deleteFile', async (_event, { tenantId, fileId }) => {
+    await GoogleDriveService.deleteFile(tenantId, fileId);
+    return true;
+  });
+  ipcMain.handle('operations:gdrive:scanFolderMetadata', async (_event, { tenantId, folderId }) => {
+    return await GoogleDriveService.scanFolderMetadata(tenantId, folderId);
   });
 
   // Database Handlers for sync requests

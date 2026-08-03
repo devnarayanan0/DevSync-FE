@@ -6,3 +6,14 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Build Artifacts
+dist-electron/
+dist-packaged/
+*.dmg
+*.exe
+*.AppImage
+
+# Local Database
+devsync.db
+devsync.db-journal

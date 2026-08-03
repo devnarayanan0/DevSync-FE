@@ -64,11 +64,7 @@ export class GoogleDriveService {
       const fileBlob = new Blob([fileBuffer]);
       formData.append('file', fileBlob, fileName);
 
-      const response = await client.post('/api/operations/gdrive/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await client.post('/api/operations/gdrive/upload', formData);
 
       return response.data;
     } catch (err: any) {

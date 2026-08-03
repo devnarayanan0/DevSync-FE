@@ -178,10 +178,10 @@ function getApiClient() {
 
 // electron/services/AuthService.ts
 var AuthService = class {
-  static async register(email, password) {
+  static async register(name, email, password) {
     try {
       const client = getApiClient();
-      const response = await client.post("/api/auth/register", { email, password });
+      const response = await client.post("/api/auth/register", { name, email, password });
       return !!response.data;
     } catch (err) {
       console.error("[AuthService] Registration failed:", err.response?.data || err.message);
@@ -338,11 +338,7 @@ var AwsService = class {
       formData.append("folderName", targetFolder.replace(/\\/g, "/"));
       const fileBlob = new Blob([fileBuffer]);
       formData.append("file", fileBlob, fileName);
-      const response = await client.post("/api/operations/aws/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      });
+      const response = await client.post("/api/operations/aws/upload", formData);
       return response.data;
     } catch (err) {
       console.error("[AwsService] S3 Upload failed:", err.response?.data || err.message);
@@ -455,11 +451,7 @@ var GoogleDriveService = class {
       formData.append("folderId", folderId);
       const fileBlob = new Blob([fileBuffer]);
       formData.append("file", fileBlob, fileName);
-      const response = await client.post("/api/operations/gdrive/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      });
+      const response = await client.post("/api/operations/gdrive/upload", formData);
       return response.data;
     } catch (err) {
       console.error("[GoogleDriveService] GDrive upload failed:", err.response?.data || err.message);
@@ -1106,8 +1098,8 @@ function setupIpcHandlers() {
     });
     return import_electron2.app.getLoginItemSettings().openAtLogin;
   });
-  import_electron2.ipcMain.handle("auth:register", async (_event, { email, password }) => {
-    return await AuthService.register(email, password);
+  import_electron2.ipcMain.handle("auth:register", async (_event, { name, email, password }) => {
+    return await AuthService.register(name, email, password);
   });
   import_electron2.ipcMain.handle("auth:login", async (_event, { email, password }) => {
     return await AuthService.login(email, password);
@@ -1135,6 +1127,20 @@ function setupIpcHandlers() {
     await AwsService.createBucket(tenantId, bucketName);
     return true;
   });
+  import_electron2.ipcMain.handle("operations:aws:uploadFile", async (_event, { tenantId, bucketName, folderName, filePath, relativeTargetName }) => {
+    return await AwsService.uploadFile(tenantId, bucketName, folderName, filePath, relativeTargetName);
+  });
+  import_electron2.ipcMain.handle("operations:aws:downloadFile", async (_event, { tenantId, bucketName, folderName, fileName, localSavePath }) => {
+    await AwsService.downloadFile(tenantId, bucketName, folderName, fileName, localSavePath);
+    return true;
+  });
+  import_electron2.ipcMain.handle("operations:aws:deleteFile", async (_event, { tenantId, bucketName, folderName, fileName }) => {
+    await AwsService.deleteFile(tenantId, bucketName, folderName, fileName);
+    return true;
+  });
+  import_electron2.ipcMain.handle("operations:aws:scanFolderMetadata", async (_event, { tenantId, bucketName, folderName }) => {
+    return await AwsService.scanFolderMetadata(tenantId, bucketName, folderName);
+  });
   import_electron2.ipcMain.handle("connection:getGdriveAuthUrl", async (_event, tenantId) => {
     return await GoogleDriveService.getAuthUrl(tenantId);
   });
@@ -1143,6 +1149,20 @@ function setupIpcHandlers() {
   });
   import_electron2.ipcMain.handle("operations:gdrive:createFolder", async (_event, { tenantId, folderName, parentFolderId }) => {
     return await GoogleDriveService.createFolder(tenantId, folderName, parentFolderId);
+  });
+  import_electron2.ipcMain.handle("operations:gdrive:uploadFile", async (_event, { tenantId, folderId, filePath }) => {
+    return await GoogleDriveService.uploadFile(tenantId, folderId, filePath);
+  });
+  import_electron2.ipcMain.handle("operations:gdrive:downloadFile", async (_event, { tenantId, fileId, localSavePath }) => {
+    await GoogleDriveService.downloadFile(tenantId, fileId, localSavePath);
+    return true;
+  });
+  import_electron2.ipcMain.handle("operations:gdrive:deleteFile", async (_event, { tenantId, fileId }) => {
+    await GoogleDriveService.deleteFile(tenantId, fileId);
+    return true;
+  });
+  import_electron2.ipcMain.handle("operations:gdrive:scanFolderMetadata", async (_event, { tenantId, folderId }) => {
+    return await GoogleDriveService.scanFolderMetadata(tenantId, folderId);
   });
   import_electron2.ipcMain.handle("db-get-sync-requests", () => {
     const db2 = getDb();

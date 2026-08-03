@@ -2,10 +2,10 @@ import { getApiClient } from './ApiClient';
 import { getSetting, setSetting, deleteSetting } from './DatabaseService';
 
 export class AuthService {
-  static async register(email: string, password: string): Promise<boolean> {
+  static async register(name: string, email: string, password: string): Promise<boolean> {
     try {
       const client = getApiClient();
-      const response = await client.post('/api/auth/register', { email, password });
+      const response = await client.post('/api/auth/register', { name, email, password });
       return !!response.data;
     } catch (err: any) {
       console.error('[AuthService] Registration failed:', err.response?.data || err.message);

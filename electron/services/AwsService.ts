@@ -80,11 +80,7 @@ export class AwsService {
       const fileBlob = new Blob([fileBuffer]);
       formData.append('file', fileBlob, fileName);
 
-      const response = await client.post('/api/operations/aws/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await client.post('/api/operations/aws/upload', formData);
 
       return response.data;
     } catch (err: any) {

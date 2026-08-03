@@ -7,7 +7,7 @@ import_electron.contextBridge.exposeInMainWorld("electronAPI", {
   getAutoStart: () => import_electron.ipcRenderer.invoke("get-auto-start"),
   setAutoStart: (enabled) => import_electron.ipcRenderer.invoke("set-auto-start", enabled),
   // Authentication IPCs
-  authRegister: (email, password) => import_electron.ipcRenderer.invoke("auth:register", { email, password }),
+  authRegister: (name, email, password) => import_electron.ipcRenderer.invoke("auth:register", { name, email, password }),
   authLogin: (email, password) => import_electron.ipcRenderer.invoke("auth:login", { email, password }),
   authLogout: () => import_electron.ipcRenderer.invoke("auth:logout"),
   authGetSession: () => import_electron.ipcRenderer.invoke("auth:getSession"),
@@ -18,10 +18,18 @@ import_electron.contextBridge.exposeInMainWorld("electronAPI", {
   awsVerify: (tenantId, accessKey, secretKey, region) => import_electron.ipcRenderer.invoke("connection:verifyAws", { tenantId, accessKey, secretKey, region }),
   awsListBuckets: (tenantId) => import_electron.ipcRenderer.invoke("operations:aws:listBuckets", tenantId),
   awsCreateBucket: (tenantId, bucketName) => import_electron.ipcRenderer.invoke("operations:aws:createBucket", { tenantId, bucketName }),
+  awsUploadFile: (tenantId, bucketName, folderName, filePath, relativeTargetName) => import_electron.ipcRenderer.invoke("operations:aws:uploadFile", { tenantId, bucketName, folderName, filePath, relativeTargetName }),
+  awsDownloadFile: (tenantId, bucketName, folderName, fileName, localSavePath) => import_electron.ipcRenderer.invoke("operations:aws:downloadFile", { tenantId, bucketName, folderName, fileName, localSavePath }),
+  awsDeleteFile: (tenantId, bucketName, folderName, fileName) => import_electron.ipcRenderer.invoke("operations:aws:deleteFile", { tenantId, bucketName, folderName, fileName }),
+  awsScanFolderMetadata: (tenantId, bucketName, folderName) => import_electron.ipcRenderer.invoke("operations:aws:scanFolderMetadata", { tenantId, bucketName, folderName }),
   // Google Drive proxy operations
   gdriveGetAuthUrl: (tenantId) => import_electron.ipcRenderer.invoke("connection:getGdriveAuthUrl", tenantId),
   gdriveListFolders: (tenantId, folderId) => import_electron.ipcRenderer.invoke("operations:gdrive:listFolders", { tenantId, folderId }),
   gdriveCreateFolder: (tenantId, folderName, parentFolderId) => import_electron.ipcRenderer.invoke("operations:gdrive:createFolder", { tenantId, folderName, parentFolderId }),
+  gdriveUploadFile: (tenantId, folderId, filePath) => import_electron.ipcRenderer.invoke("operations:gdrive:uploadFile", { tenantId, folderId, filePath }),
+  gdriveDownloadFile: (tenantId, fileId, localSavePath) => import_electron.ipcRenderer.invoke("operations:gdrive:downloadFile", { tenantId, fileId, localSavePath }),
+  gdriveDeleteFile: (tenantId, fileId) => import_electron.ipcRenderer.invoke("operations:gdrive:deleteFile", { tenantId, fileId }),
+  gdriveScanFolderMetadata: (tenantId, folderId) => import_electron.ipcRenderer.invoke("operations:gdrive:scanFolderMetadata", { tenantId, folderId }),
   // Synchronization Pipeline Configs (SQLite DB)
   dbGetSyncRequests: () => import_electron.ipcRenderer.invoke("db-get-sync-requests"),
   dbSaveSyncRequest: (request) => import_electron.ipcRenderer.invoke("db-save-sync-request", request),

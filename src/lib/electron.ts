@@ -10,7 +10,7 @@ declare global {
       setAutoStart: (enabled: boolean) => Promise<boolean>;
       
       // Authentication
-      authRegister: (email: string, password: string) => Promise<boolean>;
+      authRegister: (name: string, email: string, password: string) => Promise<boolean>;
       authLogin: (email: string, password: string) => Promise<any>;
       authLogout: () => Promise<boolean>;
       authGetSession: () => Promise<{ isLoggedIn: boolean; token: string; user: UserProfile | null }>;
@@ -23,11 +23,19 @@ declare global {
       awsVerify: (tenantId: string, accessKey: string, secretKey: string, region: string) => Promise<any>;
       awsListBuckets: (tenantId: string) => Promise<any[]>;
       awsCreateBucket: (tenantId: string, bucketName: string) => Promise<boolean>;
+      awsUploadFile: (tenantId: string, bucketName: string, folderName: string, filePath: string, relativeTargetName: string) => Promise<any>;
+      awsDownloadFile: (tenantId: string, bucketName: string, folderName: string, fileName: string, localSavePath: string) => Promise<boolean>;
+      awsDeleteFile: (tenantId: string, bucketName: string, folderName: string, fileName: string) => Promise<boolean>;
+      awsScanFolderMetadata: (tenantId: string, bucketName: string, folderName: string) => Promise<any[]>;
 
       // Google Drive Operations
       gdriveGetAuthUrl: (tenantId: string) => Promise<string>;
       gdriveListFolders: (tenantId: string, folderId?: string) => Promise<any[]>;
       gdriveCreateFolder: (tenantId: string, folderName: string, parentFolderId?: string) => Promise<any>;
+      gdriveUploadFile: (tenantId: string, folderId: string, filePath: string) => Promise<any>;
+      gdriveDownloadFile: (tenantId: string, fileId: string, localSavePath: string) => Promise<boolean>;
+      gdriveDeleteFile: (tenantId: string, fileId: string) => Promise<boolean>;
+      gdriveScanFolderMetadata: (tenantId: string, folderId: string) => Promise<any[]>;
 
       // SQLite Sync pipeline configuration
       dbGetSyncRequests: () => Promise<any[]>;
@@ -89,9 +97,9 @@ export async function setAutoStart(enabled: boolean): Promise<boolean> {
 }
 
 // Wrapper Functions with premium web fallbacks
-export async function authRegister(email: string, password: string): Promise<boolean> {
+export async function authRegister(name: string, email: string, password: string): Promise<boolean> {
   if (isElectron()) {
-    return await window.electronAPI!.authRegister(email, password);
+    return await window.electronAPI!.authRegister(name, email, password);
   }
   return true;
 }
@@ -171,6 +179,23 @@ export async function awsCreateBucket(tenantId: string, bucketName: string): Pro
   return true;
 }
 
+export async function awsUploadFile(tenantId: string, bucketName: string, folderName: string, filePath: string, relativeTargetName: string): Promise<any> {
+  if (isElectron()) return await window.electronAPI!.awsUploadFile(tenantId, bucketName, folderName, filePath, relativeTargetName);
+  return null;
+}
+export async function awsDownloadFile(tenantId: string, bucketName: string, folderName: string, fileName: string, localSavePath: string): Promise<boolean> {
+  if (isElectron()) return await window.electronAPI!.awsDownloadFile(tenantId, bucketName, folderName, fileName, localSavePath);
+  return true;
+}
+export async function awsDeleteFile(tenantId: string, bucketName: string, folderName: string, fileName: string): Promise<boolean> {
+  if (isElectron()) return await window.electronAPI!.awsDeleteFile(tenantId, bucketName, folderName, fileName);
+  return true;
+}
+export async function awsScanFolderMetadata(tenantId: string, bucketName: string, folderName: string): Promise<any[]> {
+  if (isElectron()) return await window.electronAPI!.awsScanFolderMetadata(tenantId, bucketName, folderName);
+  return [];
+}
+
 export async function gdriveGetAuthUrl(tenantId: string): Promise<string> {
   if (isElectron()) {
     return await window.electronAPI!.gdriveGetAuthUrl(tenantId);
@@ -190,6 +215,23 @@ export async function gdriveCreateFolder(tenantId: string, folderName: string, p
     return await window.electronAPI!.gdriveCreateFolder(tenantId, folderName, parentFolderId);
   }
   return null;
+}
+
+export async function gdriveUploadFile(tenantId: string, folderId: string, filePath: string): Promise<any> {
+  if (isElectron()) return await window.electronAPI!.gdriveUploadFile(tenantId, folderId, filePath);
+  return null;
+}
+export async function gdriveDownloadFile(tenantId: string, fileId: string, localSavePath: string): Promise<boolean> {
+  if (isElectron()) return await window.electronAPI!.gdriveDownloadFile(tenantId, fileId, localSavePath);
+  return true;
+}
+export async function gdriveDeleteFile(tenantId: string, fileId: string): Promise<boolean> {
+  if (isElectron()) return await window.electronAPI!.gdriveDeleteFile(tenantId, fileId);
+  return true;
+}
+export async function gdriveScanFolderMetadata(tenantId: string, folderId: string): Promise<any[]> {
+  if (isElectron()) return await window.electronAPI!.gdriveScanFolderMetadata(tenantId, folderId);
+  return [];
 }
 
 export async function getSyncRequests(): Promise<SyncRequest[]> {
