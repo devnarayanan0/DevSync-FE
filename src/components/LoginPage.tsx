@@ -121,15 +121,15 @@ export default function LoginPage({
         <div className="w-full max-w-md px-6">
           {/* Logo Section with rotating border */}
           <div className="mb-6 flex flex-col items-center">
-            <div className="relative flex h-16 w-52 items-center justify-center rounded-2xl p-[2px] overflow-hidden bg-slate-200/50 dark:bg-neutral-800/50 shadow-xl">
+            <div className="relative flex items-center justify-center rounded-2xl p-[2px] overflow-hidden bg-slate-200/50 dark:bg-neutral-800/50 shadow-xl">
               {/* Rotating gradient background */}
               <div
                 className="absolute inset-[-100%] animate-spin bg-[conic-gradient(from_0deg,transparent_40%,#84cc16_100%)]"
                 style={{ animationDuration: '2.5s' }}
               />
-              {/* Inner card content */}
-              <div className="relative w-full h-full flex items-center justify-center rounded-[14px] bg-[#D6E8E1] p-3">
-                <img src="/logo.png" alt="DevSync Logo" className="h-full w-full object-contain" />
+              {/* Logo */}
+              <div className="relative rounded-2xl overflow-hidden bg-theme-card">
+                <img src="/logo.png" alt="DevSync Logo" className="h-24 object-contain p-2 rounded-2xl" />
               </div>
             </div>
           </div>
