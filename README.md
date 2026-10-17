@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/assets/icons/DevSync.png" alt="DevSync" width="90" />
+<img src="public/DevSync.png" alt="DevSync" width="90" />
 
 # DevSync
 
@@ -24,7 +24,7 @@
 ## System Architecture
 
 <div align="center">
-  <img src="image.png" width="100%" alt="DevSync system architecture" />
+  <img src="public/image.png" width="100%" alt="DevSync system architecture" />
 </div>
 
 The architecture separates the desktop application's **data plane** from the backend's **control plane**. The Electron client transfers file contents directly to cloud providers. The Spring Boot backend handles authenticated API requests, tenant management, and cloud connection metadata.
