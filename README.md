@@ -2,8 +2,6 @@
 
 <img src="public/DevSync.png" alt="DevSync" width="90" />
 
-# DevSync
-
 **Open source desktop application for bi directional synchronization between local folders and cloud storage**
 
 <br/>
