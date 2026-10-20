@@ -14,7 +14,11 @@
     "electron:start": "npm run electron:build:main && electron .",
     "electron:prod": "npm run build && NODE_ENV=production electron .",
     "dev:all": "npm run electron:build:main && concurrently \"npm run dev\" \"electron .\"",
-    "electron:pack": "npm run build && electron-builder"
+    "electron:pack": "npm run build && electron-builder",
+    "build:windows": "npm run build && electron-builder --config electron-builder.windows.json --win nsis --x64 && node scripts/copy-installer.cjs windows DevSync-Setup.exe",
+    "build:macos": "npm run build && electron-builder --config electron-builder.macos.json --mac dmg && node scripts/copy-installer.cjs macos DevSync.dmg",
+    "build:macos:arm64": "npm run build && electron-builder --config electron-builder.macos.json --mac dmg --arm64 && node scripts/copy-installer.cjs macos DevSync.dmg",
+    "build:macos:x64": "npm run build && electron-builder --config electron-builder.macos.json --mac dmg --x64 && node scripts/copy-installer.cjs macos DevSync.dmg"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

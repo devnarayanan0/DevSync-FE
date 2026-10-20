@@ -165,19 +165,12 @@ export default function DesktopBootLoader({ onComplete }: DesktopBootLoaderProps
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-500/10 blur-[130px] rounded-full pointer-events-none" />
 
         <div className="w-full max-w-md p-8 relative flex flex-col items-center z-10 animate-fade-in">
-          {/* Minimalist Logo design with rotating border */}
           <div className="relative mb-6 flex items-center justify-center">
-            <div className="relative flex h-24 w-24 items-center justify-center rounded-full p-[2px] overflow-hidden bg-slate-200/50 dark:bg-neutral-800/50 shadow-xl">
-              {/* Rotating gradient background */}
-              <div 
-                className="absolute inset-[-100%] animate-spin bg-[conic-gradient(from_0deg,transparent_40%,#84cc16_100%)]" 
-                style={{ animationDuration: '2.5s' }}
-              />
-              {/* Inner card content */}
-              <div className="relative w-full h-full flex items-center justify-center rounded-full border border-lime-400 bg-lime-500 text-black font-extrabold text-4xl shadow-xs">
-                DS
-              </div>
-            </div>
+            <img
+              src="/images/load.gif"
+              alt="Loading DevSync"
+              className="h-48 w-48 object-contain"
+            />
           </div>
         </div>
       </div>

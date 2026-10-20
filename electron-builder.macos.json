@@ -1,0 +1,36 @@
+{
+  "appId": "com.devsync.app",
+  "productName": "DevSync",
+  "directories": {
+    "output": "dist-packaged/macos"
+  },
+  "files": [
+    "dist/**/*",
+    "dist-electron/**/*",
+    "package.json"
+  ],
+  "asar": true,
+  "asarUnpack": [
+    "node_modules/better-sqlite3/**/*"
+  ],
+  "mac": {
+    "category": "public.app-category.utilities",
+    "target": [
+      {
+        "target": "dmg"
+      }
+    ]
+  },
+  "dmg": {
+    "title": "DevSync",
+    "artifactName": "DevSync.dmg",
+    "contents": [
+      {
+        "x": 410,
+        "y": 200,
+        "type": "link",
+        "path": "/Applications"
+      }
+    ]
+  }
+}

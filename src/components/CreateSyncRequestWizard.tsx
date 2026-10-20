@@ -288,15 +288,7 @@ export default function CreateSyncRequestWizard({
                     }`}
                 >
                   <div className="h-14 w-20 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-neutral-800/50 shadow-sm p-2">
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="flex items-end gap-1 select-none">
-                        <span className="text-2xl font-black tracking-tighter text-slate-800 dark:text-white font-sans lowercase">aws</span>
-                      </div>
-                      <svg className="w-10 h-2 text-[#FF9900] -mt-1.5" viewBox="0 0 40 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M2.5 1.5 C10.5 5.5, 29.5 5.5, 37.5 1.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                        <path d="M34.5 1.5 L37.5 1.5 L36.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
+                    <img src="/images/aws.png" alt="AWS" className="h-full w-full object-contain" />
                   </div>
                   <h4 className="text-xs font-bold text-neutral-900 dark:text-neutral-100">AWS S3</h4>
                   {provider === 'aws-s3' && (
@@ -315,11 +307,7 @@ export default function CreateSyncRequestWizard({
                     }`}
                 >
                   <div className="h-14 w-20 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-neutral-800/50 shadow-sm p-1">
-                    <svg className="w-10 h-9" viewBox="0 0 144 144" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M47.2 24h49.6l23.2 40H70.4L47.2 24z" fill="#FFC107" />
-                      <path d="M18 76l23.2-40 47.2 82-23.2 40L18 76z" fill="#2196F3" />
-                      <path d="M70.4 64h63l-23.2 40H47.2l23.2-40z" fill="#4CAF50" />
-                    </svg>
+                    <img src="/images/gcp.png" alt="Google Cloud" className="h-full w-full object-contain" />
                   </div>
                   <h4 className="text-xs font-bold text-neutral-900 dark:text-neutral-100">Google Drive</h4>
                   {provider === 'google-drive' && (
@@ -332,10 +320,7 @@ export default function CreateSyncRequestWizard({
                 {/* Microsoft Azure Blob - Disabled */}
                 <div className="p-6.5 rounded-xl border border-dashed border-slate-205 dark:border-neutral-800/80 bg-slate-50/40 dark:bg-neutral-950/10 opacity-55 flex flex-col items-center text-center justify-center space-y-3 cursor-not-allowed select-none">
                   <div className="h-14 w-20 flex items-center justify-center rounded-lg bg-slate-50/50 dark:bg-neutral-800/20 p-2">
-                    <svg className="w-9 h-9" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M21 95l43-80h24L45 95H21z" fill="#0078D4" />
-                      <path d="M88 15h24L72 95H48l40-80z" fill="#50E6FF" fillOpacity="0.8" />
-                    </svg>
+                    <img src="/images/azure.png" alt="Microsoft Azure" className="h-full w-full object-contain" />
                   </div>
                   <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500">Microsoft Azure Blob</h4>
                 </div>
@@ -343,9 +328,7 @@ export default function CreateSyncRequestWizard({
                 {/* Dropbox Client - Disabled */}
                 <div className="p-6.5 rounded-xl border border-dashed border-slate-205 dark:border-neutral-800/80 bg-slate-50/40 dark:bg-neutral-950/10 opacity-55 flex flex-col items-center text-center justify-center space-y-3 cursor-not-allowed select-none">
                   <div className="h-14 w-20 flex items-center justify-center rounded-lg bg-slate-50/50 dark:bg-neutral-800/20 p-2">
-                    <svg className="w-10 h-10 text-slate-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M6 2L1 5.5l5 3.5 5-3.5L6 2zM18 2l-5 3.5 5 3.5 5-3.5L18 2zM1 12.5l5 3.5 5-3.5-5-3.5-5 3.5zM13 12.5l5 3.5 5-3.5-5-3.5-5 3.5zM6 19.5l6 4 6-4v-2L12 21l-6-3.5v2z" />
-                    </svg>
+                    <img src="/images/dropbox.png" alt="Dropbox" className="h-full w-full object-contain" />
                   </div>
                   <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500">Dropbox</h4>
                 </div>
